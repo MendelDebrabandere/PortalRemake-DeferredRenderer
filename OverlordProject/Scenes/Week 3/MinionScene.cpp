@@ -2,9 +2,7 @@
 #include "stdafx.h"
 #include "MinionScene.h"
 
-#include "Prefabs/CubePrefab.h"
-#include "Prefabs/SpherePrefab.h"
-
+#include "Prefabs/TorusPrefab.h"
 
 MinionScene::MinionScene() :
 	GameScene(L"MinionScene"){}
@@ -17,11 +15,26 @@ void MinionScene::Initialize()
 	m_SceneContext.settings.enableOnGUI = true;
 
 	Logger::LogInfo(L"Welcome, humble Minion!");
+
+	//Big donut
+	m_pTorusBig = new TorusPrefab(10, 50, 1, 25, XMFLOAT4{ Colors::Red });
+	AddChild(m_pTorusBig);
+
+	//Middle donut
+	m_pTorusMiddle = new TorusPrefab(7, 50, 1, 25, XMFLOAT4{ Colors::Green });
+	m_pTorusBig->AddChild(m_pTorusMiddle);
+
+	//Small donut
+	m_pTorusSmall = new TorusPrefab(4, 50, 1, 25, XMFLOAT4{ Colors::Blue });
+	m_pTorusMiddle->AddChild(m_pTorusSmall);
 }
 
 void MinionScene::Update()
 {
-	//Optional
+	float rotation = 90.f * m_SceneContext.pGameTime->GetTotal();
+	m_pTorusBig->GetTransform()->Rotate(0, rotation, 0);
+	m_pTorusMiddle->GetTransform()->Rotate(rotation, 0, 0);
+	m_pTorusSmall->GetTransform()->Rotate(rotation, 0, 0);
 }
 
 void MinionScene::Draw()

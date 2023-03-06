@@ -17,9 +17,10 @@ protected:
 	void OnGUI() override;
 
 private:
-	GameObject* m_pObject{};
-	RigidBodyComponent* m_pRigidBody{};
-	FreeCamera* m_pFixedCamera{};
+	GameObject* m_pTorusBig{ nullptr };
+	GameObject* m_pTorusMiddle{ nullptr };
+	GameObject* m_pTorusSmall{ nullptr };
+
 };
 
 
