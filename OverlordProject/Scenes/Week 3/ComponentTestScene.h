@@ -2,7 +2,7 @@
 class ComponentTestScene final : public GameScene
 {
 public:
-	ComponentTestScene() : GameScene(L"MinionScene"){};
+	ComponentTestScene() : GameScene(L"ComponentTestScene"){};
 	~ComponentTestScene() override = default;
 
 	ComponentTestScene(const ComponentTestScene& other) = delete;

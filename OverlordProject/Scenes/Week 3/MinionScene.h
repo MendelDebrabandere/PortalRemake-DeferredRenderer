@@ -2,7 +2,7 @@
 class MinionScene final : public GameScene
 {
 public:
-	MinionScene();
+	MinionScene() : GameScene(L"MinionScene") {};
 	~MinionScene() override = default;
 
 	MinionScene(const MinionScene& other) = delete;

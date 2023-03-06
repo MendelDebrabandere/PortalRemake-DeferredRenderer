@@ -4,9 +4,6 @@
 
 #include "Prefabs/TorusPrefab.h"
 
-MinionScene::MinionScene() :
-	GameScene(L"MinionScene"){}
-
 void MinionScene::Initialize()
 {
 	//m_SceneContext.settings.showInfoOverlay = true;
