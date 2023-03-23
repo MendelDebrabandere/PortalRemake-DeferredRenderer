@@ -19,9 +19,9 @@ void PongScene::Initialize()
 	auto& sceneSettings = GetSceneSettings();
 	sceneSettings.clearColor = XMFLOAT4{ Colors::Black };
 
-	//auto* camera = GetActiveCamera();
-	//camera->
-
+	//m_SceneContext.pCamera->GetTransform()->Translate(0, 50, 0);
+	/*m_SceneContext.pCamera->GetTransform()->Rotate(0, -90, 0);
+	m_SceneContext.pCamera->*/
 
 
 	//PongLeft
@@ -82,8 +82,7 @@ void PongScene::Initialize()
 
 	auto pLeftTriggerRB = m_pLeftTrigger->AddComponent(new RigidBodyComponent(true));
 	pLeftTriggerRB->AddCollider(PxBoxGeometry{ 1, 2.5f, fieldSize.y }, *pBouncyMaterial, true);
-
-
+	
 	//Right Trigger
 	m_pRightTrigger = new CubePrefab(0, 0, 0, pongColor);
 	m_pRightTrigger->GetTransform()->Translate(fieldSize.x, 0, 0);
@@ -91,6 +90,19 @@ void PongScene::Initialize()
 
 	auto pRightTriggerRB = m_pRightTrigger->AddComponent(new RigidBodyComponent(true));
 	pRightTriggerRB->AddCollider(PxBoxGeometry{ 1, 2.5f, fieldSize.y }, *pBouncyMaterial, true);
+	
+	auto function = [=](GameObject* pTriggerObject, GameObject* pOtherObject, PxTriggerAction action)
+	{
+		if (action == PxTriggerAction::ENTER)
+		{
+			pOtherObject->GetTransform()->Translate(0, 1, 0);
+			m_IsBallMoving = false;
+			pTriggerObject->GetTransform();
+		}
+	};
+
+	m_pLeftTrigger->SetOnTriggerCallBack(function);
+	m_pRightTrigger->SetOnTriggerCallBack(function);
 
 }
 
@@ -99,16 +111,22 @@ void PongScene::Update()
 	// Move ball when space is pressed
 	if (m_IsBallMoving == false)
 	{
-		if (InputManager::IsKeyboardKey(InputState::pressed, VK_SPACE))
+		const auto RBcomp = m_pBall->GetComponent<RigidBodyComponent>();
+		if (RBcomp)
 		{
-			const float force{ 4000.f };
-			const auto RBcomp = m_pBall->GetComponent<RigidBodyComponent>();
-			if (RBcomp)
+			RBcomp->SetKinematic(true);
+
+			if (InputManager::IsKeyboardKey(InputState::pressed, VK_SPACE))
+			{
+				RBcomp->SetKinematic(false);
+
+				const float force{ 4000.f };
 				RBcomp->AddForce(XMFLOAT3{ force,0,force });
-			else
-				std::cout << "No RBcomp found \n";
-			m_IsBallMoving = true;
+				m_IsBallMoving = true;
+			}
 		}
+		else
+			std::cout << "No RBcomp found \n";
 	}
 
 	//INPUT
@@ -132,16 +150,6 @@ void PongScene::Update()
 	if (InputManager::IsKeyboardKey(InputState::down, 'F'))
 	{
 		m_pPongLeft->GetTransform()->Translate(leftPPos.x, leftPPos.y, leftPPos.z - moveSpeed * dTime);
-	}
-
-	//Reset ball if it is out of bounds
-	const auto ballXPos = m_pBall->GetTransform()->GetWorldPosition().x;
-
-	if (ballXPos <= m_pLeftTrigger->GetTransform()->GetWorldPosition().x ||
-		ballXPos >= m_pRightTrigger->GetTransform()->GetWorldPosition().x)
-	{
-		m_pBall->GetTransform()->Translate(0, 1, 0);
-		m_IsBallMoving = false;
 	}
 
 	//Clamp peddles to playspace

@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "ComponentTestScene.h"
-
 #include "Prefabs/SpherePrefab.h"
 
 
