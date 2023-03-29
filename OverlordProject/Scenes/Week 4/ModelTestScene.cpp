@@ -8,6 +8,8 @@ void ModelTestScene::Initialize()
 {
 	m_SceneContext.settings.enableOnGUI = true;
 
+	auto pPhysMat{ PxGetPhysics().createMaterial(0.5f, 0.5f, 0.5f) };
+
 	//Create new instance of a certain metrial
 	DiffuseMaterial* pMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
 	//Set texture of the material
@@ -21,11 +23,12 @@ void ModelTestScene::Initialize()
 	component->SetMaterial(pMaterial);
 	m_pChair = new GameObject();
 	m_pChair->AddComponent<ModelComponent>(component);
-
-	const auto rbComp = new RigidBodyComponent();
-	rbComp->AddCollider(L"Meshes/Chair.ovpt",)
-	m_pChair->AddComponent<RigidBodyComponent>(rbComp);
-
+	m_pChair->GetComponent<TransformComponent>()->Translate(0.0f, 15.0f, 0.0f);
+	m_pChair->GetComponent<TransformComponent>()->Rotate(45, 45, 45);
+	//RigidBody
+	const auto pConvexMesh = ContentManager::Load<PxConvexMesh>(L"Meshes/Chair.ovpc");
+	const auto convexGeometry{ PxConvexMeshGeometry{ pConvexMesh } };
+	m_pChair->AddComponent(new RigidBodyComponent())->AddCollider(convexGeometry, *pPhysMat);
 	AddChild(m_pChair);
 
 }
