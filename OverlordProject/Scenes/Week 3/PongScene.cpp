@@ -9,12 +9,12 @@ void PongScene::Initialize()
 
 
 	//m_SceneContext.settings.showInfoOverlay = true;
-	m_SceneContext.settings.drawPhysXDebug = false;
+	m_SceneContext.settings.drawPhysXDebug = true;
 	m_SceneContext.settings.drawGrid = false;
 	m_SceneContext.settings.enableOnGUI = true;
 
 	auto& physx = PxGetPhysics();
-	auto pBouncyMaterial = physx.createMaterial(0.5f, 0.5f, 1.f);
+	auto pBouncyMaterial = physx.createMaterial(0.f, 0.f, 1.f);
 
 	auto& sceneSettings = GetSceneSettings();
 	sceneSettings.clearColor = XMFLOAT4{ Colors::Black };
