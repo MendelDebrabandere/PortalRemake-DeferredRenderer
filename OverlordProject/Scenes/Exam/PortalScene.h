@@ -1,0 +1,32 @@
+#pragma once
+class Character;
+
+class PortalScene final : public GameScene
+{
+public:
+	PortalScene() : GameScene(L"PortalScene") {};
+	~PortalScene() override = default;
+
+	PortalScene(const PortalScene& other) = delete;
+	PortalScene(PortalScene&& other) noexcept = delete;
+	PortalScene& operator=(const PortalScene& other) = delete;
+	PortalScene& operator=(PortalScene&& other) noexcept = delete;
+
+protected:
+	void Initialize() override;
+	void Update() override;
+	//void Draw() override;
+	void OnGUI() override;
+
+private:
+	// Helper functions
+	void InitLevel();
+	void InitCharacter(bool controlCamera, float mouseSens);
+
+	GameObject* m_pFloor{ nullptr };
+
+	GameObject* m_pWall1{ nullptr };
+	GameObject* m_pWall2{ nullptr };
+
+	Character* m_pCharacter{};
+};

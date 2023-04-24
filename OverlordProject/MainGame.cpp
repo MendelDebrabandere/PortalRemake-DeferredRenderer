@@ -6,14 +6,16 @@
 // #define W4
 // #define W5
 // #define W6
- #define W7
+// #define W7
 // #define W8
 // #define W9
 // #define W10
 
 /*MILESTONE Content*/
-//#define MILESTONE_1
+// #define MILESTONE_1
 // #define MILESTONE_2
+
+ #define Exam
 
 #pragma region Lab/Milestone Includes
 #ifdef W3
@@ -76,6 +78,10 @@
 #include "Scenes/Week 10/PostProcessingScene.h"
 #endif
 
+#ifdef Exam
+#include "Scenes/Exam/PortalScene.h"
+#endif
+
 #pragma endregion
 
 //Game is preparing
@@ -85,9 +91,9 @@ void MainGame::OnGamePreparing(GameContext& gameContext)
 	//gameContext.windowWidth=... (default is 1280)
 	//gameContext.windowHeight=... (default is 720)
 
-	gameContext.windowTitle = L"GP2 - Milestone 1 (2023) | (2DAE07) Debrabandere Mendel";
+	//gameContext.windowTitle = L"GP2 - Milestone 1 (2023) | (2DAE07) Debrabandere Mendel";
 	//gameContext.windowTitle = L"GP2 - Milestone 2 (2023) | (2DAE13) Doe John";
-	//gameContext.windowTitle = L"GP2 - Exam Project (2023) | (2DAE13) Doe John";
+	gameContext.windowTitle = L"GP2 - Exam Project (2023) | (2DAE13) Doe John";
 }
 
 void MainGame::Initialize()
@@ -151,6 +157,10 @@ void MainGame::Initialize()
 	SceneManager::Get()->AddGameScene(new ShadowMappingScene());
 	SceneManager::Get()->AddGameScene(new ParticleScene());
 	SceneManager::Get()->AddGameScene(new PostProcessingScene());
+#endif
+
+#ifdef Exam
+	SceneManager::Get()->AddGameScene(new PortalScene());
 #endif
 }
 

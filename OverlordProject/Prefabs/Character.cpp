@@ -24,6 +24,9 @@ void Character::Update(const SceneContext& sceneContext)
 {
 	if (m_pCameraComponent->IsActive())
 	{
+
+		
+
 		//constexpr float epsilon{ 0.01f }; //Constant that can be used to compare if a float is near zero
 		const float elapsedSec{ sceneContext.pGameTime->GetElapsed() };
 
@@ -47,13 +50,13 @@ void Character::Update(const SceneContext& sceneContext)
 		//## Input Gathering (look)
 		XMFLOAT2 look{ 0.f, 0.f };
 		//Only if the Left Mouse Button is Down >
-		if (InputManager::IsMouseButton(InputState::down, 1))
-		{
+		//if (InputManager::IsMouseButton(InputState::down, 1))
+		//{
 			// Store the MouseMovement in the local 'look' variable (cast is required)
-			const auto mouseMovement = InputManager::GetMouseMovement();
+			auto mouseMovement = InputManager::GetMouseMovement();
 			look.x = static_cast<float>(mouseMovement.x);
 			look.y = static_cast<float>(mouseMovement.y);
-		}
+		//}
 		//Optional: in case look.x AND look.y are near zero, you could use the Right ThumbStickPosition for look
 
 		//************************
@@ -126,7 +129,7 @@ void Character::Update(const SceneContext& sceneContext)
 		//Else (=Character is grounded, no input pressed)
 		else
 			//m_TotalVelocity.y is zero
-			m_TotalVelocity.y = 0.f;
+			m_TotalVelocity.y = -0.1f;
 
 		//************
 		//DISPLACEMENT
@@ -184,4 +187,9 @@ void Character::DrawImGui()
 			m_pCameraComponent->SetActive(isActive);
 		}
 	}
+}
+
+void Character::SetCameraActive(bool newValue)
+{
+	m_pCameraComponent->SetActive(newValue);
 }

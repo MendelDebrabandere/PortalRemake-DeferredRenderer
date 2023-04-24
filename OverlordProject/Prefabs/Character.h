@@ -43,6 +43,7 @@ public:
 	Character& operator=(Character&& other) noexcept = delete;
 
 	void DrawImGui();
+	void SetCameraActive(bool newValue = true);
 
 protected:
 	void Initialize(const SceneContext&) override;

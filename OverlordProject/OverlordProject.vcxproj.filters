@@ -28,6 +28,7 @@
     <ClCompile Include="Scenes\Week 7\FontTestScene.cpp" />
     <ClCompile Include="Scenes\Week 7\PickingScene.cpp" />
     <ClCompile Include="Prefabs\Character.cpp" />
+    <ClCompile Include="Scenes\Exam\PortalScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -56,5 +57,6 @@
     <ClInclude Include="Scenes\Week 7\FontTestScene.h" />
     <ClInclude Include="Scenes\Week 7\PickingScene.h" />
     <ClInclude Include="Prefabs\Character.h" />
+    <ClInclude Include="Scenes\Exam\PortalScene.h" />
   </ItemGroup>
 </Project>

@@ -247,7 +247,7 @@ void InputManager::UpdateInputStates(bool overrideEnable)
 			m_CurrMousePosition = m_OldMousePosition;
 		}
 	}
-	
+
 	m_MouseMovement.x = m_CurrMousePosition.x - m_OldMousePosition.x;
 	m_MouseMovement.y = m_CurrMousePosition.y - m_OldMousePosition.y;
 
