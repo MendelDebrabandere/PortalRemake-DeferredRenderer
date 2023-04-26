@@ -42,11 +42,13 @@ void ModelComponent::Initialize(const SceneContext& sceneContext)
 
 	if(m_CastShadows) //Only if we cast a shadow of course..
 	{
-		TODO_W8(L"Update MeshFilter for ShadowMapGenerator")
+		//TODO_W8(L"Update MeshFilter for ShadowMapGenerator");
 		//1. Use ShadowMapRenderer::UpdateMeshFilter to update this MeshFilter for ShadowMap Rendering
+		ShadowMapRenderer::Get()->UpdateMeshFilter(sceneContext, m_pMeshFilter);
 
-		TODO_W8(L"Enable ShadowMapDraw function call (m_enableShadowMapDraw = true)")
+		//TODO_W8(L"Enable ShadowMapDraw function call (m_enableShadowMapDraw = true)");
 		//2. Make sure to set m_enableShadowMapDraw to true, otherwise BaseComponent::ShadowMapDraw is not called
+		m_enableShadowMapDraw = true;
 	}
 }
 
@@ -102,16 +104,32 @@ void ModelComponent::Draw(const SceneContext& sceneContext)
 	}
 }
 
-void ModelComponent::ShadowMapDraw(const SceneContext& /*sceneContext*/)
+void ModelComponent::ShadowMapDraw(const SceneContext& sceneContext)
 {
 	//We only draw this Mesh to the ShadowMap if it casts shadows
 	if (!m_CastShadows)return;
 
-	TODO_W8(L"Draw Mesh to ShadowMapRenderer (Static/Skinned)")
+	//TODO_W8(L"Draw Mesh to ShadowMapRenderer (Static/Skinned)");
 	//This function is only called during the ShadowPass (and if m_enableShadowMapDraw is true)
 	//Here we want to Draw this Mesh to the ShadowMap, using the ShadowMapRenderer::DrawMesh function
 
 	//1. Call ShadowMapRenderer::DrawMesh with the required function arguments BUT boneTransforms are only required for skinned meshes of course..
+
+	auto pShadowMapRenderer = ShadowMapRenderer::Get();
+	auto meshWorld = GetTransform()->GetWorld();
+
+	if (m_pAnimator != nullptr)
+	{
+		// Skinned mesh case
+		auto meshBones = m_pAnimator->GetBoneTransforms();
+		pShadowMapRenderer->DrawMesh(sceneContext, m_pMeshFilter, meshWorld, meshBones);
+	}
+	else
+	{
+		// Static mesh case
+		std::vector<XMFLOAT4X4> emptyBones; // Empty vector for static mesh
+		pShadowMapRenderer->DrawMesh(sceneContext, m_pMeshFilter, meshWorld, emptyBones);
+	}
 }
 
 void ModelComponent::SetMaterial(BaseMaterial* pMaterial, UINT8 submeshId)
