@@ -2,6 +2,7 @@
 #include "PortalGun.h"
 
 #include "Portal.h"
+#include "Materials/PortalMaterial.h"
 #include "Scenes/Exam/PortalScene.h"
 
 
@@ -30,38 +31,40 @@ void PortalGun::ShootGun(PortalScene* scene, PortalType type)
 	if (scene->GetPhysxProxy()->Raycast(rayStart, rayEnd.getNormalized(), PX_MAX_F32, hit, PxHitFlag::eDEFAULT, filterData))
 	{
 		//delete old portal
-		if (m_pPortals[int(type)])
-			scene->RemoveChild(m_pPortals[int(type)]);
+		if (m_PortalPtrs[int(type)])
+			scene->RemoveChild(m_PortalPtrs[int(type)]);
 
 		//Spawn new portal
-		auto portal = scene->AddChild(new Portal(type));
+		auto portal = scene->AddChild(new Portal(type, m_PortalMaterialPtrs[int(type)]));
 		auto transform = portal->GetTransform();
+
 		//Transform
 		const XMFLOAT3 position = { hit.block.position.x, hit.block.position.y, hit.block.position.z };
 		transform->Translate(position);
+
 		//Rotate
 		const XMFLOAT3 wallNormal = { hit.block.normal.x, hit.block.normal.y, hit.block.normal.z };
-
-		// Project the wall normal onto the XZ plane
 		XMFLOAT3 projectedNormal = { wallNormal.x, 0, wallNormal.z };
 		float projectedNormalLength = sqrtf(projectedNormal.x * projectedNormal.x + projectedNormal.z * projectedNormal.z);
-
-		// Calculate the angle between the projection and the world Z axis
 		float angleY = atan2f(projectedNormal.x, projectedNormal.z);
-
-		// Calculate the angle between the original wall normal and its projection onto the XZ plane
 		float angleX = atan2f(wallNormal.y, projectedNormalLength);
-
-
 		transform->Rotate(angleX, angleY, 0, false);
+
 		//save new portal
-		m_pPortals[int(type)] = portal;
+		m_PortalPtrs[int(type)] = portal;
 	}
 }
 
 void PortalGun::Initialize(const SceneContext&)
 {
-	m_pPortals.resize(2);
+	m_PortalPtrs.resize(2);
+
+	//Create new instance of a certain metrial
+	m_PortalMaterialPtrs.resize(2);
+
+	m_PortalMaterialPtrs[0] = MaterialManager::Get()->CreateMaterial<PortalMaterial>();
+	m_PortalMaterialPtrs[1] = MaterialManager::Get()->CreateMaterial<PortalMaterial>();
+
 }
 
 void PortalGun::Update(const SceneContext&)

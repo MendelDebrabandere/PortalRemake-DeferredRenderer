@@ -1,4 +1,6 @@
 #pragma once
+class PortalMaterial;
+
 enum class PortalType
 {
 	Orange = 0,
@@ -8,7 +10,7 @@ enum class PortalType
 class Portal final : public GameObject
 {
 public:
-	Portal(PortalType type);
+	Portal(PortalType type, PortalMaterial* material);
 	~Portal() override = default;
 
 	Portal(const Portal& other) = delete;
@@ -23,7 +25,7 @@ protected:
 private:
 	PortalType m_Type{};
 
-	MeshDrawComponent* m_Plane{};
+	ModelComponent* m_pMesh{};
 
-
+	PortalMaterial* m_pPortalMat{};
 };

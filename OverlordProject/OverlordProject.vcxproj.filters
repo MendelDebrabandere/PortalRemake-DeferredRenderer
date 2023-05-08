@@ -34,6 +34,7 @@
     <ClCompile Include="Materials\Shadow\DiffuseMaterial_Shadow_Skinned.cpp" />
     <ClCompile Include="Prefabs\Portal.cpp" />
     <ClCompile Include="Prefabs\PortalGun.cpp" />
+    <ClCompile Include="Materials\PortalMaterial.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -68,5 +69,6 @@
     <ClInclude Include="Materials\Shadow\DiffuseMaterial_Shadow.h" />
     <ClInclude Include="Prefabs\Portal.h" />
     <ClInclude Include="Prefabs\PortalGun.h" />
+    <ClInclude Include="Materials\PortalMaterial.h" />
   </ItemGroup>
 </Project>

@@ -1,34 +1,27 @@
 #include "stdafx.h"
 #include "Portal.h"
+#include "Materials/PortalMaterial.h"
 
-Portal::Portal(PortalType type)
-	:m_Type{ type }
+Portal::Portal(PortalType type, PortalMaterial* material)
+	: m_Type{ type }
+	, m_pPortalMat{material}
 {
 }
 
 void Portal::Initialize(const SceneContext& /*sceneContext*/)
 {
-	constexpr float halfPlaneHeight{ 3.5f };
-	constexpr float halfPlaneWidth{ 1.5f };
 
-	//Create Plane
-	m_Plane = new MeshDrawComponent(2);
+	//Create portal mesh
+	const auto component = new ModelComponent(L"Meshes/Portal.ovm");
+	component->SetMaterial(m_pPortalMat);
+	m_pMesh = AddComponent<ModelComponent>(component);
+	m_pMesh->GetTransform()->Scale(0.03f);
 
-	XMFLOAT4 color{};
+	if (m_Type == PortalType::Blue)
+		m_pPortalMat->MakeBlue();
 	if (m_Type == PortalType::Orange)
-		color = XMFLOAT4(1.f, 0.7f, 0.2f, 1.f);
-	else
-		color = XMFLOAT4(0.2f, 0.2f, 1.f, 1.f);
+		m_pPortalMat->MakeOrange();
 
-	//FRONT
-	m_Plane->AddQuad(
-		VertexPosNormCol(XMFLOAT3(-halfPlaneWidth, halfPlaneHeight, 0), XMFLOAT3(0, 0, -1), color),
-		VertexPosNormCol(XMFLOAT3(halfPlaneWidth, halfPlaneHeight, 0), XMFLOAT3(0, 0, -1), color),
-		VertexPosNormCol(XMFLOAT3(halfPlaneWidth, -halfPlaneHeight, 0), XMFLOAT3(0, 0, -1), color),
-		VertexPosNormCol(XMFLOAT3(-halfPlaneWidth, -halfPlaneHeight, 0), XMFLOAT3(0, 0, -1), color)
-	);
-
-	AddComponent(m_Plane);
 }
 
 void Portal::Update(const SceneContext&)

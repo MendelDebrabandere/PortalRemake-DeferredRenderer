@@ -1,4 +1,5 @@
 #pragma once
+class PortalMaterial;
 class Portal;
 enum class PortalType;
 class PortalScene;
@@ -21,6 +22,6 @@ protected:
 	void Update(const SceneContext&) override;
 
 private:
-	std::vector<Portal*> m_pPortals{};
-
+	std::vector<Portal*> m_PortalPtrs{};
+	std::vector<PortalMaterial*> m_PortalMaterialPtrs{};
 };

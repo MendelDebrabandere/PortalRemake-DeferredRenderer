@@ -32,4 +32,6 @@ private:
 	Character* m_pCharacter{};
 
 	PortalGun* m_pPortalGun{};
+
+	bool m_MouseGone{ true };
 };

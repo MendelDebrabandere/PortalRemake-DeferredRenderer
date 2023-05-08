@@ -132,6 +132,12 @@ void InputManager::Update()
 	if (!m_Enabled)
 		return;
 
+	if (IsKeyboardKey(InputState::pressed, 27)) // ESC BUTTON = 27
+	{
+		m_ForceToCenter = !m_ForceToCenter;
+		CursorVisible(!m_ForceToCenter);
+	}
+
 	if (ImGui::GetIO().WantCaptureMouseUnlessPopupClose)
 		return;
 
@@ -226,14 +232,6 @@ void InputManager::UpdateInputStates(bool overrideEnable)
 		m_LastUpdate = currTime;
 	}
 
-	// Calculate the window's client area center point in screen coordinates.
-	RECT windowRect;
-	GetClientRect(m_GameContext.windowHandle, &windowRect);
-	POINT clientAreaCenter;
-	clientAreaCenter.x = (windowRect.right - windowRect.left) / 2;
-	clientAreaCenter.y = (windowRect.bottom - windowRect.top) / 2;
-	ClientToScreen(m_GameContext.windowHandle, &clientAreaCenter);
-
 	// Store the current mouse position, and convert it from screen coordinates to client area coordinates.
 	m_OldMousePosition = m_CurrMousePosition;
 	if (GetCursorPos(&m_CurrMousePosition))
@@ -251,6 +249,14 @@ void InputManager::UpdateInputStates(bool overrideEnable)
 	// If m_ForceToCenter is true, set the cursor position to the center of the client area (in screen coordinates).
 	if (m_ForceToCenter)
 	{
+		// Calculate the window's client area center point in screen coordinates.
+		RECT windowRect;
+		GetClientRect(m_GameContext.windowHandle, &windowRect);
+		POINT clientAreaCenter;
+		clientAreaCenter.x = (windowRect.right - windowRect.left) / 2;
+		clientAreaCenter.y = (windowRect.bottom - windowRect.top) / 2;
+		ClientToScreen(m_GameContext.windowHandle, &clientAreaCenter);
+
 		SetCursorPos(clientAreaCenter.x, clientAreaCenter.y);
 		m_CurrMousePosition = clientAreaCenter;
 		ScreenToClient(m_GameContext.windowHandle, &m_CurrMousePosition);
