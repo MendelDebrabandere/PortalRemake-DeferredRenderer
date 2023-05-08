@@ -2,7 +2,10 @@
 #include "PortalScene.h"
 
 #include "Prefabs/Character.h"
+#include "Prefabs/PortalGun.h"
 #include "Prefabs/CubePrefab.h"
+#include "Prefabs/Portal.h"
+
 
 void PortalScene::Initialize()
 {
@@ -18,7 +21,14 @@ void PortalScene::Initialize()
 
 void PortalScene::Update()
 {
-
+	if (InputManager::IsMouseButton(InputState::pressed, VK_RBUTTON))
+	{
+		m_pPortalGun->ShootGun(this, PortalType::Blue);
+	}
+	if (InputManager::IsMouseButton(InputState::pressed, VK_LBUTTON))
+	{
+		m_pPortalGun->ShootGun(this, PortalType::Orange);
+	}
 }
 
 void PortalScene::OnGUI()
@@ -115,5 +125,12 @@ void PortalScene::InitCharacter(bool controlCamera, float mouseSens)
 	// Control camera
 	m_pCharacter->SetCameraActive(controlCamera);
 
+	//Character collision group
+	m_pCharacter->SetCollisionGroup(CollisionGroup::Group9);
+
+	// Add protalgun
+	m_pPortalGun = new PortalGun();
+	m_pCharacter->AddChild(m_pPortalGun);
 }
+
 

@@ -193,3 +193,8 @@ void Character::SetCameraActive(bool newValue)
 {
 	m_pCameraComponent->SetActive(newValue);
 }
+
+void Character::SetCollisionGroup(CollisionGroup group)
+{
+	m_pControllerComponent->SetCollisionGroup(group);
+}

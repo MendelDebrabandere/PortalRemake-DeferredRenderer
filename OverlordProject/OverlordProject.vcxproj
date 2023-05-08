@@ -96,6 +96,8 @@
     <ClCompile Include="Materials\DiffuseMaterial_Skinned.cpp" />
     <ClCompile Include="Materials\Shadow\DiffuseMaterial_Shadow.cpp" />
     <ClCompile Include="Materials\Shadow\DiffuseMaterial_Shadow_Skinned.cpp" />
+    <ClCompile Include="Prefabs\PortalGun.cpp" />
+    <ClCompile Include="Prefabs\Portal.cpp" />
     <ClCompile Include="Scenes\Exam\PortalScene.cpp" />
     <ClCompile Include="Prefabs\Character.cpp" />
     <ClCompile Include="Scenes\Week 6\HardwareSkinningScene.cpp" />
@@ -146,6 +148,8 @@
     <ClInclude Include="Materials\DiffuseMaterial_Skinned.h" />
     <ClInclude Include="Materials\Shadow\DiffuseMaterial_Shadow.h" />
     <ClInclude Include="Materials\Shadow\DiffuseMaterial_Shadow_Skinned.h" />
+    <ClInclude Include="Prefabs\PortalGun.h" />
+    <ClInclude Include="Prefabs\Portal.h" />
     <ClInclude Include="Scenes\Exam\PortalScene.h" />
     <ClInclude Include="Prefabs\Character.h" />
     <ClInclude Include="Scenes\Week 6\HardwareSkinningScene.h" />

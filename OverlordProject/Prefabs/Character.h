@@ -45,6 +45,8 @@ public:
 	void DrawImGui();
 	void SetCameraActive(bool newValue = true);
 
+	void SetCollisionGroup(CollisionGroup group);
+
 protected:
 	void Initialize(const SceneContext&) override;
 	void Update(const SceneContext&) override;

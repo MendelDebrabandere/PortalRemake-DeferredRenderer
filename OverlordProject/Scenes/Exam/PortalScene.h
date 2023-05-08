@@ -1,4 +1,5 @@
 #pragma once
+class PortalGun;
 class Character;
 
 class PortalScene final : public GameScene
@@ -29,4 +30,6 @@ private:
 	GameObject* m_pWall2{ nullptr };
 
 	Character* m_pCharacter{};
+
+	PortalGun* m_pPortalGun{};
 };
