@@ -52,10 +52,11 @@ void Character::Update(const SceneContext& sceneContext)
 		//Only if the Left Mouse Button is Down >
 		//if (InputManager::IsMouseButton(InputState::down, 1))
 		//{
+		constexpr float mouseSens{ 0.5f };
 			// Store the MouseMovement in the local 'look' variable (cast is required)
 			auto mouseMovement = InputManager::GetMouseMovement();
-			look.x = static_cast<float>(mouseMovement.x);
-			look.y = static_cast<float>(mouseMovement.y);
+			look.x = static_cast<float>(mouseMovement.x) * mouseSens;
+			look.y = static_cast<float>(mouseMovement.y) * mouseSens;
 		//}
 		//Optional: in case look.x AND look.y are near zero, you could use the Right ThumbStickPosition for look
 

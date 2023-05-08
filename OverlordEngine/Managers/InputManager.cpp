@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "InputManager.h"
 
+
 PBYTE InputManager::m_pCurrKeyboardState = nullptr;
 PBYTE InputManager::m_pOldKeyboardState = nullptr;
 PBYTE InputManager::m_pKeyboardState0 = nullptr;
@@ -79,18 +80,6 @@ bool InputManager::IsActionTriggered(int actionID) const
 void InputManager::ForceMouseToCenter(bool force)
 {
 	m_ForceToCenter = force;
-
-	if (force)
-	{
-		POINT mouseCenter{};
-		m_CurrMousePosition.x = static_cast<LONG>(m_GameContext.windowWidth) / 2;
-		m_CurrMousePosition.y = static_cast<LONG>(m_GameContext.windowHeight) / 2;
-		mouseCenter.x = m_CurrMousePosition.x;
-		mouseCenter.y = m_CurrMousePosition.y;
-		ClientToScreen(m_GameContext.windowHandle, &mouseCenter);
-
-		SetCursorPos(mouseCenter.x, mouseCenter.y);
-	}
 }
 
 void InputManager::UpdateGamepadStates()
@@ -237,8 +226,15 @@ void InputManager::UpdateInputStates(bool overrideEnable)
 		m_LastUpdate = currTime;
 	}
 
-	//TODO: Refactor Mouse Updates
-	//Update Mouse Position
+	// Calculate the window's client area center point in screen coordinates.
+	RECT windowRect;
+	GetClientRect(m_GameContext.windowHandle, &windowRect);
+	POINT clientAreaCenter;
+	clientAreaCenter.x = (windowRect.right - windowRect.left) / 2;
+	clientAreaCenter.y = (windowRect.bottom - windowRect.top) / 2;
+	ClientToScreen(m_GameContext.windowHandle, &clientAreaCenter);
+
+	// Store the current mouse position, and convert it from screen coordinates to client area coordinates.
 	m_OldMousePosition = m_CurrMousePosition;
 	if (GetCursorPos(&m_CurrMousePosition))
 	{
@@ -248,8 +244,18 @@ void InputManager::UpdateInputStates(bool overrideEnable)
 		}
 	}
 
+	// Calculate the mouse movement.
 	m_MouseMovement.x = m_CurrMousePosition.x - m_OldMousePosition.x;
 	m_MouseMovement.y = m_CurrMousePosition.y - m_OldMousePosition.y;
+
+	// If m_ForceToCenter is true, set the cursor position to the center of the client area (in screen coordinates).
+	if (m_ForceToCenter)
+	{
+		SetCursorPos(clientAreaCenter.x, clientAreaCenter.y);
+		m_CurrMousePosition = clientAreaCenter;
+		ScreenToClient(m_GameContext.windowHandle, &m_CurrMousePosition);
+	}
+
 
 	//Normalized
 	m_MouseMovementNormalized.x = m_MouseMovement.x > 0 ? 1.f : (m_MouseMovement.x < 0 ? -1.f : 0.f);

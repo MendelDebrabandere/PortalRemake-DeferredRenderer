@@ -15,12 +15,18 @@ void PortalScene::Initialize()
 	m_SceneContext.settings.drawGrid = false;
 	m_SceneContext.settings.enableOnGUI = true;
 
+	InputManager::ForceMouseToCenter(true);
+	InputManager::CursorVisible(false);
+
+
 	InitLevel();
 	InitCharacter(true, 10);
 }
 
 void PortalScene::Update()
 {
+
+
 	if (InputManager::IsMouseButton(InputState::pressed, VK_RBUTTON))
 	{
 		m_pPortalGun->ShootGun(this, PortalType::Blue);
