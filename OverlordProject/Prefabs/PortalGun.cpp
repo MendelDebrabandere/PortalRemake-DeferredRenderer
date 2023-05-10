@@ -34,21 +34,30 @@ void PortalGun::ShootGun(PortalScene* scene, PortalType type)
 		if (m_PortalPtrs[int(type)])
 			scene->RemoveChild(m_PortalPtrs[int(type)]);
 
+		//otherPortalIdx
+		PortalType otherType;
+		if (type == PortalType::Blue)
+			otherType = PortalType::Orange;
+		else
+			otherType = PortalType::Blue;
+
 		//Spawn new portal
-		auto portal = scene->AddChild(new Portal(type, m_PortalMaterialPtrs[int(type)]));
+		auto portal = scene->AddChild(new Portal(type, m_PortalMaterialPtrs[int(type)], m_PortalPtrs[int(otherType)]));
 		auto transform = portal->GetTransform();
+		const XMFLOAT3 wallNormal = { hit.block.normal.x, hit.block.normal.y, hit.block.normal.z };
 
 		//Transform
-		const XMFLOAT3 position = { hit.block.position.x, hit.block.position.y, hit.block.position.z };
+		constexpr float wallGap{ 0.01f };
+		const XMFLOAT3 position = { hit.block.position.x + wallNormal.x * wallGap, hit.block.position.y + wallNormal.y * wallGap, hit.block.position.z + wallNormal.z * wallGap };
 		transform->Translate(position);
 
 		//Rotate
-		const XMFLOAT3 wallNormal = { hit.block.normal.x, hit.block.normal.y, hit.block.normal.z };
 		XMFLOAT3 projectedNormal = { wallNormal.x, 0, wallNormal.z };
 		float projectedNormalLength = sqrtf(projectedNormal.x * projectedNormal.x + projectedNormal.z * projectedNormal.z);
 		float angleY = atan2f(projectedNormal.x, projectedNormal.z);
 		float angleX = atan2f(wallNormal.y, projectedNormalLength);
 		transform->Rotate(angleX, angleY, 0, false);
+
 
 		//save new portal
 		m_PortalPtrs[int(type)] = portal;

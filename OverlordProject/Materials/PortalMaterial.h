@@ -1,5 +1,7 @@
 #pragma once
 
+class Portal;
+
 class PortalMaterial final : public Material<PortalMaterial>
 {
 public:
@@ -13,6 +15,8 @@ public:
 
 	void MakeOrange();
 	void MakeBlue();
+
+	void SetOtherPortal(Portal* otherPortal);
 
 protected:
 	void InitializeEffectVariables() override;

@@ -28,6 +28,10 @@ public:
 	const XMFLOAT4X4& GetViewInverse() const {return m_ViewInverse;}
 	const XMFLOAT4X4& GetViewProjectionInverse() const {return m_ViewProjectionInverse;}
 
+	float GetFOV() const { return m_FOV; }
+	float GetFarPlane() const { return m_FarPlane; }
+	float GetNearPlane() const { return m_NearPlane; }
+
 	GameObject* Pick(CollisionGroup ignoreGroups = CollisionGroup::None) const;
 
 protected:

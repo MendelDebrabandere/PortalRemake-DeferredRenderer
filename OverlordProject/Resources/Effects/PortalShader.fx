@@ -5,6 +5,10 @@ float4x4 gWorldViewProj : WORLDVIEWPROJECTION;
 float4x4 gWorld : WORLD;
 float3 gLightDirection : DIRECTION = float3(0.577f, -0.577f, 0.577f);
 
+float4x4 gOtherPortalWorldViewProj;
+float4x4 gOtherPortalWorld;
+
+
 float3 gColorDiffuse : COLOR;
 
 RasterizerState FrontCulling 
@@ -33,8 +37,8 @@ struct VS_OUTPUT
 VS_OUTPUT VS(VS_INPUT input)
 {
 	VS_OUTPUT output;
-	output.pos = mul ( float4(input.pos,1.0f), gWorldViewProj );
-	output.normal = normalize(mul(input.normal, (float3x3)gWorld));
+	output.pos = mul (mul ( float4(input.pos,1.0f), gWorldViewProj ),  gOtherPortalWorldViewProj);
+	output.normal = normalize( mul( mul(input.normal, (float3x3)gWorld)), gOtherPortalWorld);
 	return output;
 }
 

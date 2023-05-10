@@ -35,6 +35,7 @@
     <ClCompile Include="Prefabs\Portal.cpp" />
     <ClCompile Include="Prefabs\PortalGun.cpp" />
     <ClCompile Include="Materials\PortalMaterial.cpp" />
+    <ClCompile Include="Scenes\Week 9\ParticleScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -70,5 +71,6 @@
     <ClInclude Include="Prefabs\Portal.h" />
     <ClInclude Include="Prefabs\PortalGun.h" />
     <ClInclude Include="Materials\PortalMaterial.h" />
+    <ClInclude Include="Scenes\Week 9\ParticleScene.h" />
   </ItemGroup>
 </Project>

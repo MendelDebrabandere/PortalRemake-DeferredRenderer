@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "PortalMaterial.h"
+#include "Prefabs/Portal.h"
 
 
 PortalMaterial::PortalMaterial()
@@ -17,8 +18,12 @@ void PortalMaterial::MakeBlue()
 	SetVariable_Vector(L"gColorDiffuse", XMFLOAT4{ 0.5f, 0.5f, 1.0f, 1.0f });
 }
 
+void PortalMaterial::SetOtherPortal(Portal* otherPortal)
+{
+	SetVariable_Matrix(L"gOtherPortalWorldViewProj", otherPortal->GetWorldViewProj());
+	SetVariable_Matrix(L"gOtherPortalWorld", otherPortal->GetWorld());
+}
+
 void PortalMaterial::InitializeEffectVariables()
 {
-	SetVariable_Vector(L"gLightDirection", XMFLOAT3{ 0.577f, 0.577f, -0.577f });
-	//SetVariable_Vector(L"gColorDiffuse", XMFLOAT4{ 0.0f, 0.0f, 0.0f, 1.0f });
 }
