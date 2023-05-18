@@ -37,8 +37,10 @@ struct VS_OUTPUT
 VS_OUTPUT VS(VS_INPUT input)
 {
 	VS_OUTPUT output;
-	output.pos = mul (mul ( float4(input.pos,1.0f), gWorldViewProj ),  gOtherPortalWorldViewProj);
-	output.normal = normalize( mul( mul(input.normal, (float3x3)gWorld)), gOtherPortalWorld);
+	//output.pos = mul (mul ( float4(input.pos,1.0f), gWorldViewProj ),  gOtherPortalWorldViewProj);
+	//output.normal = normalize( mul( mul(input.normal, (float3x3)gWorld), (float3x3)gOtherPortalWorld));
+	output.pos = mul ( float4(input.pos,1.0f), gWorldViewProj );
+	output.normal = normalize( mul(input.normal, (float3x3)gWorld));
 	return output;
 }
 
@@ -64,4 +66,3 @@ technique11 Default {
 		SetPixelShader(CompileShader(ps_4_0, PS()));
 	}
 }
-
