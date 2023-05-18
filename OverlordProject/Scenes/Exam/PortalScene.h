@@ -17,6 +17,7 @@ protected:
 	void Initialize() override;
 	void Update() override;
 	//void Draw() override;
+	void PostDraw() override;
 	void OnGUI() override;
 
 private:
@@ -34,4 +35,8 @@ private:
 	PortalGun* m_pPortalGun{};
 
 	bool m_MouseGone{ true };
+
+	bool m_DrawPortalMap{ true };
+	float m_ShadowMapScale{ 0.3f };
+
 };

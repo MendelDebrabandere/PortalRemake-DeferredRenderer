@@ -14,6 +14,8 @@ void PortalScene::Initialize()
 	m_SceneContext.settings.drawGrid = false;
 	m_SceneContext.settings.enableOnGUI = true;
 
+	m_SceneContext.pLights->SetDirectionalLight({ -95.6139526f,66.1346436f,-41.1850471f }, { 0.740129888f, -0.597205281f, 0.309117377f });
+
 	InputManager::ForceMouseToCenter(m_MouseGone);
 	InputManager::CursorVisible(!m_MouseGone);
 
@@ -32,11 +34,6 @@ void PortalScene::Update()
 	{
 		m_pPortalGun->ShootGun(this, PortalType::Orange);
 	}
-}
-
-void PortalScene::OnGUI()
-{
-	m_pCharacter->DrawImGui();
 }
 
 void PortalScene::InitLevel()
@@ -137,3 +134,18 @@ void PortalScene::InitCharacter(bool controlCamera, float mouseSens)
 }
 
 
+void PortalScene::PostDraw()
+{
+	//Draw ShadowMap (Debug Visualization)
+	if (m_DrawPortalMap) {
+
+		ShadowMapRenderer::Get()->Debug_DrawDepthSRV({ m_SceneContext.windowWidth - 10.f, 10.f }, { m_ShadowMapScale, m_ShadowMapScale }, { 1.f,0.f });
+	}
+}
+
+void PortalScene::OnGUI()
+{
+	m_pCharacter->DrawImGui();
+	ImGui::Checkbox("Draw PortalMap", &m_DrawPortalMap);
+	ImGui::SliderFloat("ShadowMap Scale", &m_ShadowMapScale, 0.f, 1.f);
+}

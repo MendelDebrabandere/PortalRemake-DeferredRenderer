@@ -2,7 +2,7 @@
 #include "PortalGun.h"
 
 #include "Portal.h"
-#include "Materials/PortalMaterial.h"
+#include "Materials/Portal/PortalMaterial.h"
 #include "Scenes/Exam/PortalScene.h"
 
 

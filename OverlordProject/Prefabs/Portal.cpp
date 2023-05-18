@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Portal.h"
-#include "Materials/PortalMaterial.h"
+#include "Materials/Portal/PortalMaterial.h"
 
 Portal::Portal(PortalType type, PortalMaterial* material, Portal* otherPortal)
 	: m_Type{ type }
