@@ -12,10 +12,10 @@ RenderTarget::~RenderTarget(void)
 
 void RenderTarget::CleanUp()
 {
-	if (!m_ColorBufferSupplied)
+	//if (!m_ColorBufferSupplied)
 	SafeRelease(m_pColor);
 
-	if (!m_DepthBufferSupplied)
+	//if (!m_DepthBufferSupplied)
 	SafeRelease(m_pDepth);
 
 	SafeRelease(m_pRenderTargetView);

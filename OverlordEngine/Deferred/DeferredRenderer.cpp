@@ -5,7 +5,7 @@
 
 DeferredRenderer::~DeferredRenderer()
 {
-	for (auto i{0}; i < RT_COUNT; ++i) //Skip main RT
+	for (auto i{1}; i < RT_COUNT; ++i) //Skip main RT
 	{
 		SafeDelete(m_GBuffer[i])
 	}
