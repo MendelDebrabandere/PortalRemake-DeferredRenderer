@@ -100,7 +100,44 @@ VS_OUTPUT VS(float3 position:POSITION, float2 texCoord:TEXCOORD)
 [earlydepthstencil] //Execute Depth&Stencil tests before PS execution (not during as usual)
 float4 PS(VS_OUTPUT input) :SV_TARGET
 {
-	return float4(1,1,1,1);
+	int2 screenCoord = input.Position.xy;
+	int3 loadCoord = int3(screenCoord, 0);
+
+	//World Position from depth
+	float depth = gTextureDepth.Load(loadCoord).r;
+	float textureWidth;
+	float textureHeight;
+	gTextureDepth.GetDimensions(textureWidth, textureHeight);
+	float3 P = DepthToWorldPosition(depth, screenCoord, float2(textureWidth, textureHeight), gMatrixViewProjInv);
+
+	//View Direction
+	float3 V = normalize(P - gEyePos);
+
+	//Retrieve Components
+	float3 diffuse = gTextureDiffuse.Load(loadCoord).rgb; //DIFFUSE
+	float4 specular = gTextureSpecular.Load(loadCoord); //SPECULAR
+	float shininess = exp2(specular.a * 10.5f);
+	float3 N = gTextureNormal.Load(loadCoord).xyz; //NORMAL
+	
+	//Material
+	Material mat = (Material)0;
+	mat.Diffuse = diffuse;
+	mat.Specular = specular.rgb;
+	mat.Shininess = shininess;
+
+	//Do Lighting (Point=0, Spot=1)
+	LightingResult result = (LightingResult)0;
+	if (gCurrentLight.Type == 0) // Pointlight
+	{
+		result = DoPointLighting(gCurrentLight, mat, V, N, P);
+	}
+	else //Spotlight
+	{
+		result = DoSpotLighting(gCurrentLight, mat, V, N, P);
+	}
+
+	//FINAL COLOR
+	return float4((mat.Diffuse * result.Diffuse) + (mat.Specular * result.Specular), 1); // + Ambient (What's on backbuffer)
 }
 
 technique11 Default

@@ -50,11 +50,11 @@ float3 DoDiffuse(Light light, float3 L, float3 N)
 {
 	//Lambert Diffuse
 	float diffuseStrength = dot(N, -L);
-	diffuseStrength = saturate(diffuseStrength);
-
-	////Half-Lambert diffuse
-	//diffuseStrength = diffuseStrength * 0.5 + 0.5;
 	//diffuseStrength = saturate(diffuseStrength);
+
+	//Half-Lambert diffuse
+	diffuseStrength = diffuseStrength * 0.5 + 0.5;
+	diffuseStrength = saturate(diffuseStrength);
 
 	return light.Color.rgb * diffuseStrength;
 }
@@ -99,7 +99,7 @@ LightingResult DoDirectionalLighting(Light light, Material mat, float3 L, float3
 	LightingResult result;
 
 	result.Diffuse = DoDiffuse(light, L, N) * light.Intensity;
-	result.Specular = DoSpecular(light, mat, L, V, N) * light.Intensity;
+	result.Specular = DoSpecular(light, mat, V, L, N) * light.Intensity;
 
 	return result;
 }
@@ -109,8 +109,14 @@ LightingResult DoPointLighting(Light light, Material mat, float3 V, float3 N, fl
 {
 	LightingResult result;
 
-	//PointLight Shading Logic
-	//....
+	float3 L = P - light.Position.xyz;
+	float distance = length(L);
+	L = L / distance;
+	
+	float attenuation = DoAttenuation(light, distance);
+
+	result.Diffuse = DoDiffuse(light, L, N) * attenuation * light.Intensity;
+	result.Specular = DoSpecular(light, mat, V, L, N) * attenuation * light.Intensity;
 
 	return result;
 }
@@ -120,8 +126,15 @@ LightingResult DoSpotLighting(Light light, Material mat, float3 V, float3 N, flo
 {
 	LightingResult result;
 
-	//SpotLight Shading Logic
-	//...
+	float3 L = P - light.Position.xyz;
+	float distance = length(L);
+	L = L / distance;
+
+	float attenuation = DoAttenuation(light, distance);
+	float coneFalloff = DoSpotCone(light, L);
+
+	result.Diffuse = DoDiffuse(light, L, N) * attenuation * coneFalloff * light.Intensity;
+	result.Specular = DoSpecular(light, mat, V, L, N) * attenuation * coneFalloff * light.Intensity;
 
 	return result;
 }

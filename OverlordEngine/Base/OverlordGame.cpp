@@ -243,6 +243,7 @@ HRESULT OverlordGame::InitializeDirectX()
 	rtDesc.pColor = pBackbuffer;
 	rtDesc.enableColorSRV = true;
 	rtDesc.enableDepthSRV = true;
+	rtDesc.depthFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	HANDLE_ERROR(m_pDefaultRenderTarget->Create(rtDesc))
 

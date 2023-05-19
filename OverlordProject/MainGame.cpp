@@ -10,7 +10,7 @@
 // #define W8
 // #define W9
 // #define W10
-#define W11 //Deferred Rendering
+#define W11
 
 /*MILESTONE Content*/
 // #define MILESTONE_1

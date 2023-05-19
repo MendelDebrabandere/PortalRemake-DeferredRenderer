@@ -64,7 +64,7 @@ void DeferredRenderingScene::Initialize()
 
 	//Directional
 	auto& dirLight = m_SceneContext.pLights->GetDirectionalLight();
-	dirLight.isEnabled = true;
+	dirLight.isEnabled = false;
 	dirLight.direction = { -0.577f, -0.577f, 0.577f , 1.0f };
 
 	//Spot Light
@@ -99,7 +99,7 @@ void DeferredRenderingScene::Update()
 	pos.w = 1.0f;
 
 	m_SceneContext.pLights->GetLight(1).position = pos;
-	m_SceneContext.pLights->GetLight(1).intensity = MathHelper::randF(0.2f, 1.2f);
+	//m_SceneContext.pLights->GetLight(1).intensity = MathHelper::randF(0.2f, 1.2f);
 
 	if (m_FlashLightMode)
 	{

@@ -10,6 +10,16 @@ DeferredRenderer::~DeferredRenderer()
 		SafeDelete(m_GBuffer[i])
 	}
 	SafeDelete(m_pLightPassRenderer);
+
+
+	SafeRelease(m_pDefaultRenderTargetView);
+	SafeRelease(m_pDefaultDepthStencilView);
+
+	for (auto i{ 0 }; i < RT_COUNT; ++i) 
+	{
+		SafeRelease(m_RenderTargetViews[i])
+	}
+
 }
 
 void DeferredRenderer::Initialize()
@@ -34,7 +44,7 @@ void DeferredRenderer::Initialize()
 	}
 
 	//Collect SRVs (Ambient/Diffuse/Specular/Normal) + DepthSRV
-	for (auto i{0}; i < SRV_COUNT; ++i)
+	for (auto i{0}; i < SRV_COUNT - 1; ++i)
 	{
 		m_ShaderResourceViews[i] = m_GBuffer[i]->GetColorShaderResourceView();
 	}
@@ -43,6 +53,9 @@ void DeferredRenderer::Initialize()
 	//LightPassRenderer Init
 	m_pLightPassRenderer = new DeferredLightRenderer();
 	m_pLightPassRenderer->Initialize(m_GameContext.d3dContext);
+
+	auto descDefaultRT = pDefaultRenderTarget->GetDesc();
+	m_pLightPassRenderer->CreateReadOnlyDSV(m_GameContext.d3dContext, descDefaultRT.pDepth, descDefaultRT.depthFormat);
 }
 
 RenderTarget* DeferredRenderer::CreateRenderTarget(UINT width, UINT height, DXGI_FORMAT format) const
