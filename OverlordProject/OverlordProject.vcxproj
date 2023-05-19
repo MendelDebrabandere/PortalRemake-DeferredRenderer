@@ -99,6 +99,7 @@
     <ClCompile Include="Materials\Shadow\DiffuseMaterial_Shadow_Skinned.cpp" />
     <ClCompile Include="Materials\Portal\PortalMaterial.cpp" />
     <ClCompile Include="Materials\Post\PostBlur.cpp" />
+    <ClCompile Include="Materials\Post\PostBloom.cpp" />
     <ClCompile Include="Prefabs\PortalGun.cpp" />
     <ClCompile Include="Prefabs\Portal.cpp" />
     <ClCompile Include="Scenes\Exam\PortalScene.cpp" />
@@ -156,6 +157,7 @@
     <ClInclude Include="Materials\Shadow\DiffuseMaterial_Shadow_Skinned.h" />
     <ClInclude Include="Materials\Portal\PortalMaterial.h" />
     <ClInclude Include="Materials\Post\PostBlur.h" />
+    <ClInclude Include="Materials\Post\PostBloom.h" />
     <ClInclude Include="Prefabs\PortalGun.h" />
     <ClInclude Include="Prefabs\Portal.h" />
     <ClInclude Include="Scenes\Exam\PortalScene.h" />

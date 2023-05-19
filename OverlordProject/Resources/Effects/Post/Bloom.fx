@@ -10,6 +10,8 @@ SamplerState samPoint
 
 Texture2D gTexture;
 
+float threshold = 0.6f;
+
 /// Create Depth Stencil State (ENABLE DEPTH WRITING)
 DepthStencilState EnableDepthWriting
 {
@@ -57,35 +59,45 @@ PS_INPUT VS(VS_INPUT input)
 //------------
 float4 PS(PS_INPUT input): SV_Target
 {
-	// Step 1: find the dimensions of the texture (the texture has a method for that)	
+    // Apply the bright pass filter.
+    float4 color = gTexture.Sample(samPoint, input.TexCoord);
+    // Calc brightness by accounting for human eye
+    float brightness = dot(color.rgb, float3(0.299, 0.587, 0.114));
+    
+    // If the color is below the threshold, discard it.
+    if(brightness < threshold)
+    {
+        return color;
+    }
+    
+	// find the dimensions of the texture (the texture has a method for that)	
 	int2 textureSize;
 	gTexture.GetDimensions(textureSize.x, textureSize.y);
 
-	// Step 2: calculate dx and dy (UV space for 1 pixel)	
+	// calculate dx and dy (UV space for 1 pixel)	
 	float2 dxdy = 1.0f / float2(textureSize);
 
-	// Step 3: Create a double for loop (5 iterations each)
-	float4 color = float4(0,0,0,0);
+	// Create a double for loop (5 iterations each)
+	color = float4(0,0,0,0);
 	for (int i = -2; i < 3 ; ++i)
 	{
 		for (int j = -2; j < 3; ++j)
 		{
-			//		   Inside the loop, calculate the offset in each direction. Make sure not to take every pixel but move by 2 pixels each time
 			color += gTexture.Sample(samPoint, float2(input.TexCoord.x + i * dxdy.x, input.TexCoord.y + j * dxdy.y ));
-			//			Do a texture lookup using your previously calculated uv coordinates + the offset, and add to the final color
 		}
 	}
 
-	// Step 4: Divide the final color by the number of passes (in this case 5*5)	
+	// Divide the final color by the number of passes (in this case 5*5)	
 	color /= 25;
-	// Step 5: return the final color
+
+	// return the final color
 	return color;
 }
 
 
 //TECHNIQUE
 //---------
-technique11 Blur
+technique11 Bloom
 {
     pass P0
     {
