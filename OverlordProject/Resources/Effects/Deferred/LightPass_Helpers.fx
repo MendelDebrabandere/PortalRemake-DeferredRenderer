@@ -50,11 +50,11 @@ float3 DoDiffuse(Light light, float3 L, float3 N)
 {
 	//Lambert Diffuse
 	float diffuseStrength = dot(N, -L);
-	//diffuseStrength = saturate(diffuseStrength);
-
-	//Half-Lambert diffuse
-	diffuseStrength = diffuseStrength * 0.5 + 0.5;
 	diffuseStrength = saturate(diffuseStrength);
+
+	////Half-Lambert diffuse
+	//diffuseStrength = diffuseStrength * 0.5 + 0.5;
+	//diffuseStrength = saturate(diffuseStrength);
 
 	return light.Color.rgb * diffuseStrength;
 }

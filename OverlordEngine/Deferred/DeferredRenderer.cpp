@@ -10,16 +10,6 @@ DeferredRenderer::~DeferredRenderer()
 		SafeDelete(m_GBuffer[i])
 	}
 	SafeDelete(m_pLightPassRenderer);
-
-
-	SafeRelease(m_pDefaultRenderTargetView);
-	SafeRelease(m_pDefaultDepthStencilView);
-
-	for (auto i{ 0 }; i < RT_COUNT; ++i) 
-	{
-		SafeRelease(m_RenderTargetViews[i])
-	}
-
 }
 
 void DeferredRenderer::Initialize()
