@@ -8,8 +8,3 @@ PostBloom::PostBloom()
 {
 }
 
-
-void Initialize(const GameContext& /*gameContext*/)
-{
-	
-}

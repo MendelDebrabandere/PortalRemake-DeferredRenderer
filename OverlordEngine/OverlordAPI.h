@@ -70,3 +70,6 @@
 
 #include "Prefabs/FixedCamera.h"
 #include "Prefabs/FreeCamera.h"
+
+#include "Deferred/DeferredRenderer.h"
+#include "Deferred/QuadRenderer.h"

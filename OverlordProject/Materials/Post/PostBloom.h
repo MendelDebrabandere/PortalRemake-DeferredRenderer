@@ -12,7 +12,7 @@ public:
 	PostBloom& operator=(PostBloom&& other) noexcept = delete;
 
 protected:
-	void Initialize(const GameContext& /*gameContext*/) override;
+	void Initialize(const GameContext& /*gameContext*/) override {};
 };	
 
 

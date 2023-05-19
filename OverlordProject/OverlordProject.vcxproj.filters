@@ -40,6 +40,9 @@
     <ClCompile Include="Materials\Post\PostGrayscale.cpp" />
     <ClCompile Include="Materials\Post\PostBlur.cpp" />
     <ClCompile Include="Materials\Post\PostBloom.cpp" />
+    <ClCompile Include="Scenes\Week 11\DeferredRenderingScene.cpp" />
+    <ClCompile Include="Materials\BasicMaterial.cpp" />
+    <ClCompile Include="Materials\BasicMaterial_Deferred.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -80,5 +83,8 @@
     <ClInclude Include="Materials\Post\PostGrayscale.h" />
     <ClInclude Include="Materials\Post\PostBlur.h" />
     <ClInclude Include="Materials\Post\PostBloom.h" />
+    <ClInclude Include="Scenes\Week 11\DeferredRenderingScene.h" />
+    <ClInclude Include="Materials\BasicMaterial.h" />
+    <ClInclude Include="Materials\BasicMaterial_Deferred.h" />
   </ItemGroup>
 </Project>

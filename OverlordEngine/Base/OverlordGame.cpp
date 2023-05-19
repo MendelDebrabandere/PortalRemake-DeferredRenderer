@@ -28,7 +28,11 @@ OverlordGame::~OverlordGame()
 	TextRenderer::Destroy();
 	ShadowMapRenderer::Destroy();
 	PortalMapRenderer::Destroy();
+	DeferredRenderer::Destroy();
+	QuadRenderer::Destroy();
+
 	Logger::Release(); //TODO > Singleton
+
 
 	//ImGui Cleanup
 	ImGui_ImplDX11_Shutdown();
@@ -237,6 +241,9 @@ HRESULT OverlordGame::InitializeDirectX()
 
 	RENDERTARGET_DESC rtDesc;
 	rtDesc.pColor = pBackbuffer;
+	rtDesc.enableColorSRV = true;
+	rtDesc.enableDepthSRV = true;
+
 	HANDLE_ERROR(m_pDefaultRenderTarget->Create(rtDesc))
 
 	//Set Default Rendertarget 
@@ -332,6 +339,8 @@ HRESULT OverlordGame::InitializeGame()
 	TextRenderer::Create(m_GameContext);
 	ShadowMapRenderer::Create(m_GameContext);
 	PortalMapRenderer::Create(m_GameContext);
+	DeferredRenderer::Create(m_GameContext);
+	QuadRenderer::Create(m_GameContext);
 
 	//***************
 	//GAME INITIALIZE
