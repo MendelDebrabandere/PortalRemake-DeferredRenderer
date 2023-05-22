@@ -3,6 +3,7 @@
 
 #include "Materials/BasicMaterial.h"
 #include "Materials/BasicMaterial_Deferred.h"
+#include "Materials/Post/PostBloom.h"
 
 #define FULL_SPONZA
 
@@ -88,6 +89,11 @@ void DeferredRenderingScene::Initialize()
 	light.range = 30.0f;
 	light.type = LightType::Point;
 	m_SceneContext.pLights->AddLight(light);
+
+	// BLoom test
+	m_pPostBloom = MaterialManager::Get()->CreateMaterial<PostBloom>();
+	AddPostProcessingEffect(m_pPostBloom);
+
 }
 
 void DeferredRenderingScene::Update()
@@ -115,6 +121,10 @@ void DeferredRenderingScene::OnGUI()
 	DeferredRenderer::Get()->DrawImGui();
 
 	ImGui::Checkbox("Flashlight Mode", &m_FlashLightMode);
+
+	bool isEnabled = m_pPostBloom->IsEnabled();
+	ImGui::Checkbox("Bloom PP", &isEnabled);
+	m_pPostBloom->SetIsEnabled(isEnabled);
 }
 
 void DeferredRenderingScene::LoadSponzaMesh(const std::wstring& meshName, const std::wstring& specularMap, const std::wstring& normalMap, bool useTransparency) const

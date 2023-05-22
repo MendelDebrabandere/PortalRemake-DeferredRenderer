@@ -9,8 +9,8 @@
 // #define W7
 // #define W8
 // #define W9
-// #define W10
-#define W11
+ #define W10
+// #define W11
 
 /*MILESTONE Content*/
 // #define MILESTONE_1
@@ -97,8 +97,8 @@ void MainGame::OnGamePreparing(GameContext& gameContext)
 	//gameContext.windowHeight=... (default is 720)
 
 	//gameContext.windowTitle = L"GP2 - Milestone 1 (2023) | (2DAE-07) Debrabandere Mendel";
-	//gameContext.windowTitle = L"GP2 - Milestone 2 (2023) | (2DAE-07) Debrabandere Mendel";
-	gameContext.windowTitle = L"GP2 - Exam Project (2023) | (2DAE-07) Debrabandere Mendel";
+	gameContext.windowTitle = L"GP2 - Milestone 2 (2023) | (2DAE-07) Debrabandere Mendel";
+	//gameContext.windowTitle = L"GP2 - Exam Project (2023) | (2DAE-07) Debrabandere Mendel";
 }
 
 void MainGame::Initialize()

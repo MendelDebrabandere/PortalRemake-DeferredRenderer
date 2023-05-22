@@ -10,13 +10,11 @@ SamplerState samPoint
 
 Texture2D gTexture;
 
-float threshold = 0.6f;
-
 /// Create Depth Stencil State (ENABLE DEPTH WRITING)
 DepthStencilState EnableDepthWriting
 {
-    DepthEnable = true;
-    DepthWriteMask = true;
+    DepthEnable = true;		// enable depth testing
+    DepthWriteMask = true;	// disable depth writing
 };
 
 /// Create Rasterizer State (Backface culling) 
@@ -47,9 +45,9 @@ PS_INPUT VS(VS_INPUT input)
 {
 	PS_INPUT output = (PS_INPUT)0;
 	// Set the Position
-    output.Position = float4(input.Position,1);
+	output.Position = float4(input.Position, 1.0f);
 	// Set the TexCoord
-    output.TexCoord = input.TexCoord;
+	output.TexCoord = input.TexCoord;
 	
 	return output;
 }
@@ -59,38 +57,45 @@ PS_INPUT VS(VS_INPUT input)
 //------------
 float4 PS(PS_INPUT input): SV_Target
 {
-    // Apply the bright pass filter.
-    float4 color = gTexture.Sample(samPoint, input.TexCoord);
-    // Calc brightness by accounting for human eye
-    float brightness = dot(color.rgb, float3(0.299, 0.587, 0.114));
-    
-    // If the color is below the threshold, discard it.
-    if(brightness < threshold)
-    {
-        return color;
-    }
-    
-	// find the dimensions of the texture (the texture has a method for that)	
+	// Step 1: find the dimensions of the texture (the texture has a method for that)
 	int2 textureSize;
 	gTexture.GetDimensions(textureSize.x, textureSize.y);
 
-	// calculate dx and dy (UV space for 1 pixel)	
-	float2 dxdy = 1.0f / float2(textureSize);
+	// Step 2: calculate dx and dy (UV space for 1 pixel)	
+	float2 d = 1.0f / (float2)textureSize;
 
-	// Create a double for loop (5 iterations each)
-	color = float4(0,0,0,0);
-	for (int i = -2; i < 3 ; ++i)
+    float bloomThreshold = 0.6f; // Threshold for determining which pixels contribute to bloom
+    float bloomIntensity = 2.f; // Intensity of the bloom effect
+
+	// Step 3: Create a double for loop (5 iterations each)
+	float4 color = gTexture.Sample(samPoint, input.TexCoord);
+    int amountOfPixelsBloomed = 0;
+	for (int i = -2; i < 3; ++i)
 	{
 		for (int j = -2; j < 3; ++j)
 		{
-			color += gTexture.Sample(samPoint, float2(input.TexCoord.x + i * dxdy.x, input.TexCoord.y + j * dxdy.y ));
-		}
+            if (i == 0 && j == 0)
+                continue;
+
+            float2 offset = float2(i * 2.0 * d.x, j * 2.0 * d.y);
+            float4 sampledColor = gTexture.Sample(samPoint, input.TexCoord + offset);
+
+            // Calculate brightness
+            float brightness = dot(sampledColor.rgb, float3(0.2126, 0.7152, 0.0722));
+
+            // Apply bloom effect if brightness exceeds the threshold
+            if (brightness > bloomThreshold)
+            {
+                float4 bloomColor = bloomIntensity * sampledColor;  
+                color += bloomColor;
+                ++amountOfPixelsBloomed;   
+            }
+        }
 	}
-
-	// Divide the final color by the number of passes (in this case 5*5)	
-	color /= 25;
-
-	// return the final color
+    
+	// Step 4: Divide the final color by the number of passes (in this case 5*5)	
+	color /= 1 + (amountOfPixelsBloomed * bloomIntensity);
+	// Step 5: return the final color
 	return color;
 }
 

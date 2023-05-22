@@ -1,4 +1,6 @@
 #pragma once
+class PostBloom;
+
 class DeferredRenderingScene : public GameScene
 {
 public:
@@ -19,5 +21,7 @@ protected:
 
 	GameObject* m_pSponza{};
 	bool m_FlashLightMode{ false };
+
+	PostBloom* m_pPostBloom{};
 };
 
