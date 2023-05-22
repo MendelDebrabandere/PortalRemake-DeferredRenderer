@@ -22,7 +22,7 @@ void ParticleScene::Initialize()
 	settings.color = { 1.f,1.f,1.f, .6f };
 
 	const auto pObject = AddChild(new GameObject);
-	m_pEmitter = pObject->AddComponent(new ParticleEmitterComponent(L"Textures/FireBall.png", settings, 200));
+	m_pEmitter = pObject->AddComponent(new ParticleEmitterComponent(L"Textures/Smoke.png", settings, 200));
 
 	//Teapot
 	m_pTeapot = AddChild(new GameObject());

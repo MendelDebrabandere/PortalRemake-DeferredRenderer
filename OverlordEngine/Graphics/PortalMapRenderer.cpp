@@ -5,6 +5,8 @@
 PortalMapRenderer::~PortalMapRenderer()
 {
 	SafeDelete(m_pPortalRenderTarget)
+	SafeDelete(m_pPortalMapGenerator)
+
 }
 
 void PortalMapRenderer::Initialize()

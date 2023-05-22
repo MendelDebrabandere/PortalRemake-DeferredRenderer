@@ -5,6 +5,7 @@
 ShadowMapRenderer::~ShadowMapRenderer()
 {
 	SafeDelete(m_pShadowRenderTarget)
+	SafeDelete(m_pShadowMapGenerator)
 }
 
 void ShadowMapRenderer::Initialize()
