@@ -65,11 +65,10 @@ float4 PS(PS_INPUT input): SV_Target
 	float2 d = 1.0f / (float2)textureSize;
 
     float bloomThreshold = 0.6f; // Threshold for determining which pixels contribute to bloom
-    float bloomIntensity = 2.f; // Intensity of the bloom effect
 
 	// Step 3: Create a double for loop (5 iterations each)
 	float4 color = gTexture.Sample(samPoint, input.TexCoord);
-    int amountOfPixelsBloomed = 0;
+    int amountOfPixelsBloomed = 1;
 	for (int i = -2; i < 3; ++i)
 	{
 		for (int j = -2; j < 3; ++j)
@@ -86,15 +85,14 @@ float4 PS(PS_INPUT input): SV_Target
             // Apply bloom effect if brightness exceeds the threshold
             if (brightness > bloomThreshold)
             {
-                float4 bloomColor = bloomIntensity * sampledColor;  
-                color += bloomColor;
+                color += sampledColor;
                 ++amountOfPixelsBloomed;   
             }
         }
 	}
     
 	// Step 4: Divide the final color by the number of passes (in this case 5*5)	
-	color /= 1 + (amountOfPixelsBloomed * bloomIntensity);
+	color /= amountOfPixelsBloomed;
 	// Step 5: return the final color
 	return color;
 }
