@@ -1,6 +1,5 @@
 float4x4 gWorld;
 float4x4 gWorldViewProj;
-float4x4 gLightViewProj;
 
 
 DepthStencilState depthStencilState
@@ -47,7 +46,7 @@ float4 PortalMapVS(float3 position:POSITION):SV_POSITION
 {
 	//TODO: return the position of the vertex in correct space (hint: seen from the view of the light)
 	float4 worldPosition = mul(float4(position, 1.0f), gWorld);
-    float4 lightSpacePosition = mul(worldPosition, gLightViewProj);
+    float4 lightSpacePosition = mul(worldPosition, gWorldViewProj);
     return lightSpacePosition;
 }
 

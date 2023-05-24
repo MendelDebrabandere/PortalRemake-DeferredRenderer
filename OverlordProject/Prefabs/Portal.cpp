@@ -1,25 +1,17 @@
 #include "stdafx.h"
 #include "Portal.h"
 #include "Materials/Portal/PortalMaterial.h"
+#include "Prefabs/Character.h"
 
-Portal::Portal(PortalType type, PortalMaterial* material, Portal* otherPortal)
+Portal::Portal(PortalType type, PortalMaterial* material,Character* character)
 	: m_Type{ type }
-	, m_pPortalMat{material}
-	, m_OtherPortal{otherPortal}
+	, m_pPortalMat{ material }
+	, m_pCharacter{ character }
 {
 }
 
-const float* Portal::GetWorldViewProj() const
-{
-	return m_pWorldViewProjVar;
-}
 
-const float* Portal::GetWorld() const
-{ 
-	return m_pWorldVar;
-}
-
-void Portal::Initialize(const SceneContext& /*sceneContext*/)
+void Portal::Initialize(const SceneContext& sceneContext)
 {
 
 	//Create portal mesh
@@ -30,19 +22,20 @@ void Portal::Initialize(const SceneContext& /*sceneContext*/)
 
 	if (m_Type == PortalType::Blue)
 		m_pPortalMat->MakeBlue();
-	if (m_Type == PortalType::Orange)
+	else if (m_Type == PortalType::Orange)
 		m_pPortalMat->MakeOrange();
 
+	m_pCameraObject = AddChild(new FixedCamera());
+	m_pCameraComponent = m_pCameraObject->GetComponent<CameraComponent>();
+
+	//im sorry ;( i had to use const cast
+	SceneContext* SceneCtx = const_cast<SceneContext*>(&sceneContext);
+	if (m_Type == PortalType::Blue)
+		SceneCtx->pPortal1Camera = m_pCameraComponent;
+	else if (m_Type == PortalType::Orange)
+		SceneCtx->pPortal2Camera = m_pCameraComponent;
 }
 
-void Portal::Update(const SceneContext& context)
+void Portal::Update(const SceneContext&/* context*/)
 {
-
-	//auto& d3d11 = context.d3dContext;
-	auto world = XMLoadFloat4x4(&GetTransform()->GetWorld());
-	const auto viewProjection = XMLoadFloat4x4(&context.pCamera->GetViewProjection());
-
-	m_pWorldVar = reinterpret_cast<float*>(&world);
-	auto wvp = world * viewProjection;
-	m_pWorldViewProjVar = reinterpret_cast<float*>(&wvp);
 }

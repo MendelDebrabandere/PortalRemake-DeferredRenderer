@@ -1,10 +1,12 @@
 #include "stdafx.h"
 #include "PortalScene.h"
 
+
 #include "Prefabs/Character.h"
 #include "Prefabs/PortalGun.h"
 #include "Prefabs/CubePrefab.h"
 #include "Prefabs/Portal.h"
+#include "Materials/Portal/PortalMaterial.h"
 
 void PortalScene::Initialize()
 {
@@ -22,18 +24,33 @@ void PortalScene::Initialize()
 
 	InitLevel();
 	InitCharacter(true, 10);
+
+
+	//Portal 1
+	//***********
+	PortalMaterial* portal1Mat = MaterialManager::Get()->CreateMaterial<PortalMaterial>();
+	const auto pBluePortal = new Portal(PortalType::Blue, portal1Mat, m_pCharacter);
+	pBluePortal->GetTransform()->Translate(15, 2, 20);
+	AddChild(pBluePortal);
+
+	//Portal 2
+	//***********
+	PortalMaterial* portal2Mat = MaterialManager::Get()->CreateMaterial<PortalMaterial>();
+	const auto pOrangePortal = new Portal(PortalType::Orange, portal2Mat, m_pCharacter);
+	pOrangePortal->GetTransform()->Translate(-5, 2,10);
+	AddChild(pOrangePortal);
 }
 
 void PortalScene::Update()
 {
-	if (InputManager::IsMouseButton(InputState::pressed, VK_RBUTTON))
-	{
-		m_pPortalGun->ShootGun(this, PortalType::Blue);
-	}
-	if (InputManager::IsMouseButton(InputState::pressed, VK_LBUTTON))
-	{
-		m_pPortalGun->ShootGun(this, PortalType::Orange);
-	}
+	//if (InputManager::IsMouseButton(InputState::pressed, VK_RBUTTON))
+	//{
+	//	m_pPortalGun->ShootGun(this, PortalType::Blue);
+	//}
+	//if (InputManager::IsMouseButton(InputState::pressed, VK_LBUTTON))
+	//{
+	//	m_pPortalGun->ShootGun(this, PortalType::Orange);
+	//}
 }
 
 void PortalScene::InitLevel()
@@ -128,24 +145,16 @@ void PortalScene::InitCharacter(bool controlCamera, float mouseSens)
 	//Character collision group
 	m_pCharacter->SetCollisionGroup(CollisionGroup::Group9);
 
-	// Add protalgun
-	m_pPortalGun = new PortalGun();
-	m_pCharacter->AddChild(m_pPortalGun);
+	//// Add protalgun
+	//m_pPortalGun = new PortalGun(m_pCharacter);
+	//m_pCharacter->AddChild(m_pPortalGun);
 }
 
 
 void PortalScene::PostDraw()
 {
-	//Draw ShadowMap (Debug Visualization)
-	if (m_DrawPortalMap) {
-
-		ShadowMapRenderer::Get()->Debug_DrawDepthSRV({ m_SceneContext.windowWidth - 10.f, 10.f }, { m_ShadowMapScale, m_ShadowMapScale }, { 1.f,0.f });
-	}
 }
 
 void PortalScene::OnGUI()
 {
-	m_pCharacter->DrawImGui();
-	ImGui::Checkbox("Draw PortalMap", &m_DrawPortalMap);
-	ImGui::SliderFloat("ShadowMap Scale", &m_ShadowMapScale, 0.f, 1.f);
 }

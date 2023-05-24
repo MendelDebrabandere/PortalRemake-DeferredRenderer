@@ -47,11 +47,14 @@ public:
 
 	void SetCollisionGroup(CollisionGroup group);
 
+	const FixedCamera* GetCamera() const { return m_pCameraObject; }
+
 protected:
 	void Initialize(const SceneContext&) override;
 	void Update(const SceneContext&) override;
 
 private:
+	FixedCamera* m_pCameraObject{};
 	CameraComponent* m_pCameraComponent{};
 	ControllerComponent* m_pControllerComponent{};
 

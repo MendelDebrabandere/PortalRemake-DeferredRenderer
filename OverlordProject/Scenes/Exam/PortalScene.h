@@ -1,5 +1,5 @@
 #pragma once
-class PortalGun;
+//class PortalGun;
 class Character;
 
 class PortalScene final : public GameScene
@@ -32,11 +32,11 @@ private:
 
 	Character* m_pCharacter{};
 
-	PortalGun* m_pPortalGun{};
+	//PortalGun* m_pPortalGun{};
 
 	bool m_MouseGone{ true };
 
-	bool m_DrawPortalMap{ true };
-	float m_ShadowMapScale{ 0.3f };
+	//bool m_DrawPortalMap{ true };
+	//float m_PortalMapScale{ 0.3f };
 
 };

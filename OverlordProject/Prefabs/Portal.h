@@ -1,4 +1,5 @@
 #pragma once
+class Character;
 class PortalMaterial;
 
 enum class PortalType
@@ -10,7 +11,7 @@ enum class PortalType
 class Portal final : public GameObject
 {
 public:
-	Portal(PortalType type, PortalMaterial* material, Portal* otherPortal);
+	Portal(PortalType type, PortalMaterial* material, Character* character);
 	~Portal() override = default;
 
 	Portal(const Portal& other) = delete;
@@ -18,22 +19,19 @@ public:
 	Portal& operator=(const Portal& other) = delete;
 	Portal& operator=(Portal&& other) noexcept = delete;
 
-	const float* GetWorldViewProj() const;
-	const float* GetWorld() const;
-
 protected:
 	void Initialize(const SceneContext&) override;
 	void Update(const SceneContext&) override;
 
 private:
+	Character* m_pCharacter{};
+
+	FixedCamera* m_pCameraObject{};
+	CameraComponent* m_pCameraComponent{ nullptr };
+
 	PortalType m_Type{};
 
 	ModelComponent* m_pMesh{};
 
 	PortalMaterial* m_pPortalMat{};
-
-	Portal* m_OtherPortal{};
-
-	float* m_pWorldVar{};
-	float* m_pWorldViewProjVar{};
 };

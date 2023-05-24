@@ -34,7 +34,6 @@
     <ClCompile Include="Materials\Shadow\DiffuseMaterial_Shadow_Skinned.cpp" />
     <ClCompile Include="Prefabs\Portal.cpp" />
     <ClCompile Include="Prefabs\PortalGun.cpp" />
-    <ClCompile Include="Materials\Portal\PortalMaterial.cpp" />
     <ClCompile Include="Scenes\Week 9\ParticleScene.cpp" />
     <ClCompile Include="Scenes\Week 10\PostProcessingScene.cpp" />
     <ClCompile Include="Materials\Post\PostGrayscale.cpp" />
@@ -43,6 +42,7 @@
     <ClCompile Include="Scenes\Week 11\DeferredRenderingScene.cpp" />
     <ClCompile Include="Materials\BasicMaterial.cpp" />
     <ClCompile Include="Materials\BasicMaterial_Deferred.cpp" />
+    <ClCompile Include="Materials\Portal\PortalMaterial.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -77,7 +77,6 @@
     <ClInclude Include="Materials\Shadow\DiffuseMaterial_Shadow.h" />
     <ClInclude Include="Prefabs\Portal.h" />
     <ClInclude Include="Prefabs\PortalGun.h" />
-    <ClInclude Include="Materials\Portal\PortalMaterial.h" />
     <ClInclude Include="Scenes\Week 9\ParticleScene.h" />
     <ClInclude Include="Scenes\Week 10\PostProcessingScene.h" />
     <ClInclude Include="Materials\Post\PostGrayscale.h" />
@@ -86,5 +85,6 @@
     <ClInclude Include="Scenes\Week 11\DeferredRenderingScene.h" />
     <ClInclude Include="Materials\BasicMaterial.h" />
     <ClInclude Include="Materials\BasicMaterial_Deferred.h" />
+    <ClInclude Include="Materials\Portal\PortalMaterial.h" />
   </ItemGroup>
 </Project>

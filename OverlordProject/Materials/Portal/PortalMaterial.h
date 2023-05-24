@@ -1,7 +1,4 @@
 #pragma once
-
-class Portal;
-
 class PortalMaterial final : public Material<PortalMaterial>
 {
 public:
@@ -13,15 +10,10 @@ public:
 	PortalMaterial& operator=(const PortalMaterial& other) = delete;
 	PortalMaterial& operator=(PortalMaterial&& other) noexcept = delete;
 
+
 	void MakeOrange();
 	void MakeBlue();
-
-	void SetOtherPortal(Portal* otherPortal);
-
 protected:
 	void InitializeEffectVariables() override;
-	void OnUpdateModelVariables(const SceneContext&, const ModelComponent*) const override;
-
-private:
 };
 

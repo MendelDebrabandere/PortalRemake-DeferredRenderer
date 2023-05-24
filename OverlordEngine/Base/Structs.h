@@ -39,6 +39,9 @@ struct SceneContext
 	GameTime* pGameTime{};
 	D3D11Context d3dContext{};
 
+	CameraComponent* pPortal1Camera{};
+	CameraComponent* pPortal2Camera{};
+
 	float windowWidth{};
 	float windowHeight{};
 	float aspectRatio{};
