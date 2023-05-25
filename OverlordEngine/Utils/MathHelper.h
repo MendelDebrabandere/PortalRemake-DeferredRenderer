@@ -52,4 +52,11 @@ namespace MathHelper
 		if (value < lo)
 			value = lo;
 	}
+
+	inline float GetSign(float needsSign)
+	{
+		if (needsSign > 0.01f) return 1;
+		if (needsSign < -0.01f) return -1;
+		return 1;
+	}
 }

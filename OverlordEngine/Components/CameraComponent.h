@@ -34,6 +34,8 @@ public:
 
 	GameObject* Pick(CollisionGroup ignoreGroups = CollisionGroup::None) const;
 
+	void SetOblique(bool enable) { m_UseOblique = enable; }
+	void SetClipPlane(const XMFLOAT4& clipPlane) { m_ClippingPlane = clipPlane; }
 protected:
 
 	void Initialize(const SceneContext& /*sceneContext*/) override {};
@@ -48,5 +50,9 @@ private:
 
 	float m_FarPlane{}, m_NearPlane{}, m_FOV{}, m_Size{};
 	bool m_IsActive{}, m_PerspectiveProjection{};
+
+	bool m_UseOblique{};
+
+	XMFLOAT4 m_ClippingPlane{};
 };
 

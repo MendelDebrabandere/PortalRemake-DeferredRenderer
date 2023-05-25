@@ -1,5 +1,6 @@
 #pragma once
 #include "Base/Structs.h"
+class RenderTarget;
 class PostProcessingMaterial;
 class BaseMaterial;
 class PhysxProxy;
@@ -38,6 +39,7 @@ public:
 	PhysxProxy* GetPhysxProxy() const { return m_pPhysxProxy; }
 	void SetActiveCamera(CameraComponent* pCameraComponent);
 
+
 protected:
 	virtual void Initialize() = 0;
 	virtual void PostInitialize() {};
@@ -51,6 +53,9 @@ protected:
 	virtual void OnSceneDeactivated() {}
 
 	SceneContext m_SceneContext{};
+
+	void DrawPortal(RenderTarget* rt);
+
 private:
 	friend class SceneManager;
 

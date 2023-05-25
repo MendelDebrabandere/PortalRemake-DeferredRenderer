@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "GameScene.h"
 
+#include "Graphics/PortalRenderer.h"
+
 GameScene::GameScene(std::wstring sceneName):
 	m_SceneName(std::move(sceneName))
 {
@@ -417,4 +419,21 @@ void GameScene::SetActiveCamera(CameraComponent* pCameraComponent)
 	m_pActiveCamera = (pCameraComponent) ? pCameraComponent : m_pDefaultCamera;
 	m_pActiveCamera->SetActive(true);
 	m_SceneContext.pCamera = m_pActiveCamera; //Change SceneContext
+}
+
+void GameScene::DrawPortal(RenderTarget* rt)
+{
+	m_pGame->SetRenderTarget(rt);
+
+	rt->Clear();
+
+	////Object-Scene Draw
+	for (const auto pChild : m_pChildren)
+	{
+		pChild->RootDraw(m_SceneContext);
+	}
+
+	constexpr ID3D11ShaderResourceView* const pSRV[] = { nullptr };
+	m_SceneContext.d3dContext.pDeviceContext->PSSetShaderResources(0, 1, pSRV);
+	PortalRenderer::Get()->End(m_SceneContext);
 }
