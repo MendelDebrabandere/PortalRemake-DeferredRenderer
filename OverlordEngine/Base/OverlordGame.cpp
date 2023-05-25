@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "OverlordGame.h"
 
-#include "Graphics/PortalRenderer.h"
-
 OverlordGame::OverlordGame():
 	m_IsActive(true)
 {
@@ -27,7 +25,6 @@ OverlordGame::~OverlordGame()
 	SpriteRenderer::Destroy();
 	TextRenderer::Destroy();
 	ShadowMapRenderer::Destroy();
-	PortalRenderer::Destroy();
 	DeferredRenderer::Destroy();
 	QuadRenderer::Destroy();
 
@@ -339,7 +336,6 @@ HRESULT OverlordGame::InitializeGame()
 	SpriteRenderer::Create(m_GameContext);
 	TextRenderer::Create(m_GameContext);
 	ShadowMapRenderer::Create(m_GameContext);
-	PortalRenderer::Create(m_GameContext);
 	DeferredRenderer::Create(m_GameContext);
 	QuadRenderer::Create(m_GameContext);
 

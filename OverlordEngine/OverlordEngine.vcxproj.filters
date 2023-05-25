@@ -57,7 +57,6 @@
     <ClCompile Include="Deferred\DeferredLightRenderer.cpp" />
     <ClCompile Include="Deferred\DeferredRenderer.cpp" />
     <ClCompile Include="Deferred\QuadRenderer.cpp" />
-    <ClCompile Include="Graphics\PortalRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -126,6 +125,5 @@
     <ClInclude Include="Deferred\DeferredLightRenderer.h" />
     <ClInclude Include="Deferred\DeferredRenderer.h" />
     <ClInclude Include="Deferred\QuadRenderer.h" />
-    <ClInclude Include="Graphics\PortalRenderer.h" />
   </ItemGroup>
 </Project>

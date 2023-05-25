@@ -18,6 +18,11 @@ Portal::Portal(PortalType type, Portal* pLinkedPortal)
 	}
 }
 
+Portal::~Portal()
+{
+	SafeDelete(m_pRenderTarget);
+}
+
 void Portal::Initialize(const SceneContext& sceneContext)
 {
 	//Render target
@@ -31,7 +36,7 @@ void Portal::Initialize(const SceneContext& sceneContext)
 
 	m_pRenderTarget->Create(rDesc);
 
-	//Cameras
+	//Camera
 	m_pCameraComponent = new CameraComponent();
 	m_pCameraComponent->SetActive(false);
 
@@ -39,33 +44,48 @@ void Portal::Initialize(const SceneContext& sceneContext)
 	m_pCameraObject->AddComponent(m_pCameraComponent);
 	m_pCameraObject->SetTag(L"PortalCam");
 
-	auto pCamMat = MaterialManager::Get()->CreateMaterial<ColorMaterial>();
-	pCamMat->SetColor(m_Color);
-	auto pModel = m_pCameraObject->AddComponent(new ModelComponent(L"Meshes/Sphere.ovm", false));
-	pModel->SetMaterial(pCamMat);
+	auto pColorMat = MaterialManager::Get()->CreateMaterial<ColorMaterial>();
+	pColorMat->SetColor(m_Color);
+	auto pModel = m_pCameraObject->AddComponent(new ModelComponent(L"Meshes/Arrow.ovm", false));
+	//pModel->GetTransform()->Scale(0.1f, 0.1f, 0.1f);
+	pModel->SetMaterial(pColorMat);
 
 	AddChild(m_pCameraObject);
 
 
 	//Screen
-	auto pScreenObject = AddChild(new GameObject());
 	m_pScreenMat = MaterialManager::Get()->CreateMaterial<PortalMaterial>();
 	m_pPortalModel = new ModelComponent(L"Meshes/portal.ovm");
 	m_pPortalModel->SetMaterial(m_pScreenMat);
-	pScreenObject->AddComponent(m_pPortalModel);
-
+	AddComponent(m_pPortalModel);
 	m_pPortalModel->GetTransform()->Scale(0.1f, 0.1f, 0.1f);
-	m_pPortalModel->GetTransform()->Rotate(0.f, 90.f, 0.f);
+
+	//Frame
+	auto pFrameModel = new ModelComponent(L"Meshes/portalframe.ovm");
+	pFrameModel->SetMaterial(pColorMat);
+	AddComponent(pFrameModel);
+	pFrameModel->GetTransform()->Scale(0.1f, 0.1f, 0.1f);
+
 }
 
 void Portal::Update(const SceneContext& /*sceneContext*/)
 {
-	auto position = m_pLinkedPortal->GetTransform()->GetWorldPosition();
-	position.x -= 0.1f;
-	position.y -= 0.1f;
-	position.z -= 0.1f;
-	m_pCameraComponent->GetTransform()->Translate(position);
-	m_pCameraComponent->GetTransform()->Rotate(90, 0, 0);
+	auto desiredPos = m_pLinkedPortal->GetTransform()->GetWorldPosition();
+	desiredPos.x -= 0.1f;
+	desiredPos.y -= 0.1f;
+	desiredPos.z -= 0.1f;
+	auto parentTranslate = GetTransform()->GetWorldPosition();
+
+	auto localTranslate = XMFLOAT3{ desiredPos.x - parentTranslate.x,
+									desiredPos.y - parentTranslate.y,
+									desiredPos.z - parentTranslate.z };
+
+	localTranslate = XMFLOAT3{ localTranslate.x * 10,
+									localTranslate.y * 10,
+									localTranslate.z * 10 };
+
+	m_pCameraComponent->GetTransform()->Translate(localTranslate);
+	m_pCameraComponent->GetTransform()->Rotate(0, 0, 0);
 }
 
 void Portal::SetNearClipPlane()

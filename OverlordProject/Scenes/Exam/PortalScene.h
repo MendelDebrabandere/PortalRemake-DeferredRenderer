@@ -35,9 +35,6 @@ private:
 
 	//PortalGun* m_pPortalGun{};
 
-	//bool m_DrawPortalMap{ true };
-	//float m_PortalMapScale{ 0.3f };
-
 	Portal* m_pBluePortal{};
 	Portal* m_pOrangePortal{};
 

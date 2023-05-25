@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "GameScene.h"
 
-#include "Graphics/PortalRenderer.h"
-
 GameScene::GameScene(std::wstring sceneName):
 	m_SceneName(std::move(sceneName))
 {
@@ -427,7 +425,7 @@ void GameScene::DrawPortal(RenderTarget* rt)
 
 	rt->Clear();
 
-	////Object-Scene Draw
+	//Object-Scene Draw
 	for (const auto pChild : m_pChildren)
 	{
 		pChild->RootDraw(m_SceneContext);
@@ -435,5 +433,5 @@ void GameScene::DrawPortal(RenderTarget* rt)
 
 	constexpr ID3D11ShaderResourceView* const pSRV[] = { nullptr };
 	m_SceneContext.d3dContext.pDeviceContext->PSSetShaderResources(0, 1, pSRV);
-	PortalRenderer::Get()->End(m_SceneContext);
+	m_pGame->SetRenderTarget(nullptr);
 }

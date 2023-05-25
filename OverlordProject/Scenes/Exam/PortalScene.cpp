@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "PortalScene.h"
 
-
-#include "Graphics/PortalRenderer.h"
 #include "Prefabs/Character.h"
 #include "Prefabs/PortalGun.h"
 #include "Prefabs/CubePrefab.h"
@@ -30,12 +28,12 @@ void PortalScene::Initialize()
 	//Portal 1
 	//***********
 	m_pBluePortal = new Portal(PortalType::Blue, nullptr);
-	m_pBluePortal->GetTransform()->Translate(15, 10, 20);
+	m_pBluePortal->GetTransform()->Translate(15, 2, 20);
 
 	//Portal 2
 	//***********
 	m_pOrangePortal = new Portal(PortalType::Orange, m_pBluePortal);
-	m_pOrangePortal->GetTransform()->Translate(-5, 10,10);
+	m_pOrangePortal->GetTransform()->Translate(-5, 2,10);
 
 	m_pBluePortal->SetLinkedPortal(m_pOrangePortal);
 
@@ -43,8 +41,6 @@ void PortalScene::Initialize()
 	AddChild(m_pBluePortal);
 	AddChild(m_pOrangePortal);
 
-
-	PortalRenderer::Get()->SetRenderTargets(m_pBluePortal->GetRenderTarget(), m_pOrangePortal->GetRenderTarget());
 }
 
 void PortalScene::Update()
@@ -161,14 +157,14 @@ void PortalScene::PostDraw()
 
 	auto pMainCam = GetActiveCamera();
 
-	//Draw portal 0 to screen 1
+	//Draw blue portal
 	SetActiveCamera(m_pBluePortal->GetCamera()->GetComponent<CameraComponent>());
 	m_pBluePortal->SetNearClipPlane();
 	DrawPortal(m_pBluePortal->GetRenderTarget());
 	m_pOrangePortal->GetScreenMat()->SetVariable_Texture(L"gTexture", m_pBluePortal->GetRenderTarget()->GetColorShaderResourceView());
 
 
-	//Draw portal 1 to screen 0
+	//Draw orange portal
 	SetActiveCamera(m_pOrangePortal->GetCamera()->GetComponent<CameraComponent>());
 	m_pOrangePortal->SetNearClipPlane();
 	DrawPortal(m_pOrangePortal->GetRenderTarget());
@@ -176,9 +172,9 @@ void PortalScene::PostDraw()
 
 
 	pMainCam->SetActive(true);
-
 }
 
 void PortalScene::OnGUI()
 {
+	m_pCharacter->DrawImGui();
 }

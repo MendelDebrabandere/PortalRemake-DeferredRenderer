@@ -14,7 +14,7 @@ class Portal final : public GameObject
 {
 public:
 	Portal(PortalType type, Portal* pLinkedPortal);
-	~Portal() override = default;
+	~Portal() override;
 
 	Portal(const Portal& other) = delete;
 	Portal(Portal&& other) noexcept = delete;

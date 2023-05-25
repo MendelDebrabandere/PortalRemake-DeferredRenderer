@@ -116,7 +116,6 @@
     <ClInclude Include="Misc\ParticleMaterial.h" />
     <ClInclude Include="Misc\PostProcessingMaterial.h" />
     <ClInclude Include="Misc\ShadowMapMaterial.h" />
-    <ClInclude Include="Graphics\PortalRenderer.h" />
     <ClInclude Include="Prefabs\FixedCamera.h" />
     <ClInclude Include="Prefabs\FreeCamera.h" />
     <ClInclude Include="Utils\ImguiHelper.h">
@@ -189,7 +188,6 @@
     <ClCompile Include="Misc\ParticleMaterial.cpp" />
     <ClCompile Include="Misc\PostProcessingMaterial.cpp" />
     <ClCompile Include="Misc\ShadowMapMaterial.cpp" />
-    <ClCompile Include="Graphics\PortalRenderer.cpp" />
     <ClCompile Include="Prefabs\FixedCamera.cpp" />
     <ClCompile Include="Prefabs\FreeCamera.cpp" />
     <ClCompile Include="Utils\ImguiHelper.cpp" />
