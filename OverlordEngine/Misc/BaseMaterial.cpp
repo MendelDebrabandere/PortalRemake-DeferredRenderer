@@ -46,7 +46,7 @@ void BaseMaterial::_baseInitialize(ID3DX11Effect* pRootEffect, UINT materialId)
 
 void BaseMaterial::UpdateEffectVariables(const SceneContext& sceneContext, const ModelComponent* pModelComponent)
 {
-	if (!NeedsUpdate(sceneContext.frameNumber, pModelComponent->GetComponentId())) return;
+	//if (!NeedsUpdate(sceneContext.frameNumber, pModelComponent->GetComponentId())) return;
 
 	if (m_IsInitialized)
 	{

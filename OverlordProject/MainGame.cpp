@@ -97,15 +97,15 @@ void MainGame::OnGamePreparing(GameContext& gameContext)
 	//gameContext.windowHeight=... (default is 720)
 
 	//gameContext.windowTitle = L"GP2 - Milestone 1 (2023) | (2DAE-07) Debrabandere Mendel";
-	gameContext.windowTitle = L"GP2 - Milestone 2 (2023) | (2DAE-07) Debrabandere Mendel";
-	//gameContext.windowTitle = L"GP2 - Exam Project (2023) | (2DAE-07) Debrabandere Mendel";
+	//gameContext.windowTitle = L"GP2 - Milestone 2 (2023) | (2DAE-07) Debrabandere Mendel";
+	gameContext.windowTitle = L"GP2 - Exam Project (2023) | (2DAE-07) Debrabandere Mendel";
 }
 
 void MainGame::Initialize()
 {
 
 #ifdef W3
-	SceneManager::Get()->AddGameScene(new PongScene())
+	SceneManager::Get()->AddGameScene(new PongScene());
 	SceneManager::Get()->AddGameScene(new MinionScene());
 	SceneManager::Get()->AddGameScene(new ComponentTestScene());
 #endif

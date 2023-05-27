@@ -13,7 +13,7 @@ enum class PortalType
 class Portal final : public GameObject
 {
 public:
-	Portal(PortalType type, Portal* pLinkedPortal);
+	Portal(PortalType type, Portal* pLinkedPortal, Character* character);
 	~Portal() override;
 
 	Portal(const Portal& other) = delete;
@@ -24,7 +24,7 @@ public:
 	void SetLinkedPortal(Portal* pPortal) { m_pLinkedPortal = pPortal; }
 
 	PortalMaterial* GetScreenMat() const { return m_pScreenMat; }
-	FreeCamera* GetCamera() const { return m_pCameraObject; }
+	GameObject* GetCamera() const { return m_pCameraObject; }
 	RenderTarget* GetRenderTarget() const { return m_pRenderTarget; }
 
 	void Initialize(const SceneContext&) override;
@@ -34,9 +34,11 @@ public:
 
 	float GetPortalDir() const { return m_PortalDir; }
 private:
+	Character* m_pCharacter{};
+
 	Portal* m_pLinkedPortal{};
 
-	FreeCamera* m_pCameraObject{};
+	GameObject* m_pCameraObject{};
 	CameraComponent* m_pCameraComponent{};
 
 	RenderTarget* m_pRenderTarget{};
