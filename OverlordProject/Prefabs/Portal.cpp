@@ -46,7 +46,8 @@ void Portal::Initialize(const SceneContext& sceneContext)
 	m_pCameraComponent = new CameraComponent();
 	m_pCameraComponent->SetActive(false);
 
-	m_pCameraObject = new GameObject();
+	m_pCameraPivot = AddChild(new GameObject());
+	m_pCameraObject = m_pCameraPivot->AddChild(new GameObject());
 	m_pCameraObject->AddComponent(m_pCameraComponent);
 	m_pCameraObject->SetTag(L"PortalCam");
 
@@ -54,8 +55,6 @@ void Portal::Initialize(const SceneContext& sceneContext)
 	auto pModel = modelGO->AddComponent(new ModelComponent(L"Meshes/Arrow.ovm", false));
 	modelGO->GetTransform()->Translate(0.0f, 0.0f, -1.f);
 	pModel->SetMaterial(pColorMat);
-
-	AddChild(m_pCameraObject);
 
 
 	//Screen
@@ -78,29 +77,58 @@ void Portal::Update(const SceneContext& sceneContext)
 	auto playerCamTransform = sceneContext.pCamera->GetTransform();
 
 	// Get the world positions and rotations as XMVECTOR's
-	XMVECTOR portalPos = XMLoadFloat3(&otherPortalTransform->GetWorldPosition());
-	XMVECTOR camPos = XMLoadFloat3(&playerCamTransform->GetWorldPosition());
+	XMVECTOR otherPortalPos = XMLoadFloat3(&otherPortalTransform->GetWorldPosition());
+	XMVECTOR playerCamPos = XMLoadFloat3(&playerCamTransform->GetWorldPosition());
 
-	XMVECTOR camRot = XMLoadFloat4(&playerCamTransform->GetWorldRotation());
+	XMVECTOR otherPortalRot = XMLoadFloat4(&otherPortalTransform->GetWorldRotation());
+	XMVECTOR playerCamRot = XMLoadFloat4(&playerCamTransform->GetWorldRotation());
 
+	//TRANSLATIONS
 	// Compute position of player relative to portal A
-	XMVECTOR relativePos = camPos - portalPos;
+	XMVECTOR relativePos = playerCamPos - otherPortalPos;
 
-	XMFLOAT3 pos{};
-	XMStoreFloat3(&pos, relativePos);
+	
+	XMFLOAT3 rotatedPosition;
+	XMStoreFloat3(&rotatedPosition, relativePos);
+	m_pCameraObject->GetTransform()->Translate(rotatedPosition);
 
+
+	//ROTATIONS
+	constexpr float PI = 3.141592653589793238462643383279502884197f;
+	// ROTATE OBJECT TO THE PLAYER CAMERA 
 	// Convert quaternion to Euler angles (roll, pitch, yaw order)
 	XMFLOAT4 q;
-	XMStoreFloat4(&q, camRot);
+	XMStoreFloat4(&q, playerCamRot);
 	float pitch = asin(2.f * (q.w * q.y - q.z * q.x));
 	float roll = atan2(2.f * (q.w * q.x + q.y * q.z), 1 - 2.f * (q.x * q.x + q.y * q.y));
 	float yaw = atan2(2.f * (q.w * q.z + q.x * q.y), 1 - 2.f * (q.y * q.y + q.z * q.z));
 
-	XMFLOAT3 eulerRotation{ roll, pitch, yaw };
+	if (yaw > PI / 2.f || yaw < -PI / 2.f)
+	{
+		roll += PI;
+		yaw += PI;
+		pitch = PI - pitch;
+	}
 
-	// Set the relative position and rotation of Portal B Camera
-	m_pCameraObject->GetTransform()->Rotate(eulerRotation.x, eulerRotation.y, eulerRotation.z, false); // These values are radians so passing true
-	m_pCameraObject->GetTransform()->Translate(pos);
+	m_pCameraObject->GetTransform()->Rotate(roll, pitch, yaw, false); // These values are radians so passing true
+
+	// ROTATE PIVOT TO THE OTHER PORTAL
+	q;
+	XMStoreFloat4(&q, otherPortalRot);
+	pitch = asin(2.f * (q.w * q.y - q.z * q.x));
+	roll = atan2(2.f * (q.w * q.x + q.y * q.z), 1 - 2.f * (q.x * q.x + q.y * q.y));
+	yaw = atan2(2.f * (q.w * q.z + q.x * q.y), 1 - 2.f * (q.y * q.y + q.z * q.z));
+
+	if (yaw > PI / 2.f || yaw < -PI / 2.f)
+	{
+		roll += PI;
+		yaw += PI;
+		pitch = PI - pitch;
+	}
+
+	m_pCameraPivot->GetTransform()->Rotate(roll, -pitch, -yaw, false); // These values are radians so passing true
+
+
 
 }
 

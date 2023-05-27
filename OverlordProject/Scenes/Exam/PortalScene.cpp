@@ -29,38 +29,19 @@ void PortalScene::Initialize()
 	//Portal 1
 	//***********
 	m_pBluePortal = new Portal(PortalType::Blue, nullptr, m_pCharacter);
+	m_pBluePortal->GetTransform()->Rotate(0.f, -30.f, 0.f);
 	m_pBluePortal->GetTransform()->Translate(18, 2.8f, 20);
 
 	//Portal 2
 	//***********
 	m_pOrangePortal = new Portal(PortalType::Orange, m_pBluePortal, m_pCharacter);
+	m_pOrangePortal->GetTransform()->Rotate(0, 45.f, 0);
 	m_pOrangePortal->GetTransform()->Translate(-5, 2.8f, 10);
 
 	m_pBluePortal->SetLinkedPortal(m_pOrangePortal);
 
 	AddChild(m_pBluePortal);
 	AddChild(m_pOrangePortal);
-
-
-	//CHAIR
-	//Create new instance of a certain metrial
-	DiffuseMaterial* pMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
-	//Set texture of the material
-	pMaterial->SetDiffuseTexture(L"textures/Chair_Dark.dds");
-
-	auto pChair = new GameObject();
-	const auto component = new ModelComponent(L"Meshes/Chair.ovm");
-	component->SetMaterial(pMaterial);
-	pChair->AddComponent<ModelComponent>(component);
-	pChair->GetTransform()->Translate(18, -3, 35);
-	AddChild(pChair);
-
-	//Cube
-	auto cube = new CubePrefab(1, 1, 1, XMFLOAT4{ 0.1f,0.1f,0.1f,1 });
-	cube->GetTransform()->Translate(18, 1, 25);
-	AddChild(cube);
-
-
 }
 
 void PortalScene::Update()
@@ -74,7 +55,6 @@ void PortalScene::Update()
 	//	m_pPortalGun->ShootGun(this, PortalType::Orange);
 	//}
 }
-
 
 void PortalScene::InitLevel()
 {
@@ -118,6 +98,23 @@ void PortalScene::InitLevel()
 	auto wall2RB = m_pWall2->AddComponent(new RigidBodyComponent(true));
 	wall2RB->AddCollider(PxBoxGeometry{ wallSize.x / 2, wallSize.y / 2, 1 / 2.f }, *pDefaultMaterial);
 	AddChild(m_pWall2);
+
+	//CHAIR
+	DiffuseMaterial* pMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
+	//Set texture of the material
+	pMaterial->SetDiffuseTexture(L"textures/Chair_Dark.dds");
+
+	auto pChair = new GameObject();
+	const auto component = new ModelComponent(L"Meshes/Chair.ovm");
+	component->SetMaterial(pMaterial);
+	pChair->AddComponent<ModelComponent>(component);
+	pChair->GetTransform()->Translate(18, -3, 35);
+	AddChild(pChair);
+
+	//Cube
+	auto cube = new CubePrefab(1, 1, 1, XMFLOAT4{ 0.1f,0.1f,0.1f,1 });
+	cube->GetTransform()->Translate(18, 1, 25);
+	AddChild(cube);
 }
 
 void PortalScene::InitCharacter(bool controlCamera, float mouseSens)
@@ -179,14 +176,14 @@ void PortalScene::PostDraw()
 	auto pMainCam = GetActiveCamera();
 
 	//Draw blue portal
-	SetActiveCamera(m_pBluePortal->GetCamera()->GetComponent<CameraComponent>());
+	SetActiveCamera(m_pBluePortal->GetCamera());
 	m_pBluePortal->SetNearClipPlane();
 	DrawPortal(m_pBluePortal->GetRenderTarget());
 	m_pOrangePortal->GetScreenMat()->SetVariable_Texture(L"gTexture", m_pBluePortal->GetRenderTarget()->GetColorShaderResourceView());
 
 
 	//Draw orange portal
-	SetActiveCamera(m_pOrangePortal->GetCamera()->GetComponent<CameraComponent>());
+	SetActiveCamera(m_pOrangePortal->GetCamera());
 	m_pOrangePortal->SetNearClipPlane();
 	DrawPortal(m_pOrangePortal->GetRenderTarget());
 	m_pBluePortal->GetScreenMat()->SetVariable_Texture(L"gTexture", m_pOrangePortal->GetRenderTarget()->GetColorShaderResourceView());

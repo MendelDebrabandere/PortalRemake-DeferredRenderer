@@ -24,7 +24,7 @@ public:
 	void SetLinkedPortal(Portal* pPortal) { m_pLinkedPortal = pPortal; }
 
 	PortalMaterial* GetScreenMat() const { return m_pScreenMat; }
-	GameObject* GetCamera() const { return m_pCameraObject; }
+	CameraComponent* GetCamera() const { return m_pCameraComponent; }
 	RenderTarget* GetRenderTarget() const { return m_pRenderTarget; }
 
 	void Initialize(const SceneContext&) override;
@@ -36,6 +36,7 @@ private:
 
 	Portal* m_pLinkedPortal{};
 
+	GameObject* m_pCameraPivot{};
 	GameObject* m_pCameraObject{};
 	CameraComponent* m_pCameraComponent{};
 
