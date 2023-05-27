@@ -31,8 +31,6 @@ public:
 	void Update(const SceneContext&) override;
 
 	void SetNearClipPlane();
-
-	float GetPortalDir() const { return m_PortalDir; }
 private:
 	Character* m_pCharacter{};
 
@@ -48,8 +46,5 @@ private:
 	PortalType m_Type{};
 
 	XMFLOAT4 m_Color{};
-
-	float m_PortalDir{};
-
 };
 

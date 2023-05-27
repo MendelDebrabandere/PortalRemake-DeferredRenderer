@@ -22,17 +22,19 @@ void PortalScene::Initialize()
 	InputManager::ForceMouseToCenter(true);
 	InputManager::CursorVisible(false);
 
+	InitLevel();
+	InitCharacter(true, 10);
 
 
 	//Portal 1
 	//***********
 	m_pBluePortal = new Portal(PortalType::Blue, nullptr, m_pCharacter);
-	m_pBluePortal->GetTransform()->Translate(18, 2, 20);
+	m_pBluePortal->GetTransform()->Translate(18, 2.8f, 20);
 
 	//Portal 2
 	//***********
 	m_pOrangePortal = new Portal(PortalType::Orange, m_pBluePortal, m_pCharacter);
-	m_pOrangePortal->GetTransform()->Translate(-5, 2, 10);
+	m_pOrangePortal->GetTransform()->Translate(-5, 2.8f, 10);
 
 	m_pBluePortal->SetLinkedPortal(m_pOrangePortal);
 
@@ -40,12 +42,7 @@ void PortalScene::Initialize()
 	AddChild(m_pOrangePortal);
 
 
-
-
-	InitLevel();
-	InitCharacter(true, 10);
-
-	//CHAIR1
+	//CHAIR
 	//Create new instance of a certain metrial
 	DiffuseMaterial* pMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
 	//Set texture of the material
@@ -56,14 +53,12 @@ void PortalScene::Initialize()
 	component->SetMaterial(pMaterial);
 	pChair->AddComponent<ModelComponent>(component);
 	pChair->GetTransform()->Translate(18, -3, 35);
-	//pChair->GetTransform()->Scale(0.3f, 0.3f, 0.3f);
 	AddChild(pChair);
 
-
+	//Cube
 	auto cube = new CubePrefab(1, 1, 1, XMFLOAT4{ 0.1f,0.1f,0.1f,1 });
 	cube->GetTransform()->Translate(18, 1, 25);
 	AddChild(cube);
-
 
 
 }

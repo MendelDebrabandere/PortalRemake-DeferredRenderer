@@ -52,7 +52,7 @@ void Portal::Initialize(const SceneContext& sceneContext)
 
 	auto modelGO = m_pCameraObject->AddChild(new GameObject());
 	auto pModel = modelGO->AddComponent(new ModelComponent(L"Meshes/Arrow.ovm", false));
-	modelGO->GetTransform()->Translate(0.0f, 0.0f, -7.f);
+	modelGO->GetTransform()->Translate(0.0f, 0.0f, -1.f);
 	pModel->SetMaterial(pColorMat);
 
 	AddChild(m_pCameraObject);
@@ -73,100 +73,57 @@ void Portal::Initialize(const SceneContext& sceneContext)
 
 void Portal::Update(const SceneContext& sceneContext)
 {
-	////SET POS TO CENTER OF OTHER PORTAL
-	//auto otherPortalCenterWorld = m_pLinkedPortal->GetTransform()->GetWorldPosition();
-	////otherPortalCenterWorld.x -= 0.1f;
-	////otherPortalCenterWorld.y -= 0.1f;
-	////otherPortalCenterWorld.z -= 0.1f;
-	//auto parentTranslateWorld = GetTransform()->GetWorldPosition();
+	// Get transforms
+	auto otherPortalTransform = m_pLinkedPortal->GetTransform();
+	auto playerCamTransform = sceneContext.pCamera->GetTransform();
 
-	//auto otherPortalLocal = XMFLOAT3{ otherPortalCenterWorld.x - parentTranslateWorld.x,
-	//								otherPortalCenterWorld.y - parentTranslateWorld.y,
-	//								otherPortalCenterWorld.z - parentTranslateWorld.z };
+	// Get the world positions and rotations as XMVECTOR's
+	XMVECTOR portalPos = XMLoadFloat3(&otherPortalTransform->GetWorldPosition());
+	XMVECTOR camPos = XMLoadFloat3(&playerCamTransform->GetWorldPosition());
 
-	//otherPortalLocal = XMFLOAT3{ otherPortalLocal.x * 10,
-	//								otherPortalLocal.y * 10,
-	//								otherPortalLocal.z * 10 + -5 };
+	XMVECTOR camRot = XMLoadFloat4(&playerCamTransform->GetWorldRotation());
 
-
-	////auto playerTransform = m_pCharacter->GetTransform()->GetWorldPosition();
-
-	//m_pCameraObject->GetTransform()->Translate(otherPortalLocal);
-	//m_pCameraObject->GetTransform()->Rotate(0, 180, 0);
-
-
-	auto portalT = GetTransform();
-	auto linkedPortalT = m_pLinkedPortal->GetTransform();
-	auto camT = sceneContext.pCamera->GetTransform();
-
-	XMVECTOR relativeRotCam = XMLoadFloat4(&camT->GetWorldRotation());
-	XMVECTOR relativeRotIn = XMLoadFloat4(&portalT->GetWorldRotation());
-	XMVECTOR relativeRotOut = XMLoadFloat4(&linkedPortalT->GetWorldRotation());
-
-	XMVECTOR relativePosCam = XMLoadFloat3(&camT->GetWorldPosition());
-	XMVECTOR relativePosIn = XMLoadFloat3(&portalT->GetWorldPosition());
-	XMVECTOR relativePosOut = XMLoadFloat3(&linkedPortalT->GetWorldPosition());
-
-
-
-	//Rotate Camera according to main camera in portal space
-	auto relativeRot = XMQuaternionInverse(relativeRotOut) * relativeRotCam;
-
-	//Calculate rotation offset
-	XMMATRIX yRotDiff{};
-	if (static_cast<int>(std::roundf(m_pLinkedPortal->GetPortalDir())) % 180 == 0)
-	{
-		yRotDiff = XMMatrixRotationAxis(XMLoadFloat3(&portalT->GetUp()), XMConvertToRadians(180.f + m_pLinkedPortal->GetPortalDir()));
-	}
-	else
-	{
-		yRotDiff = XMMatrixRotationAxis(XMLoadFloat3(&portalT->GetUp()), XMConvertToRadians(m_pLinkedPortal->GetPortalDir()));
-	}
-	relativeRot = XMVector4Transform(relativeRot, yRotDiff);
-	m_pCameraObject->GetTransform()->Rotate(relativeRotIn * relativeRot);
-
-	//Translate Camera according to main camera in portal space
-	XMVECTOR relativePos = (relativePosCam - relativePosOut);
-	//Calculate rotation offset
-
-	XMMATRIX yRotDiff2{};
-	if (static_cast<int>(std::roundf(m_pLinkedPortal->GetPortalDir())) % 180 == 0)
-	{
-		yRotDiff2 = XMMatrixRotationAxis(XMLoadFloat3(&portalT->GetUp()), XMConvertToRadians(180.f + m_pLinkedPortal->GetPortalDir()));
-	}
-	else
-	{
-		yRotDiff2 = XMMatrixRotationAxis(XMLoadFloat3(&portalT->GetUp()), XMConvertToRadians(m_pLinkedPortal->GetPortalDir()));
-	}
-
-	relativePos = XMVector4Transform(relativePos, yRotDiff2);
+	// Compute position of player relative to portal A
+	XMVECTOR relativePos = camPos - portalPos;
 
 	XMFLOAT3 pos{};
 	XMStoreFloat3(&pos, relativePos);
 
-	m_pCameraObject->GetTransform()->Translate(relativePos);
+	// Convert quaternion to Euler angles (roll, pitch, yaw order)
+	XMFLOAT4 q;
+	XMStoreFloat4(&q, camRot);
+	float pitch = asin(2.f * (q.w * q.y - q.z * q.x));
+	float roll = atan2(2.f * (q.w * q.x + q.y * q.z), 1 - 2.f * (q.x * q.x + q.y * q.y));
+	float yaw = atan2(2.f * (q.w * q.z + q.x * q.y), 1 - 2.f * (q.y * q.y + q.z * q.z));
+
+	XMFLOAT3 eulerRotation{ roll, pitch, yaw };
+
+	// Set the relative position and rotation of Portal B Camera
+	m_pCameraObject->GetTransform()->Rotate(eulerRotation.x, eulerRotation.y, eulerRotation.z, false); // These values are radians so passing true
+	m_pCameraObject->GetTransform()->Translate(pos);
+
 }
 
 void Portal::SetNearClipPlane()
 {
-	const DirectX::XMFLOAT3& portalPos = GetTransform()->GetWorldPosition();
-	DirectX::XMVECTOR xmPortalPos = DirectX::XMLoadFloat3(&portalPos);
+	const XMFLOAT3& portalPos = GetTransform()->GetWorldPosition();
+	XMVECTOR xmPortalPos = XMLoadFloat3(&portalPos);
 
-	const DirectX::XMFLOAT3& portalNormal = GetTransform()->GetForward();
-	DirectX::XMVECTOR xmPortalNormal = DirectX::XMLoadFloat3(&portalNormal);
-	DirectX::XMVECTOR xmInvPortalNormal = DirectX::XMVectorScale(xmPortalNormal, -1); //rotate 180 degrees
+	const XMFLOAT3& portalNormal = GetTransform()->GetForward();
+	XMVECTOR xmPortalNormal = XMLoadFloat3(&portalNormal);
+	XMVECTOR xmInvPortalNormal = XMVectorScale(xmPortalNormal, -1); //rotate 180 degrees
 
 	//Camera distance
-	auto xmDot = DirectX::XMVector3Dot(xmPortalPos, xmInvPortalNormal);
+	auto xmDot = XMVector3Dot(xmPortalPos, xmInvPortalNormal);
 	float camDist{};
-	DirectX::XMStoreFloat(&camDist, xmDot);
+	XMStoreFloat(&camDist, xmDot);
 
 	//Don't use oblique clip plane if very close to portal as it seems this can cause some visual artifacts
 	float nearClipLimit = 0.3f;
 	if (abs(camDist) > nearClipLimit)
 	{
 		//Create and set clipping plane vector
-		DirectX::XMFLOAT4 clipPlane{ portalNormal.x, portalNormal.y, portalNormal.z, camDist };
+		XMFLOAT4 clipPlane{ portalNormal.x, portalNormal.y, portalNormal.z, camDist };
 		m_pCameraComponent->SetOblique(true);
 		m_pCameraComponent->SetClipPlane(clipPlane);
 	}
