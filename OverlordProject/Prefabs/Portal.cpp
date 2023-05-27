@@ -72,6 +72,10 @@ void Portal::Initialize(const SceneContext& sceneContext)
 
 void Portal::Update(const SceneContext& sceneContext)
 {
+	if (m_pLinkedPortal == nullptr)
+		return;
+
+
 	// Get transforms
 	auto otherPortalTransform = m_pLinkedPortal->GetTransform();
 	auto playerCamTransform = sceneContext.pCamera->GetTransform();
@@ -134,6 +138,9 @@ void Portal::Update(const SceneContext& sceneContext)
 
 void Portal::SetNearClipPlane()
 {
+	if (m_pLinkedPortal == nullptr)
+		return;
+
 	const XMFLOAT3& portalPos = GetTransform()->GetWorldPosition();
 	XMVECTOR xmPortalPos = XMLoadFloat3(&portalPos);
 
