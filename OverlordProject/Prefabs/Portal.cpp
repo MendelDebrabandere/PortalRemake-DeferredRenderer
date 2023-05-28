@@ -87,6 +87,8 @@ void Portal::Update(const SceneContext& sceneContext)
 	XMVECTOR otherPortalRot = XMLoadFloat4(&otherPortalTransform->GetWorldRotation());
 	XMVECTOR playerCamRot = XMLoadFloat4(&playerCamTransform->GetWorldRotation());
 
+	//XMVECTOR inverseRotationQuat = XMQuaternionInverse(playerCamRot);
+
 	//TRANSLATIONS
 	// Compute position of player relative to portal A
 	XMVECTOR relativePos = playerCamPos - otherPortalPos;
@@ -98,7 +100,6 @@ void Portal::Update(const SceneContext& sceneContext)
 
 
 	//ROTATIONS
-	constexpr float PI = 3.141592653589793238462643383279502884197f;
 	// ROTATE OBJECT TO THE PLAYER CAMERA 
 	// Convert quaternion to Euler angles (roll, pitch, yaw order)
 	XMFLOAT4 q;
@@ -107,6 +108,7 @@ void Portal::Update(const SceneContext& sceneContext)
 	float roll = atan2(2.f * (q.w * q.x + q.y * q.z), 1 - 2.f * (q.x * q.x + q.y * q.y));
 	float yaw = atan2(2.f * (q.w * q.z + q.x * q.y), 1 - 2.f * (q.y * q.y + q.z * q.z));
 
+	constexpr float PI = 3.141592653589793238462643383279502884197f;
 	if (yaw > PI / 2.f || yaw < -PI / 2.f)
 	{
 		roll += PI;

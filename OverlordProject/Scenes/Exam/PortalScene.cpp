@@ -25,35 +25,24 @@ void PortalScene::Initialize()
 	InitLevel();
 	InitCharacter(true, 10);
 
-
-	//Portal 1
-	//***********
-	m_pBluePortal = new Portal(PortalType::Blue, nullptr, m_pCharacter);
-	m_pBluePortal->GetTransform()->Rotate(0.f, -30.f, 0.f);
-	m_pBluePortal->GetTransform()->Translate(18, 2.8f, 20);
-
-	//Portal 2
-	//***********
-	m_pOrangePortal = new Portal(PortalType::Orange, m_pBluePortal, m_pCharacter);
-	m_pOrangePortal->GetTransform()->Rotate(0, 45.f, 0);
-	m_pOrangePortal->GetTransform()->Translate(-5, 2.8f, 10);
-
-	m_pBluePortal->SetLinkedPortal(m_pOrangePortal);
-
-	AddChild(m_pBluePortal);
-	AddChild(m_pOrangePortal);
 }
 
 void PortalScene::Update()
 {
-	//if (InputManager::IsMouseButton(InputState::pressed, VK_RBUTTON))
-	//{
-	//	m_pPortalGun->ShootGun(this, PortalType::Blue);
-	//}
-	//if (InputManager::IsMouseButton(InputState::pressed, VK_LBUTTON))
-	//{
-	//	m_pPortalGun->ShootGun(this, PortalType::Orange);
-	//}
+	//Shooting gun
+	if (InputManager::IsMouseButton(InputState::pressed, VK_RBUTTON))
+	{
+		m_pPortalGun->ShootGun(PortalType::Blue);
+	}
+	if (InputManager::IsMouseButton(InputState::pressed, VK_LBUTTON))
+	{
+		m_pPortalGun->ShootGun(PortalType::Orange);
+	}
+
+	//Update portal variables
+	auto portalPair = m_pPortalGun->GetPortals();
+	m_pBluePortal = portalPair.first;
+	m_pOrangePortal = portalPair.second;
 }
 
 void PortalScene::InitLevel()
@@ -165,9 +154,9 @@ void PortalScene::InitCharacter(bool controlCamera, float mouseSens)
 	//Character collision group
 	m_pCharacter->SetCollisionGroup(CollisionGroup::Group9);
 
-	//// Add protalgun
-	//m_pPortalGun = new PortalGun(m_pCharacter);
-	//m_pCharacter->AddChild(m_pPortalGun);
+	// Add protalgun
+	m_pPortalGun = new PortalGun(this, m_pCharacter);
+	m_pCharacter->AddChild(m_pPortalGun);
 }
 
 void PortalScene::PostDraw()

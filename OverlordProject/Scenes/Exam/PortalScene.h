@@ -1,4 +1,5 @@
 #pragma once
+class PortalGun;
 class Portal;
 //class PortalGun;
 class Character;
@@ -33,7 +34,7 @@ private:
 
 	Character* m_pCharacter{};
 
-	//PortalGun* m_pPortalGun{};
+	PortalGun* m_pPortalGun{};
 
 	Portal* m_pBluePortal{};
 	Portal* m_pOrangePortal{};
