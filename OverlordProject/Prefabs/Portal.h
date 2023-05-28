@@ -42,7 +42,7 @@ private:
 
 	RenderTarget* m_pRenderTarget{};
 
-	ModelComponent* m_pPortalModel{};
+	ModelComponent* m_pScreenModel{};
 	PortalMaterial* m_pScreenMat{};
 	PortalType m_Type{};
 

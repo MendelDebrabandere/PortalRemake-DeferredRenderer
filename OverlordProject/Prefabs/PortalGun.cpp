@@ -58,7 +58,8 @@ void PortalGun::ShootGun(PortalType type)
 		float projectedNormalLength = sqrtf(projectedNormal.x * projectedNormal.x + projectedNormal.z * projectedNormal.z);
 		float angleY = atan2f(projectedNormal.x, projectedNormal.z);
 		float angleX = atan2f(wallNormal.y, projectedNormalLength);
-		transform->Rotate(angleX, angleY, 0, false);
+		constexpr float PI = 3.141592653589793238462643383279502884197f;
+		transform->Rotate(angleX, PI + angleY, 0, false);
 	}
 }
 
@@ -67,13 +68,13 @@ void PortalGun::Initialize(const SceneContext&)
 	//Portal 1
 	//***********
 	m_pBluePortal = new Portal(PortalType::Blue, nullptr, m_pCharacter);
-	m_pBluePortal->GetTransform()->Rotate(0, 0.f, 0);
+	m_pBluePortal->GetTransform()->Rotate(0, 45.f, 0);
 	m_pBluePortal->GetTransform()->Translate(15, 2.5, 20);
 
 	//Portal 2
 	//***********
 	m_pOrangePortal = new Portal(PortalType::Orange, m_pBluePortal, m_pCharacter);
-	m_pOrangePortal->GetTransform()->Rotate(0, 0.f, 0);
+	m_pOrangePortal->GetTransform()->Rotate(0, 45.f, 0);
 	m_pOrangePortal->GetTransform()->Translate(5, 2.5, 5);
 
 	m_pBluePortal->SetLinkedPortal(m_pOrangePortal);

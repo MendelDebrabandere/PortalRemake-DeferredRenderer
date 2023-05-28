@@ -88,6 +88,14 @@ void PortalScene::InitLevel()
 	wall2RB->AddCollider(PxBoxGeometry{ wallSize.x / 2, wallSize.y / 2, 1 / 2.f }, *pDefaultMaterial);
 	AddChild(m_pWall2);
 
+	// Wall3 creation
+	auto wall3 = new CubePrefab(wallSize.x, wallSize.y, 1, wallColor);
+	wall3->GetTransform()->Translate(-40,0, 40);
+	wall3->GetTransform()->Rotate(80, wall2Rot, 0);
+	auto wall3RB = wall3->AddComponent(new RigidBodyComponent(true));
+	wall3RB->AddCollider(PxBoxGeometry{ wallSize.x / 2, wallSize.y / 2, 1 / 2.f }, *pDefaultMaterial);
+	AddChild(wall3);
+
 	//CHAIR
 	DiffuseMaterial* pMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
 	//Set texture of the material

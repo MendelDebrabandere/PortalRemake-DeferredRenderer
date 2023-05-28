@@ -59,9 +59,9 @@ void Portal::Initialize(const SceneContext& sceneContext)
 
 	//Screen
 	m_pScreenMat = MaterialManager::Get()->CreateMaterial<PortalMaterial>();
-	m_pPortalModel = new ModelComponent(L"Meshes/portal.ovm");
-	m_pPortalModel->SetMaterial(m_pScreenMat);
-	AddComponent(m_pPortalModel);
+	m_pScreenModel = new ModelComponent(L"Meshes/portal.ovm");
+	m_pScreenModel->SetMaterial(m_pScreenMat);
+	AddComponent(m_pScreenModel);
 
 	//Frame
 	auto pFrameModel = new ModelComponent(L"Meshes/portalframe.ovm");
@@ -93,10 +93,10 @@ void Portal::Update(const SceneContext& sceneContext)
 	// Compute position of player relative to portal A
 	XMVECTOR relativePos = playerCamPos - otherPortalPos;
 
-	
-	XMFLOAT3 rotatedPosition;
-	XMStoreFloat3(&rotatedPosition, relativePos);
-	m_pCameraObject->GetTransform()->Translate(rotatedPosition);
+	//convert to XMFLOAT
+	XMFLOAT3 relativePosition;
+	XMStoreFloat3(&relativePosition, relativePos);
+	m_pCameraObject->GetTransform()->Translate(relativePosition);
 
 
 	//ROTATIONS
@@ -116,7 +116,7 @@ void Portal::Update(const SceneContext& sceneContext)
 		pitch = PI - pitch;
 	}
 
-	m_pCameraObject->GetTransform()->Rotate(roll, pitch, yaw, false); // These values are radians so passing true
+	m_pCameraObject->GetTransform()->Rotate(roll, pitch, yaw, false); // These values are radians so passing false
 
 	// ROTATE PIVOT TO THE OTHER PORTAL
 	q;
@@ -132,7 +132,7 @@ void Portal::Update(const SceneContext& sceneContext)
 		pitch = PI - pitch;
 	}
 
-	m_pCameraPivot->GetTransform()->Rotate(roll, -pitch, -yaw, false); // These values are radians so passing true
+	m_pCameraPivot->GetTransform()->Rotate(-roll, PI - pitch, -yaw, false); // These values are radians so passing false
 
 
 
@@ -148,10 +148,12 @@ void Portal::SetNearClipPlane()
 
 	const XMFLOAT3& portalNormal = GetTransform()->GetForward();
 	XMVECTOR xmPortalNormal = XMLoadFloat3(&portalNormal);
-	XMVECTOR xmInvPortalNormal = XMVectorScale(xmPortalNormal, -1); //rotate 180 degrees
+	//XMVECTOR xmInvPortalNormal = XMVectorScale(xmPortalNormal, -1); //rotate 180 degrees
+
+	XMFLOAT3 inversPortalNormal{ -portalNormal.x ,-portalNormal.y ,-portalNormal.z };
 
 	//Camera distance
-	auto xmDot = XMVector3Dot(xmPortalPos, xmInvPortalNormal);
+	auto xmDot = XMVector3Dot(xmPortalPos, xmPortalNormal);
 	float camDist{};
 	XMStoreFloat(&camDist, xmDot);
 
@@ -160,7 +162,7 @@ void Portal::SetNearClipPlane()
 	if (abs(camDist) > nearClipLimit)
 	{
 		//Create and set clipping plane vector
-		XMFLOAT4 clipPlane{ portalNormal.x, portalNormal.y, portalNormal.z, camDist };
+		XMFLOAT4 clipPlane{ inversPortalNormal.x, inversPortalNormal.y, inversPortalNormal.z, camDist };
 		m_pCameraComponent->SetOblique(true);
 		m_pCameraComponent->SetClipPlane(clipPlane);
 	}
