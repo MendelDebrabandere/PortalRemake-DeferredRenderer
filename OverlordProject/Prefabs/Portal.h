@@ -31,7 +31,11 @@ public:
 	void Update(const SceneContext&) override;
 
 	void SetNearClipPlane();
+
 private:
+	void DoCameraRotations(const SceneContext&);
+	void DoTeleportingLogic(const SceneContext&);
+
 	Character* m_pCharacter{};
 
 	Portal* m_pLinkedPortal{};

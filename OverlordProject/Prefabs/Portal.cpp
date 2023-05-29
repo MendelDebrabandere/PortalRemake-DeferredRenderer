@@ -75,7 +75,14 @@ void Portal::Update(const SceneContext& sceneContext)
 	if (m_pLinkedPortal == nullptr)
 		return;
 
+	DoCameraRotations(sceneContext);
 
+	DoTeleportingLogic(sceneContext);
+
+}
+
+void Portal::DoCameraRotations(const SceneContext& sceneContext)
+{
 	// Get transforms
 	auto otherPortalTransform = m_pLinkedPortal->GetTransform();
 	auto playerCamTransform = sceneContext.pCamera->GetTransform();
@@ -86,8 +93,6 @@ void Portal::Update(const SceneContext& sceneContext)
 
 	XMVECTOR otherPortalRot = XMLoadFloat4(&otherPortalTransform->GetWorldRotation());
 	XMVECTOR playerCamRot = XMLoadFloat4(&playerCamTransform->GetWorldRotation());
-
-	//XMVECTOR inverseRotationQuat = XMQuaternionInverse(playerCamRot);
 
 	//TRANSLATIONS
 	// Compute position of player relative to portal A
@@ -119,7 +124,6 @@ void Portal::Update(const SceneContext& sceneContext)
 	m_pCameraObject->GetTransform()->Rotate(roll, pitch, yaw, false); // These values are radians so passing false
 
 	// ROTATE PIVOT TO THE OTHER PORTAL
-	q;
 	XMStoreFloat4(&q, otherPortalRot);
 	pitch = asin(2.f * (q.w * q.y - q.z * q.x));
 	roll = atan2(2.f * (q.w * q.x + q.y * q.z), 1 - 2.f * (q.x * q.x + q.y * q.y));
@@ -133,9 +137,6 @@ void Portal::Update(const SceneContext& sceneContext)
 	}
 
 	m_pCameraPivot->GetTransform()->Rotate(-roll, PI - pitch, -yaw, false); // These values are radians so passing false
-
-
-
 }
 
 void Portal::SetNearClipPlane()
@@ -157,17 +158,52 @@ void Portal::SetNearClipPlane()
 	float camDist{};
 	XMStoreFloat(&camDist, xmDot);
 
-	//Don't use oblique clip plane if very close to portal as it seems this can cause some visual artifacts
-	float nearClipLimit = 0.3f;
-	if (abs(camDist) > nearClipLimit)
+	//Create and set clipping plane vector
+	XMFLOAT4 clipPlane{ inversPortalNormal.x, inversPortalNormal.y, inversPortalNormal.z, camDist };
+	m_pCameraComponent->SetOblique(true);
+	m_pCameraComponent->SetClipPlane(clipPlane);
+}
+
+void Portal::DoTeleportingLogic(const SceneContext&)
+{
+	if (m_pCharacter->GetTpCooldown() >= 0.f)
+		return;
+
+	//Get Player data
+	const XMFLOAT3& characterPos = m_pCharacter->GetTransform()->GetWorldPosition();
+	XMVECTOR xmCharacterPos = XMLoadFloat3(&characterPos);
+	const XMFLOAT3 characterForward = m_pCharacter->GetTransform()->GetForward();
+	XMVECTOR xmCharacterForward = XMLoadFloat3(&characterForward);
+
+	//Get this data
+	const XMFLOAT3& thisPortalPos = GetTransform()->GetPosition();
+	XMVECTOR xmThisPortalPos = XMLoadFloat3(&thisPortalPos);
+	const XMFLOAT3& thisPortalForward = GetTransform()->GetForward();
+	XMVECTOR xmThisPortalForward = XMLoadFloat3(&thisPortalForward);
+
+	//Get player pos in portal space
+	auto playerRelativePos = xmCharacterPos - xmThisPortalPos;
+
+	//If this dotproduct is very small that means the player is on the plane of the portal.
+	XMVECTOR dotProduct = XMVector3Dot(playerRelativePos, xmThisPortalForward);
+	float dotProductValue = XMVectorGetX(dotProduct);
+
+	if (abs(dotProductValue) <= 0.1f)
 	{
-		//Create and set clipping plane vector
-		XMFLOAT4 clipPlane{ inversPortalNormal.x, inversPortalNormal.y, inversPortalNormal.z, camDist };
-		m_pCameraComponent->SetOblique(true);
-		m_pCameraComponent->SetClipPlane(clipPlane);
+		// Calculate the length (3D distance from player and portal)
+		XMVECTOR length = XMVector3Length(playerRelativePos);
+		float lengthValue = XMVectorGetX(length);
+		if (lengthValue <= 1.5f)
+		{
+			//TP to other portal
+			m_pCharacter->SetTpCooldown(1.f);
+			m_pCharacter->GetTransform()->Translate(m_pLinkedPortal->GetTransform()->GetWorldPosition());
+
+
+			m_pCharacter->GetCameraComponent()->GetTransform()->Rotate(0, 180, 0);
+			std::cout << "Player is close to portal plane\n";
+		}
 	}
-	else
-	{
-		m_pCameraComponent->SetOblique(false);
-	}
+
+
 }

@@ -48,12 +48,18 @@ public:
 	void SetCollisionGroup(CollisionGroup group);
 
 	const FixedCamera* GetCamera() const { return m_pCameraObject; }
+	const CameraComponent* GetCameraComponent() const { return m_pCameraComponent; }
+
+	float GetTpCooldown() const { return m_TpCooldown; }
+	void SetTpCooldown(float val) { m_TpCooldown = val; }
 
 protected:
 	void Initialize(const SceneContext&) override;
 	void Update(const SceneContext&) override;
 
 private:
+	float m_TpCooldown{};
+
 	FixedCamera* m_pCameraObject{};
 	CameraComponent* m_pCameraComponent{};
 	ControllerComponent* m_pControllerComponent{};

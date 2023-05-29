@@ -21,7 +21,5 @@ protected:
 
 	GameObject* m_pSponza{};
 	bool m_FlashLightMode{ false };
-
-	PostBloom* m_pPostBloom{};
 };
 

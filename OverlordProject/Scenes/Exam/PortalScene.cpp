@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "PortalScene.h"
 
+#include "Materials/BasicMaterial_Deferred.h"
 #include "Materials/ColorMaterial.h"
 #include "Materials/DiffuseMaterial.h"
 #include "Prefabs/Character.h"
@@ -112,6 +113,20 @@ void PortalScene::InitLevel()
 	auto cube = new CubePrefab(1, 1, 1, XMFLOAT4{ 0.1f,0.1f,0.1f,1 });
 	cube->GetTransform()->Translate(18, 1, 25);
 	AddChild(cube);
+
+	////level
+	//const auto model = new ModelComponent(L"Meshes/PortalLevel.ovm");
+	//model->SetMaterial(pMaterial);
+	//auto pLevel = new GameObject();
+	//pLevel->AddComponent<ModelComponent>(model);
+	//pLevel->GetComponent<TransformComponent>()->Translate(0.0f, 15.0f, 0.0f);
+	//pLevel->GetComponent<TransformComponent>()->Rotate(0, 90, 0);
+	//pLevel->GetComponent<TransformComponent>()->Scale(0.03f, 0.03f, 0.03f);
+	////RigidBody
+	//const auto pConvexMesh = ContentManager::Load<PxConvexMesh>(L"Meshes/PortalLevel.ovpc");
+	//const auto convexGeometry{ PxConvexMeshGeometry{ pConvexMesh } };
+	//pLevel->AddComponent(new RigidBodyComponent())->AddCollider(convexGeometry, *pDefaultMaterial);
+	//AddChild(pLevel);
 }
 
 void PortalScene::InitCharacter(bool controlCamera, float mouseSens)

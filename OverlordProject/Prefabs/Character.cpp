@@ -148,6 +148,11 @@ void Character::Update(const SceneContext& sceneContext)
 		//The above is a simple implementation of Movement Dynamics, adjust the code to further improve the movement logic and behaviour.
 		//Also, it can be usefull to use a seperate RayCast to check if the character is grounded (more responsive)
 	}
+
+	if (m_TpCooldown >= 0.f)
+	{
+		m_TpCooldown -= sceneContext.pGameTime->GetElapsed();
+	}
 }
 
 void Character::DrawImGui()
