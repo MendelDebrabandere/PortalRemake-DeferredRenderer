@@ -1,4 +1,5 @@
 #pragma once
+
 struct CharacterDesc
 {
 	CharacterDesc(
@@ -46,6 +47,7 @@ public:
 	void SetCameraActive(bool newValue = true);
 
 	void SetCollisionGroup(CollisionGroup group);
+	void SetCollisionIgnoreGroup(CollisionGroup group);
 
 	const FixedCamera* GetCamera() const { return m_pCameraObject; }
 	const CameraComponent* GetCameraComponent() const { return m_pCameraComponent; }
@@ -73,5 +75,5 @@ private:
 
 	XMFLOAT3 m_TotalVelocity{};						//TotalVelocity with X/Z for Horizontal Movement AND Y for Vertical Movement (fall/jump)
 	XMFLOAT3 m_CurrentDirection{};					//Current/Last Direction based on Camera forward/right (Stored for deacceleration)
-};
+	};
 

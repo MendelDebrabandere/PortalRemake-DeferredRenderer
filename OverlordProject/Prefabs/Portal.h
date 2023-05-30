@@ -32,11 +32,16 @@ public:
 
 	void SetNearClipPlane();
 
+	void SetWall(PxRigidActor* wall);
+
 private:
 	void DoCameraRotations(const SceneContext&);
+	void DoCollisionLogic(const SceneContext&);
 	void DoTeleportingLogic(const SceneContext&);
 
 	Character* m_pCharacter{};
+	bool m_CharacterEntered{ false };
+	bool m_CharacterLeft{ false };
 
 	Portal* m_pLinkedPortal{};
 
@@ -51,6 +56,9 @@ private:
 	PortalType m_Type{};
 
 	XMFLOAT4 m_Color{};
+
+	PxRigidActor* m_pWall{};
+	PxTransform m_pWallTransform{};
 
 	const float PI{ 3.141592653589793238462643383279502884197f };
 };

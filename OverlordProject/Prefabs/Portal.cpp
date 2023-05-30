@@ -16,7 +16,7 @@ Portal::Portal(PortalType type, Portal* pLinkedPortal, Character* character)
 	}
 	else if (type == PortalType::Orange)
 	{
-		m_Color = XMFLOAT4{ 1,0.4f,0,1 };
+		m_Color = XMFLOAT4{ 1,0.6f,0.2f,1 };
 	}
 }
 
@@ -56,7 +56,6 @@ void Portal::Initialize(const SceneContext& sceneContext)
 	modelGO->GetTransform()->Translate(0.0f, 0.0f, -1.f);
 	pModel->SetMaterial(pColorMat);
 
-
 	//Screen
 	auto screenGO = AddChild(new GameObject());
 	m_pScreenMat = MaterialManager::Get()->CreateMaterial<PortalMaterial>();
@@ -70,6 +69,31 @@ void Portal::Initialize(const SceneContext& sceneContext)
 	pFrameModel->SetMaterial(pColorMat);
 	AddComponent(pFrameModel);
 
+	//Overlap box
+	auto& physx = PxGetPhysics();
+	auto pBouncyMaterial = physx.createMaterial(0.f, 0.f, 1.f);
+
+	auto pongLeftRB = AddComponent(new RigidBodyComponent(true));
+	pongLeftRB->AddCollider(PxBoxGeometry{ 1, 2.5f, 1 }, *pBouncyMaterial, true);
+
+	//auto function = [=](GameObject*, GameObject* pOtherObject, PxTriggerAction action)
+	//{
+	//	if (pOtherObject == static_cast<GameObject*>(m_pCharacter) && m_pWall != nullptr)
+	//	{
+	//		if (action == PxTriggerAction::ENTER)
+	//		{
+	//			m_CharacterEntered = true;
+	//			m_pWall->setGlobalPose(PxTransform(PxVec3{ -100,-100,-100 }));
+	//		}
+	//		if (action == PxTriggerAction::LEAVE)
+	//		{
+	//			m_CharacterLeft = true;
+	//			m_pWall->setGlobalPose(m_pWallTransform);
+	//		}
+	//	}
+	//};
+
+	//SetOnTriggerCallBack(function);
 }
 
 void Portal::Update(const SceneContext& sceneContext)
@@ -78,6 +102,8 @@ void Portal::Update(const SceneContext& sceneContext)
 		return;
 
 	DoCameraRotations(sceneContext);
+
+	DoCollisionLogic(sceneContext);
 
 	DoTeleportingLogic(sceneContext);
 
@@ -145,6 +171,22 @@ void Portal::DoCameraRotations(const SceneContext& sceneContext)
 	m_pCameraPivot->GetTransform()->Rotate(-roll, PI - pitch, -yaw, false); // These values are radians so passing false
 }
 
+void Portal::DoCollisionLogic(const SceneContext&)
+{
+	if (m_CharacterEntered)
+	{
+		m_pCharacter->SetCollisionGroup(CollisionGroup::Group1);
+		std::cout << "Character entered overlap zone\n";
+		m_CharacterEntered = false;
+	}
+	if (m_CharacterLeft)
+	{
+		m_pCharacter->SetCollisionGroup(CollisionGroup::Group9);
+		std::cout << "Character left overlap zone\n";
+		m_CharacterLeft = false;
+	}
+}
+
 void Portal::SetNearClipPlane()
 {
 	if (m_pLinkedPortal == nullptr)
@@ -168,6 +210,12 @@ void Portal::SetNearClipPlane()
 	XMFLOAT4 clipPlane{ inversPortalNormal.x, inversPortalNormal.y, inversPortalNormal.z, camDist };
 	m_pCameraComponent->SetOblique(true);
 	m_pCameraComponent->SetClipPlane(clipPlane);
+}
+
+void Portal::SetWall(PxRigidActor* wall)
+{
+	m_pWall = wall;
+	m_pWallTransform = m_pWall->getGlobalPose();
 }
 
 void Portal::DoTeleportingLogic(const SceneContext&)

@@ -28,8 +28,9 @@ void PortalGun::ShootGun(PortalType type)
 	XMFLOAT3 rayEndF;
 	XMStoreFloat3(&rayEndF, farPoint);
 
-	const PxVec3 rayStart{ rayStartF.x, rayStartF.y, rayStartF.z };
+	PxVec3 rayStart{ rayStartF.x, rayStartF.y, rayStartF.z };
 	const PxVec3 rayEnd{ rayEndF.x - rayStart.x, rayEndF.y - rayStart.y, rayEndF.z - rayStart.z };
+	rayStart += rayEnd.getNormalized() * 2;
 
 	PxQueryFilterData filterData{};
 	filterData.data.word0 = ~UINT(CollisionGroup::Group9);
@@ -49,7 +50,7 @@ void PortalGun::ShootGun(PortalType type)
 		const XMFLOAT3 wallNormal = { hit.block.normal.x, hit.block.normal.y, hit.block.normal.z };
 
 		//Transform
-		constexpr float wallGap{ 0.1f };
+		constexpr float wallGap{ 0.0f };
 		const XMFLOAT3 position = { hit.block.position.x + wallNormal.x * wallGap, hit.block.position.y + wallNormal.y * wallGap, hit.block.position.z + wallNormal.z * wallGap };
 		transform->Translate(position);
 
@@ -60,6 +61,9 @@ void PortalGun::ShootGun(PortalType type)
 		float angleX = atan2f(wallNormal.y, projectedNormalLength);
 		constexpr float PI = 3.141592653589793238462643383279502884197f;
 		transform->Rotate(angleX, PI + angleY, 0, false);
+
+		//Set wall
+		//portal->SetWall(hit.block.actor);
 	}
 }
 

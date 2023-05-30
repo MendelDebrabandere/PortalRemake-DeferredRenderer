@@ -9,6 +9,7 @@
 #include "Prefabs/CubePrefab.h"
 #include "Prefabs/Portal.h"
 #include "Materials/Portal/PortalMaterial.h"
+#include "Prefabs/SpherePrefab.h"
 
 void PortalScene::Initialize()
 {
@@ -87,7 +88,7 @@ void PortalScene::InitLevel()
 	m_pWall2->GetTransform()->Rotate(0, wall2Rot, 0);
 	auto wall2RB = m_pWall2->AddComponent(new RigidBodyComponent(true));
 	wall2RB->AddCollider(PxBoxGeometry{ wallSize.x / 2, wallSize.y / 2, 1 / 2.f }, *pDefaultMaterial);
-	AddChild(m_pWall2);
+ 	AddChild(m_pWall2);
 
 	// Wall3 creation
 	auto wall3 = new CubePrefab(wallSize.x, wallSize.y, 1, wallColor);
@@ -173,9 +174,6 @@ void PortalScene::InitCharacter(bool controlCamera, float mouseSens)
 
 	// Control camera
 	m_pCharacter->SetCameraActive(controlCamera);
-
-	//Character collision group
-	m_pCharacter->SetCollisionGroup(CollisionGroup::Group9);
 
 	// Add protalgun
 	m_pPortalGun = new PortalGun(this, m_pCharacter);

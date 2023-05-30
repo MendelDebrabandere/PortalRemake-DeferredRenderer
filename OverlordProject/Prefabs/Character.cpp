@@ -210,3 +210,8 @@ void Character::SetCollisionGroup(CollisionGroup group)
 {
 	m_pControllerComponent->SetCollisionGroup(group);
 }
+
+void Character::SetCollisionIgnoreGroup(CollisionGroup group)
+{
+	m_pControllerComponent->SetCollisionIgnoreGroup(group);
+}
