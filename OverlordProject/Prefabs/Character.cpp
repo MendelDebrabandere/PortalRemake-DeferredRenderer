@@ -30,9 +30,6 @@ void Character::Update(const SceneContext& sceneContext)
 {
 	if (m_pCameraComponent->IsActive())
 	{
-
-		
-
 		//constexpr float epsilon{ 0.01f }; //Constant that can be used to compare if a float is near zero
 		const float elapsedSec{ sceneContext.pGameTime->GetElapsed() };
 
@@ -117,8 +114,11 @@ void Character::Update(const SceneContext& sceneContext)
 		//Calculate the horizontal velocity (m_CurrentDirection * MoveSpeed)
 		//Set the x/z component of m_TotalVelocity (horizontal_velocity x/z)
 		//It's important that you don't overwrite the y component of m_TotalVelocity (contains the vertical velocity)
-		m_TotalVelocity.x = m_CurrentDirection.x * m_MoveSpeed;
-		m_TotalVelocity.z = m_CurrentDirection.z * m_MoveSpeed;
+		if (m_pControllerComponent->GetCollisionFlags() & PxControllerCollisionFlag::eCOLLISION_DOWN)
+		{
+			m_TotalVelocity.x = m_CurrentDirection.x * m_MoveSpeed;
+			m_TotalVelocity.z = m_CurrentDirection.z * m_MoveSpeed;
+		}
 
 		//## Vertical Movement (Jump/Fall)
 		//If the Controller Component is NOT grounded (= freefall)
@@ -127,7 +127,8 @@ void Character::Update(const SceneContext& sceneContext)
 			//Decrease the y component of m_TotalVelocity with a fraction (ElapsedTime) of the Fall Acceleration (m_FallAcceleration)
 			m_TotalVelocity.y -= elapsedSec * m_FallAcceleration;
 			//Make sure that the minimum speed stays above -CharacterDesc::maxFallSpeed (negative!)
-			m_TotalVelocity.y = std::max(m_TotalVelocity.y, -m_CharacterDesc.maxFallSpeed);
+			//m_TotalVelocity.y = std::max(m_TotalVelocity.y, -m_CharacterDesc.maxFallSpeed);
+			//WHY, I WANT TO FALL AT INFIINITE SPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEDS
 		}
 		//Else If the jump action is triggered
 		else if (sceneContext.pInput->IsActionTriggered(m_CharacterDesc.actionId_Jump))

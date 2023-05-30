@@ -59,7 +59,7 @@ void PortalScene::InitLevel()
 
 	// Walls settings
 	constexpr XMFLOAT4	wallColor{ 0.8f,0.8f,0.8f,1.f };
-	constexpr XMFLOAT2	wallSize{ 30,10 };
+	constexpr XMFLOAT2	wallSize{ 30,30 };
 	constexpr XMFLOAT2	wall1Pos{ 10,10 };
 	constexpr float		wall1Rot{ 45 };
 	constexpr XMFLOAT2	wall2Pos{ -10,-10 };
@@ -98,13 +98,21 @@ void PortalScene::InitLevel()
 	wall3RB->AddCollider(PxBoxGeometry{ wallSize.x / 2, wallSize.y / 2, 1 / 2.f }, *pDefaultMaterial);
 	AddChild(wall3);
 
-	// Wall3 creation
+	// Wall4 creation
 	auto wall4 = new CubePrefab(wallSize.x, wallSize.y, 8, wallColor);
 	wall4->GetTransform()->Translate(-30, 5, 40);
 	wall4->GetTransform()->Rotate(0, 20, 0);
 	auto wall4RB = wall4->AddComponent(new RigidBodyComponent(true));
 	wall4RB->AddCollider(PxBoxGeometry{ wallSize.x / 2, wallSize.y / 2, 8 / 2.f }, *pDefaultMaterial);
 	AddChild(wall4);
+
+	// Roof creation
+	auto roof = new CubePrefab(wallSize.x, 5, wallSize.x, wallColor);
+	roof->GetTransform()->Translate(0, wallSize.y, 0);
+	roof->GetTransform()->Rotate(0, 45, 0);
+	auto roof4RB = roof->AddComponent(new RigidBodyComponent(true));
+	roof4RB->AddCollider(PxBoxGeometry{ wallSize.x / 2, 5 / 2, wallSize.x / 2.f }, *pDefaultMaterial);
+	AddChild(roof);
 
 	//CHAIR
 	DiffuseMaterial* pMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();

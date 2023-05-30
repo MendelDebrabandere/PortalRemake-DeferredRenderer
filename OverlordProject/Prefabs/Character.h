@@ -56,6 +56,9 @@ public:
 	void SetTpCooldown(float val) { m_TpCooldown = val; }
 	void AddCameraRotation(float yaw, float pitch);
 
+	XMFLOAT3 GetVelocity() const { return m_TotalVelocity; }
+	void SetVelocity(const XMFLOAT3& v){m_TotalVelocity = v;}
+
 protected:
 	void Initialize(const SceneContext&) override;
 	void Update(const SceneContext&) override;
@@ -75,5 +78,5 @@ private:
 
 	XMFLOAT3 m_TotalVelocity{};						//TotalVelocity with X/Z for Horizontal Movement AND Y for Vertical Movement (fall/jump)
 	XMFLOAT3 m_CurrentDirection{};					//Current/Last Direction based on Camera forward/right (Stored for deacceleration)
-	};
+};
 

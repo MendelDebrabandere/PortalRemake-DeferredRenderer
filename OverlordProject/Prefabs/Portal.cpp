@@ -172,13 +172,13 @@ void Portal::DoCollisionLogic(const SceneContext&)
 	if (m_CharacterEntered)
 	{
 		m_pWall->setGlobalPose(PxTransform(PxVec3{ -100,-100,-100 }));
-		std::cout << "Character entered overlap zone\n";
+		std::cout << "Entered collision zone \n";
 		m_CharacterEntered = false;
 	}
 	if (m_CharacterLeft)
 	{
 		m_pWall->setGlobalPose(m_pWallTransform);
-		std::cout << "Character left overlap zone\n";
+		std::cout << "Left collision zone \n";
 		m_CharacterLeft = false;
 	}
 }
@@ -264,13 +264,38 @@ void Portal::DoTeleportingLogic(const SceneContext&)
 			m_pCharacter->GetTransform()->Translate(teleportationPos);
 
 			//Calculate the rotation difference between the portals
-			float thisPortalRot = PI + atan2f(thisPortalForward.z, thisPortalForward.x); // PI + because we need to take the opposite angle of the entrance (the back vector)
-			float otherPortalRot = atan2f(otherPortalForward.z, otherPortalForward.x);
+			float thisPortalYaw = PI + atan2f(thisPortalForward.z, thisPortalForward.x); // PI + because we need to take the opposite angle of the entrance (the back vector)
+			float otherPortalYaw = atan2f(otherPortalForward.z, otherPortalForward.x);
 
-			float portalRotDiff = otherPortalRot - thisPortalRot;
+			float portalYawDiff = otherPortalYaw - thisPortalYaw;
 
-			m_pCharacter->AddCameraRotation(-portalRotDiff * 180.f / PI, 0); // negative because in playercamere positive means rotation to the right, not left
-			std::cout << "Player teleported\n";
+			m_pCharacter->AddCameraRotation(-portalYawDiff * 180.f / PI, 0); // negative because in playercamere positive means rotation to the right, not left
+
+			// i dont bother with the Pitch because that would look weird
+			// the real game handles it really well but i wont bother
+
+
+			//Todo: rotate velocity
+			//XMFLOAT3 vector = m_pCharacter->GetVelocity();
+
+			//XMFLOAT3 axis;
+			//XMVECTOR ax = XMVector3Cross(xmThisPortalForward, xmOtherPortalForward);
+			//XMStoreFloat3(&axis, ax);
+
+			//XMVECTOR n1 = XMVector3Normalize(xmThisPortalForward);
+			//XMVECTOR n2 = XMVector3Normalize(xmOtherPortalForward);
+			//float angle = acosf(XMVectorGetX(XMVector3Dot(n1, n2)));
+
+			//XMMATRIX rotationMatrix = XMMatrixRotationAxis(ax, angle);
+
+			//XMVECTOR v = XMLoadFloat3(&vector); // Original vector
+			//XMVECTOR rotatedV = XMVector3Transform(v, rotationMatrix);
+			//XMFLOAT3 rotatedVector;
+			//XMStoreFloat3(&rotatedVector, rotatedV);
+
+			//m_pCharacter->SetVelocity(rotatedVector);
+
+			std::cout << "Teleporting player \n";
 		}
 	}
 
