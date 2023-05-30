@@ -58,10 +58,12 @@ void Portal::Initialize(const SceneContext& sceneContext)
 
 
 	//Screen
+	auto screenGO = AddChild(new GameObject());
 	m_pScreenMat = MaterialManager::Get()->CreateMaterial<PortalMaterial>();
 	m_pScreenModel = new ModelComponent(L"Meshes/portal.ovm");
 	m_pScreenModel->SetMaterial(m_pScreenMat);
-	AddComponent(m_pScreenModel);
+	screenGO->GetTransform()->Translate(0, 0, 0.f);
+	screenGO->AddComponent(m_pScreenModel);
 
 	//Frame
 	auto pFrameModel = new ModelComponent(L"Meshes/portalframe.ovm");
@@ -98,10 +100,15 @@ void Portal::DoCameraRotations(const SceneContext& sceneContext)
 	// Compute position of player relative to portal A
 	XMVECTOR relativePos = playerCamPos - otherPortalPos;
 
-	//convert to XMFLOAT
-	XMFLOAT3 relativePosition;
-	XMStoreFloat3(&relativePosition, relativePos);
-	m_pCameraObject->GetTransform()->Translate(relativePosition);
+	float distance;
+	XMStoreFloat(&distance, XMVector3Length(relativePos));
+	if (distance > 0.5f)
+	{
+		//convert to XMFLOAT
+		XMFLOAT3 relativePosition;
+		XMStoreFloat3(&relativePosition, relativePos);
+		m_pCameraObject->GetTransform()->Translate(relativePosition);
+	}
 
 
 	//ROTATIONS
@@ -113,7 +120,6 @@ void Portal::DoCameraRotations(const SceneContext& sceneContext)
 	float roll = atan2(2.f * (q.w * q.x + q.y * q.z), 1 - 2.f * (q.x * q.x + q.y * q.y));
 	float yaw = atan2(2.f * (q.w * q.z + q.x * q.y), 1 - 2.f * (q.y * q.y + q.z * q.z));
 
-	constexpr float PI = 3.141592653589793238462643383279502884197f;
 	if (yaw > PI / 2.f || yaw < -PI / 2.f)
 	{
 		roll += PI;
@@ -181,6 +187,12 @@ void Portal::DoTeleportingLogic(const SceneContext&)
 	const XMFLOAT3& thisPortalForward = GetTransform()->GetForward();
 	XMVECTOR xmThisPortalForward = XMLoadFloat3(&thisPortalForward);
 
+	//Get this data
+	const XMFLOAT3& otherPortalPos = m_pLinkedPortal->GetTransform()->GetPosition();
+	XMVECTOR xmOtherPortalPos = XMLoadFloat3(&otherPortalPos);
+	const XMFLOAT3& otherPortalForward = m_pLinkedPortal->GetTransform()->GetForward();
+	XMVECTOR xmOtherPortalForward = XMLoadFloat3(&otherPortalForward);
+
 	//Get player pos in portal space
 	auto playerRelativePos = xmCharacterPos - xmThisPortalPos;
 
@@ -188,7 +200,7 @@ void Portal::DoTeleportingLogic(const SceneContext&)
 	XMVECTOR dotProduct = XMVector3Dot(playerRelativePos, xmThisPortalForward);
 	float dotProductValue = XMVectorGetX(dotProduct);
 
-	if (abs(dotProductValue) <= 0.1f)
+	if (abs(dotProductValue) <= 0.2f)
 	{
 		// Calculate the length (3D distance from player and portal)
 		XMVECTOR length = XMVector3Length(playerRelativePos);
@@ -197,11 +209,24 @@ void Portal::DoTeleportingLogic(const SceneContext&)
 		{
 			//TP to other portal
 			m_pCharacter->SetTpCooldown(1.f);
-			m_pCharacter->GetTransform()->Translate(m_pLinkedPortal->GetTransform()->GetWorldPosition());
 
+			//Calculate player relative pos to this portal
+			XMVECTOR xmThisRelativePos = xmCharacterPos - xmThisPortalPos;
+			xmThisRelativePos = XMVectorSetZ(xmThisRelativePos, 0.1f);
+			XMVECTOR xmTeleportationPos = xmOtherPortalPos + xmThisRelativePos;
 
-			m_pCharacter->GetCameraComponent()->GetTransform()->Rotate(0, 180, 0);
-			std::cout << "Player is close to portal plane\n";
+			XMFLOAT3 teleportationPos;
+			XMStoreFloat3(&teleportationPos, xmTeleportationPos);
+			m_pCharacter->GetTransform()->Translate(teleportationPos);
+
+			//Calculate the rotation difference between the portals
+			float thisPortalRot = PI + atan2f(thisPortalForward.z, thisPortalForward.x); // PI + because we need to take the opposite angle of the entrance (the back vector)
+			float otherPortalRot = atan2f(otherPortalForward.z, otherPortalForward.x);
+
+			float portalRotDiff = otherPortalRot - thisPortalRot;
+
+			m_pCharacter->AddCameraRotation(-portalRotDiff * 180.f / PI, 0); // negative because in playercamere positive means rotation to the right, not left
+			std::cout << "Player teleported\n";
 		}
 	}
 

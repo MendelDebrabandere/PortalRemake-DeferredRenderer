@@ -7,6 +7,12 @@ Character::Character(const CharacterDesc& characterDesc) :
 	m_FallAcceleration(characterDesc.maxFallSpeed / characterDesc.fallAccelerationTime)
 {}
 
+void Character::AddCameraRotation(float yaw, float pitch)
+{
+	m_TotalYaw += yaw;
+	m_TotalPitch += pitch;
+}
+
 void Character::Initialize(const SceneContext& /*sceneContext*/)
 {
 	//Controller

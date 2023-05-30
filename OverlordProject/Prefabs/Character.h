@@ -52,6 +52,7 @@ public:
 
 	float GetTpCooldown() const { return m_TpCooldown; }
 	void SetTpCooldown(float val) { m_TpCooldown = val; }
+	void AddCameraRotation(float yaw, float pitch);
 
 protected:
 	void Initialize(const SceneContext&) override;

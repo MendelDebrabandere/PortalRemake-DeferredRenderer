@@ -51,5 +51,7 @@ private:
 	PortalType m_Type{};
 
 	XMFLOAT4 m_Color{};
+
+	const float PI{ 3.141592653589793238462643383279502884197f };
 };
 
