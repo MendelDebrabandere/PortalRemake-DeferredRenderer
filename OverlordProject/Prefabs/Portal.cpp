@@ -70,30 +70,26 @@ void Portal::Initialize(const SceneContext& sceneContext)
 	AddComponent(pFrameModel);
 
 	//Overlap box
+
 	auto& physx = PxGetPhysics();
-	auto pBouncyMaterial = physx.createMaterial(0.f, 0.f, 1.f);
+	auto pDefaultMaterial = physx.createMaterial(0.5f, 0.5f, 0.5f);
 
-	auto pongLeftRB = AddComponent(new RigidBodyComponent(true));
-	pongLeftRB->AddCollider(PxBoxGeometry{ 1, 2.5f, 1 }, *pBouncyMaterial, true);
+	auto overlapRB = AddComponent(new RigidBodyComponent(true));
+	overlapRB->AddCollider(PxBoxGeometry{ 0.5f, 1.f, 0.5f }, *pDefaultMaterial, true);
+	overlapRB->GetPxRigidActor()->setName("PortalRB"); //important, because otherwise you can make new portals with gun on this RB
 
-	//auto function = [=](GameObject*, GameObject* pOtherObject, PxTriggerAction action)
-	//{
-	//	if (pOtherObject == static_cast<GameObject*>(m_pCharacter) && m_pWall != nullptr)
-	//	{
-	//		if (action == PxTriggerAction::ENTER)
-	//		{
-	//			m_CharacterEntered = true;
-	//			m_pWall->setGlobalPose(PxTransform(PxVec3{ -100,-100,-100 }));
-	//		}
-	//		if (action == PxTriggerAction::LEAVE)
-	//		{
-	//			m_CharacterLeft = true;
-	//			m_pWall->setGlobalPose(m_pWallTransform);
-	//		}
-	//	}
-	//};
+	auto function = [=](GameObject*, GameObject* pOtherObject, PxTriggerAction action)
+	{
+		if (pOtherObject == static_cast<GameObject*>(m_pCharacter) && m_pWall != nullptr)
+		{
+			if (action == PxTriggerAction::ENTER)
+				m_CharacterEntered = true;
+			if (action == PxTriggerAction::LEAVE)
+				m_CharacterLeft = true;
+		}
+	};
 
-	//SetOnTriggerCallBack(function);
+	SetOnTriggerCallBack(function);
 }
 
 void Portal::Update(const SceneContext& sceneContext)
@@ -175,13 +171,13 @@ void Portal::DoCollisionLogic(const SceneContext&)
 {
 	if (m_CharacterEntered)
 	{
-		m_pCharacter->SetCollisionGroup(CollisionGroup::Group1);
+		m_pWall->setGlobalPose(PxTransform(PxVec3{ -100,-100,-100 }));
 		std::cout << "Character entered overlap zone\n";
 		m_CharacterEntered = false;
 	}
 	if (m_CharacterLeft)
 	{
-		m_pCharacter->SetCollisionGroup(CollisionGroup::Group9);
+		m_pWall->setGlobalPose(m_pWallTransform);
 		std::cout << "Character left overlap zone\n";
 		m_CharacterLeft = false;
 	}

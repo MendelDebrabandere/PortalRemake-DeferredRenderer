@@ -38,6 +38,10 @@ void PortalGun::ShootGun(PortalType type)
 	PxRaycastBuffer hit{};
 	if (m_pScene->GetPhysxProxy()->Raycast(rayStart, rayEnd.getNormalized(), PX_MAX_F32, hit, PxHitFlag::eDEFAULT, filterData))
 	{
+		auto RBName = hit.block.actor->getName();
+		if (RBName && std::string(RBName) == "PortalRB")
+			return;
+
 		//Spawn new portal
 		Portal* portal{};
 		if (type == PortalType::Blue)
@@ -63,7 +67,7 @@ void PortalGun::ShootGun(PortalType type)
 		transform->Rotate(angleX, PI + angleY, 0, false);
 
 		//Set wall
-		//portal->SetWall(hit.block.actor);
+		portal->SetWall(hit.block.actor);
 	}
 }
 
