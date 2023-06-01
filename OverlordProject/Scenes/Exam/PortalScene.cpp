@@ -162,8 +162,91 @@ void PortalScene::InitLevel()
 	auto doorRB = pDoor->AddComponent(new RigidBodyComponent(true));
 	doorRB->AddCollider(doorConvexGeometry, *pDefaultMaterial);
 	doorRB->GetPxRigidActor()->setName("DoorRB");
-	pDoor->GetTransform()->Translate(15, 0, -15.f);
+	pDoor->GetTransform()->Translate(25, 0, 0.f);
 	pDoor->GetTransform()->Rotate(0, 0, 0);
+
+	doorRB->AddCollider(PxBoxGeometry{5.f, 8.f, 2.6f }, * pDefaultMaterial, true);
+
+	auto doorFunction = [=](GameObject*, GameObject* pOtherObject, PxTriggerAction action)
+	{
+		//IF IT IS THE CUBE
+		if (action == PxTriggerAction::ENTER && m_ButtonIsTriggered)
+		{
+			if (pOtherObject->GetTag() == L"Player")
+			{
+				//GO TO MAIN MENU
+				SceneManager::Get()->SetActiveGameScene(L"MainMenuScene");
+			}
+		}
+	};
+
+	pDoor->SetOnTriggerCallBack(doorFunction);
+
+
+
+	//Button
+	DiffuseMaterial* pButtonMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
+	//Set texture of the material
+	pButtonMaterial->SetDiffuseTexture(L"textures/portal_button.jpeg");
+
+	auto pButton = AddChild(new GameObject());
+
+	//Mesh
+	const auto buttonMeshComponent = new ModelComponent(L"Meshes/button.ovm");
+	buttonMeshComponent->SetMaterial(pButtonMaterial);
+	pButton->AddComponent<ModelComponent>(buttonMeshComponent);
+
+	//RigidBody
+	const auto pButtonConvexMesh = ContentManager::Load<PxConvexMesh>(L"Meshes/button.ovpc");
+	const auto buttonConvexGeometry{ PxConvexMeshGeometry{ pButtonConvexMesh } };
+	auto buttonRB = pButton->AddComponent(new RigidBodyComponent(true));
+	buttonRB->AddCollider(buttonConvexGeometry, *pDefaultMaterial);
+	buttonRB->GetPxRigidActor()->setName("ButtonRB");
+	pButton->GetTransform()->Translate(17, 0, -23.f);
+	pButton->GetTransform()->Rotate(0, 0, 0);
+	buttonRB->AddCollider(PxBoxGeometry{ 2.3f, 2.2f, 2.3f }, * pDefaultMaterial, true);
+
+
+	auto buttonFunction = [=](GameObject*, GameObject* pOtherObject, PxTriggerAction action)
+	{
+		auto pFmod = SoundManager::Get()->GetSystem();
+		FMOD::Sound* pSound{};
+
+		//IF IT IS THE CUBE
+		auto rb = pOtherObject->GetComponent<RigidBodyComponent>();
+		if (rb)
+		{
+			auto name = rb->GetPxRigidActor()->getName();
+			if (name)
+			{
+				if (std::string(name) == "CubeRB")
+				{
+					if (action == PxTriggerAction::ENTER)
+					{
+						m_ButtonIsTriggered = true;
+						pFmod->createStream("Resources/sound/ButtonPressed.mp3", FMOD_DEFAULT, nullptr, &pSound);
+					}
+					if (action == PxTriggerAction::LEAVE)
+					{
+						m_ButtonIsTriggered = false;
+						pFmod->createStream("Resources/sound/ButtonReleased.mp3", FMOD_DEFAULT, nullptr, &pSound);
+					}
+				}
+			}
+		}
+
+		if (pSound)
+		{
+			pFmod->playSound(pSound, nullptr, false, &m_pChannelAudio);
+			m_pChannelAudio->setVolume(0.1f);
+		}
+	};
+
+	pButton->SetOnTriggerCallBack(buttonFunction);
+
+
+
+
 
 	////level
 	//const auto model = new ModelComponent(L"Meshes/PortalLevel.ovm");

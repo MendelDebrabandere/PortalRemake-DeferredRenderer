@@ -85,6 +85,7 @@
 
 #ifdef Exam
 #include "Scenes/Exam/PortalScene.h"
+#include "Scenes/Exam/MainMenuScene.h"
 #endif
 
 #pragma endregion
@@ -170,6 +171,7 @@ void MainGame::Initialize()
 
 #ifdef Exam
 	SceneManager::Get()->AddGameScene(new PortalScene());
+	SceneManager::Get()->AddGameScene(new MainMenuScene());
 #endif
 }
 

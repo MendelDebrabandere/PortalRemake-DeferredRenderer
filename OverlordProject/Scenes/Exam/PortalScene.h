@@ -41,4 +41,7 @@ private:
 
 	GameObject* m_pSprite{};
 
+	bool m_ButtonIsTriggered{};
+
+	FMOD::Channel* m_pChannelAudio{ nullptr };
 };

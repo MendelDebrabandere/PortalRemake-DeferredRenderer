@@ -40,6 +40,8 @@ void Character::SetVelocity(const XMFLOAT3& v)
 
 void Character::Initialize(const SceneContext& /*sceneContext*/)
 {
+	SetTag(L"Player");
+
 	//Controller
 	m_pControllerComponent = AddComponent(new ControllerComponent(m_CharacterDesc.controller));
 
