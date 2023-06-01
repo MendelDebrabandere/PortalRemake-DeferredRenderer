@@ -3,6 +3,20 @@
 #include <algorithm>
 
 
+GameScene* SceneManager::GetSceneByName(const std::wstring& sceneName)
+{
+	const auto it = std::ranges::find_if(m_pScenes, [sceneName](const GameScene* pScene)
+		{
+			return wcscmp(pScene->m_SceneName.c_str(), sceneName.c_str()) == 0;
+		});
+
+	if (it != m_pScenes.end())
+	{
+		return *it;
+	}
+	return nullptr;
+}
+
 void SceneManager::Initialize()
 {
 	for (GameScene* pScene : m_pScenes)

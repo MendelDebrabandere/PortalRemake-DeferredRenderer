@@ -170,7 +170,6 @@ void MainGame::Initialize()
 #endif
 
 #ifdef Exam
-	SceneManager::Get()->AddGameScene(new PortalScene());
 	SceneManager::Get()->AddGameScene(new MainMenuScene());
 #endif
 }

@@ -18,9 +18,6 @@ void PortalScene::Initialize()
 
 	m_SceneContext.pLights->SetDirectionalLight({ -95.6139526f,66.1346436f,-41.1850471f }, { 0.740129888f, -0.597205281f, 0.309117377f });
 
-	InputManager::ForceMouseToCenter(true);
-	InputManager::CursorVisible(false);
-
 	InitLevel();
 	InitCharacter(true, 10);
 
@@ -28,6 +25,10 @@ void PortalScene::Initialize()
 
 void PortalScene::Update()
 {
+	//INPUT
+	InputManager::ForceMouseToCenter(true);
+	InputManager::CursorVisible(false);
+
 	//Shooting gun
 	if (InputManager::IsMouseButton(InputState::pressed, VK_LBUTTON))
 	{
@@ -350,4 +351,11 @@ void PortalScene::PostDraw()
 void PortalScene::OnGUI()
 {
 	m_pCharacter->DrawImGui();
+}
+
+void PortalScene::OnSceneActivated()
+{
+	//INPUT
+	InputManager::ForceMouseToCenter(true);
+	InputManager::CursorVisible(false);
 }

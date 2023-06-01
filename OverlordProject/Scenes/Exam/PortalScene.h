@@ -18,9 +18,9 @@ public:
 protected:
 	void Initialize() override;
 	void Update() override;
-	//void Draw() override;
 	void PostDraw() override;
 	void OnGUI() override;
+	void OnSceneActivated() override;
 
 private:
 	// Helper functions

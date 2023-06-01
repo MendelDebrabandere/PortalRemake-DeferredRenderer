@@ -14,7 +14,9 @@ public:
 protected:
 	void Initialize() override;
 	void Update() override;
+	void OnSceneActivated() override;
 
 private:
+	GameObject* m_pMenuSprite{};
 
 };
