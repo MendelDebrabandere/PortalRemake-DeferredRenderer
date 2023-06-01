@@ -46,9 +46,29 @@ void PortalGun::ShootGun(PortalType type)
 		//Spawn new portal
 		Portal* portal{};
 		if (type == PortalType::Blue)
+		{
+			auto pFmod = SoundManager::Get()->GetSystem();
+
+			FMOD::Sound* pSound{};
+			pFmod->createStream("Resources/sound/BluePortal.mp3", FMOD_DEFAULT, nullptr, &pSound);
+
+			pFmod->playSound(pSound, nullptr, false, &m_pChannelBlueGun);
+			m_pChannelBlueGun->setVolume(0.1f);
+
 			portal = m_pBluePortal;
+		}
 		else //orange
+		{
+			auto pFmod = SoundManager::Get()->GetSystem();
+
+			FMOD::Sound* pSound{};
+			pFmod->createStream("Resources/sound/OrangePortal.mp3", FMOD_DEFAULT, nullptr, &pSound);
+
+			pFmod->playSound(pSound, nullptr, false, &m_pChannelOrangeGun);
+			m_pChannelOrangeGun->setVolume(0.1f);
+
 			portal = m_pOrangePortal;
+		}
 
 		//Transform portal
 		auto transform = portal->GetTransform();

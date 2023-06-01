@@ -31,4 +31,8 @@ private:
 	Portal* m_pOrangePortal{};
 
 	PortalScene* m_pScene{};
+
+
+	FMOD::Channel* m_pChannelOrangeGun{ nullptr };
+	FMOD::Channel* m_pChannelBlueGun{ nullptr };
 };
