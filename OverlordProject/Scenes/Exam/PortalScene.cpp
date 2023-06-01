@@ -143,6 +143,28 @@ void PortalScene::InitLevel()
 	cubeRB->GetPxRigidActor()->setName("CubeRB");
 	pCube->GetTransform()->Translate(5, 10, -5.f);
 
+
+	//Door
+	DiffuseMaterial* pDoorMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
+	//Set texture of the material
+	pDoorMaterial->SetDiffuseTexture(L"textures/portal_door.jpeg");
+
+	auto pDoor = AddChild(new GameObject());
+
+	//Mesh
+	const auto doorMeshComponent = new ModelComponent(L"Meshes/door.ovm");
+	doorMeshComponent->SetMaterial(pDoorMaterial);
+	pDoor->AddComponent<ModelComponent>(doorMeshComponent);
+
+	//RigidBody
+	const auto pDoorConvexMesh = ContentManager::Load<PxConvexMesh>(L"Meshes/door.ovpc");
+	const auto doorConvexGeometry{ PxConvexMeshGeometry{ pDoorConvexMesh } };
+	auto doorRB = pDoor->AddComponent(new RigidBodyComponent(true));
+	doorRB->AddCollider(doorConvexGeometry, *pDefaultMaterial);
+	doorRB->GetPxRigidActor()->setName("DoorRB");
+	pDoor->GetTransform()->Translate(15, 0, -15.f);
+	pDoor->GetTransform()->Rotate(0, 0, 0);
+
 	////level
 	//const auto model = new ModelComponent(L"Meshes/PortalLevel.ovm");
 	//model->SetMaterial(pMaterial);
@@ -181,6 +203,7 @@ void PortalScene::InitCharacter(bool controlCamera, float mouseSens)
 	characterDesc.actionId_Jump = CharacterJump;
 	characterDesc.rotationSpeed = mouseSens;
 	characterDesc.JumpSpeed = 18;
+	characterDesc.controller.height = 2.7f;
 
 	m_pCharacter = AddChild(new Character(characterDesc));
 	m_pCharacter->GetTransform()->Translate(0.f, 5.f, 0.f);

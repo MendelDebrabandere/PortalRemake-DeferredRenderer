@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Character.h"
 
+#include "Materials/DiffuseMaterial.h"
 #include "Materials/DiffuseMaterial_Skinned.h"
 
 Character::Character(const CharacterDesc& characterDesc) :
@@ -43,11 +44,11 @@ void Character::Initialize(const SceneContext& /*sceneContext*/)
 	m_pControllerComponent = AddComponent(new ControllerComponent(m_CharacterDesc.controller));
 
 	//Camera
-	const auto pCamera = AddChild(new FixedCamera());
-	m_pCameraComponent = pCamera->GetComponent<CameraComponent>();
+	m_pCameraObject = AddChild(new FixedCamera());
+	m_pCameraComponent = m_pCameraObject->GetComponent<CameraComponent>();
 	//m_pCameraComponent->SetActive(true); //Uncomment to make this camera the active camera
 
-	pCamera->GetTransform()->Translate(0.f, m_CharacterDesc.controller.height * .5f, 0.f);
+	m_pCameraObject->GetTransform()->Translate(0.f, m_CharacterDesc.controller.height * .5f, 0.f);
 
 	//for rendering E on the screen when a box is pickupable
 	m_pFont = ContentManager::Load<SpriteFont>(L"SpriteFonts/Consolas_32.fnt");
@@ -75,7 +76,7 @@ void Character::Initialize(const SceneContext& /*sceneContext*/)
 	pModel->SetMaterial(pSkinnedMaterialLegs, 4);
 	pModel->SetMaterial(pSkinnedMaterialHair, 5);
 
-	pCharacterMesh->GetTransform()->Translate(0, -1.6f, -1.f);
+	pCharacterMesh->GetTransform()->Translate(-0.3f, -1.9f, -1.f);
 	pCharacterMesh->GetTransform()->Rotate(0, 180.f, 0.f);
 
 	m_pAnimator = pModel->GetAnimator();
@@ -85,6 +86,20 @@ void Character::Initialize(const SceneContext& /*sceneContext*/)
 		m_pAnimator->SetAnimation(m_CurrClip);
 		m_pAnimator->Play();
 	}
+
+
+	//Gun mesh
+	m_pGun = m_pCameraObject->AddChild(new GameObject);
+	const auto pGunModel = m_pGun->AddComponent(new ModelComponent(L"Meshes/PortalGun.ovm"));
+
+	const auto pMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
+	pMaterial->SetDiffuseTexture(L"Textures/PortalGun.png");
+
+	pGunModel->SetMaterial(pMaterial, 0);
+
+	m_pGun->GetTransform()->Translate(0.3f, -0.25f, 0.3f);
+	m_pGun->GetTransform()->Rotate(90, 0, 180);
+	m_pGun->GetTransform()->Scale(0.5f, 0.5f, 0.5f);
 
 }
 

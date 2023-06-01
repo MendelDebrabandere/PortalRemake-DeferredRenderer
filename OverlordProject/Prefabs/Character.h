@@ -88,5 +88,7 @@ private:
 	float m_JumpAnimTime{};
 
 	FMOD::Channel* m_pChannelTeleport{ nullptr };
+
+	GameObject* m_pGun{};
 };
 
