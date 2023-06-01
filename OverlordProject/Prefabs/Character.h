@@ -53,7 +53,7 @@ public:
 	const CameraComponent* GetCameraComponent() const { return m_pCameraComponent; }
 
 	float GetTpCooldown() const { return m_TpCooldown; }
-	void SetTpCooldown(float val) { m_TpCooldown = val; }
+	void SetTpCooldown(float val);
 	void AddCameraRotation(float yaw, float pitch);
 
 	XMFLOAT3 GetVelocity() const { return m_TotalVelocity; }
@@ -86,5 +86,7 @@ private:
 	ModelAnimator* m_pAnimator{};
 	int m_CurrClip{};
 	float m_JumpAnimTime{};
+
+	FMOD::Channel* m_pChannelTeleport{ nullptr };
 };
 

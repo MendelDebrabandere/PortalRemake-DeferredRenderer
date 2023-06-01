@@ -9,6 +9,19 @@ Character::Character(const CharacterDesc& characterDesc) :
 	m_FallAcceleration(characterDesc.maxFallSpeed / characterDesc.fallAccelerationTime)
 {}
 
+void Character::SetTpCooldown(float val)
+{
+	m_TpCooldown = val;
+
+	auto pFmod = SoundManager::Get()->GetSystem();
+
+	FMOD::Sound* pSound{};
+	pFmod->createStream("Resources/sound/Teleport.mp3", FMOD_DEFAULT, nullptr, &pSound);
+
+	pFmod->playSound(pSound, nullptr, false, &m_pChannelTeleport);
+	m_pChannelTeleport->setVolume(0.1f);
+}
+
 void Character::AddCameraRotation(float yaw, float pitch)
 {
 	m_TotalYaw += yaw;
