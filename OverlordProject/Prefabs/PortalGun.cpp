@@ -40,8 +40,9 @@ void PortalGun::ShootGun(PortalType type)
 	PxRaycastBuffer hit{};
 	if (m_pScene->GetPhysxProxy()->Raycast(rayStart, rayEnd.getNormalized(), PX_MAX_F32, hit, PxHitFlag::eDEFAULT, filterData))
 	{
+		//Anything that shouldnt have portals on them (interactible objects) have a name
 		auto RBName = hit.block.actor->getName();
-		if (RBName && std::string(RBName) == "PortalRB")
+		if (RBName)
 			return;
 
 		//Spawn new portal

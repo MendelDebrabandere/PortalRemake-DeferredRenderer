@@ -28,7 +28,7 @@ public:
 	static void SetVibration(float leftVibration, float rightVibration, GamepadIndex playerIndex = GamepadIndex::playerOne);
 	static BYTE GetKeyState(int key, bool previousFrame = false);
 
-	static void CursorVisible(bool visible) { ShowCursor(visible); }
+	static void CursorVisible(bool visible);
 	static bool IsGamepadConnected(GamepadIndex index) { return m_ConnectedGamepads[DWORD(index)]; }
 
 	static bool IsKeyboardKey(InputState state, int key);

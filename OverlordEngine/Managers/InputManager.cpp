@@ -280,6 +280,18 @@ BYTE InputManager::GetKeyState(int key, bool previousFrame)
 	return m_pCurrKeyboardState[key];
 }
 
+void InputManager::CursorVisible(bool visible)
+{
+	if (visible)
+	{
+		while (ShowCursor(visible) < 0);
+	}
+	if (!visible)
+	{
+		while (ShowCursor(visible) >= 0);
+	}
+}
+
 //NO RANGE CHECKS
 bool InputManager::IsKeyboardKeyDown_unsafe(int key, bool previousFrame)
 {

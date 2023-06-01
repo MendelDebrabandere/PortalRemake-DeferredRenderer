@@ -25,10 +25,6 @@ void PortalScene::Initialize()
 
 void PortalScene::Update()
 {
-	//INPUT
-	InputManager::ForceMouseToCenter(true);
-	InputManager::CursorVisible(false);
-
 	//Shooting gun
 	if (InputManager::IsMouseButton(InputState::pressed, VK_LBUTTON))
 	{
