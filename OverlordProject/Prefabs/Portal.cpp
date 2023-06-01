@@ -75,7 +75,7 @@ void Portal::Initialize(const SceneContext& sceneContext)
 	auto pDefaultMaterial = physx.createMaterial(0.5f, 0.5f, 0.5f);
 
 	auto overlapRB = AddComponent(new RigidBodyComponent(true));
-	overlapRB->AddCollider(PxBoxGeometry{ 0.5f, 1.f, 0.5f }, *pDefaultMaterial, true);
+	overlapRB->AddCollider(PxBoxGeometry{ 0.7f, 1.1f, 1.f }, *pDefaultMaterial, true);
 	overlapRB->GetPxRigidActor()->setName("PortalRB"); //important, because otherwise you can make new portals with gun on this RB
 
 	auto function = [=](GameObject*, GameObject* pOtherObject, PxTriggerAction action)
@@ -230,12 +230,16 @@ void Portal::DoTeleportingLogic(const SceneContext&)
 	XMVECTOR xmThisPortalPos = XMLoadFloat3(&thisPortalPos);
 	const XMFLOAT3& thisPortalForward = GetTransform()->GetForward();
 	XMVECTOR xmThisPortalForward = XMLoadFloat3(&thisPortalForward);
+	const XMFLOAT4& thisPortalRot = GetTransform()->GetWorldRotation();
+	XMVECTOR xmThisPortalRot = XMLoadFloat4(&thisPortalRot);
 
 	//Get this data
 	const XMFLOAT3& otherPortalPos = m_pLinkedPortal->GetTransform()->GetPosition();
 	XMVECTOR xmOtherPortalPos = XMLoadFloat3(&otherPortalPos);
 	const XMFLOAT3& otherPortalForward = m_pLinkedPortal->GetTransform()->GetForward();
 	XMVECTOR xmOtherPortalForward = XMLoadFloat3(&otherPortalForward);
+	const XMFLOAT4& otherPortalRot = m_pLinkedPortal->GetTransform()->GetWorldRotation();
+	XMVECTOR xmOtherPortalRot = XMLoadFloat4(&otherPortalRot);
 
 	//Get player pos in portal space
 	auto playerRelativePos = xmCharacterPos - xmThisPortalPos;
@@ -244,7 +248,7 @@ void Portal::DoTeleportingLogic(const SceneContext&)
 	XMVECTOR dotProduct = XMVector3Dot(playerRelativePos, xmThisPortalForward);
 	float dotProductValue = XMVectorGetX(dotProduct);
 
-	if (abs(dotProductValue) <= 0.2f)
+	if (abs(dotProductValue) <= 1.f)
 	{
 		// Calculate the length (3D distance from player and portal)
 		XMVECTOR length = XMVector3Length(playerRelativePos);
@@ -275,25 +279,25 @@ void Portal::DoTeleportingLogic(const SceneContext&)
 			// the real game handles it really well but i wont bother
 
 
-			//Todo: rotate velocity
-			//XMFLOAT3 vector = m_pCharacter->GetVelocity();
+			XMFLOAT3 velocity = m_pCharacter->GetVelocity();
+			XMVECTOR xmVelocity = XMLoadFloat3(&velocity);
 
-			//XMFLOAT3 axis;
-			//XMVECTOR ax = XMVector3Cross(xmThisPortalForward, xmOtherPortalForward);
-			//XMStoreFloat3(&axis, ax);
+			// Calculate the quaternion that brings quaternion1 to quaternion2
+			XMVECTOR rotationQuaternion = XMQuaternionMultiply(XMQuaternionConjugate(xmThisPortalRot), xmOtherPortalRot);
 
-			//XMVECTOR n1 = XMVector3Normalize(xmThisPortalForward);
-			//XMVECTOR n2 = XMVector3Normalize(xmOtherPortalForward);
-			//float angle = acosf(XMVectorGetX(XMVector3Dot(n1, n2)));
+			// Apply the rotation to the other vector
+			XMVECTOR xmRotatedVector = XMVector3Rotate(xmVelocity, rotationQuaternion);
 
-			//XMMATRIX rotationMatrix = XMMatrixRotationAxis(ax, angle);
+			XMFLOAT3 rotatedVector;
+			XMStoreFloat3(&rotatedVector, xmRotatedVector);
 
-			//XMVECTOR v = XMLoadFloat3(&vector); // Original vector
-			//XMVECTOR rotatedV = XMVector3Transform(v, rotationMatrix);
-			//XMFLOAT3 rotatedVector;
-			//XMStoreFloat3(&rotatedVector, rotatedV);
+			rotatedVector = XMFLOAT3{ -rotatedVector.x,
+										rotatedVector.y,
+										-rotatedVector.z };
 
-			//m_pCharacter->SetVelocity(rotatedVector);
+
+
+			m_pCharacter->SetVelocity(rotatedVector);
 
 			std::cout << "Teleporting player \n";
 		}

@@ -36,6 +36,15 @@ void Character::Update(const SceneContext& sceneContext)
 		//***************
 		//HANDLE INPUT
 
+		//// Get World and Inverse World Matrix
+		//XMMATRIX worldMatrix = XMLoadFloat4x4(&GetTransform()->GetWorld());
+		//XMMATRIX invWorldMatrix = XMMatrixInverse(nullptr, worldMatrix);
+
+		//// Transform m_TotalVelocity to local space at the start
+		//XMVECTOR totalVelocityLocal = XMVector3TransformNormal(XMLoadFloat3(&m_TotalVelocity), invWorldMatrix);
+		//XMStoreFloat3(&m_TotalVelocity, totalVelocityLocal);
+
+
 		//## Input Gathering (move)
 		XMFLOAT2 move;
 		//move.y should contain a 1 (Forward) or -1 (Backward) based on the active input (check corresponding actionId in m_CharacterDesc)
@@ -80,6 +89,10 @@ void Character::Update(const SceneContext& sceneContext)
 		const float rotationAmount{ elapsedSec * m_CharacterDesc.rotationSpeed };
 		m_TotalYaw += look.x * rotationAmount;
 		m_TotalPitch += look.y * rotationAmount;
+		if (m_TotalPitch >= 90)
+			m_TotalPitch = 90;
+		else if (m_TotalPitch <= -90)
+			m_TotalPitch = -90;
 		//Rotate this character based on the TotalPitch (X) and TotalYaw (Y)
 		GetTransform()->Rotate(0.0f, m_TotalYaw, 0.0f);
 		sceneContext.pCamera->GetTransform()->Rotate(m_TotalPitch, 0.0f, 0.0f);
@@ -154,6 +167,11 @@ void Character::Update(const SceneContext& sceneContext)
 
 		//The above is a simple implementation of Movement Dynamics, adjust the code to further improve the movement logic and behaviour.
 		//Also, it can be usefull to use a seperate RayCast to check if the character is grounded (more responsive)
+
+
+		//// Transform m_TotalVelocity back to world space at the end
+		//XMVECTOR totalVelocityWorld = XMVector3TransformNormal(XMLoadFloat3(&m_TotalVelocity), worldMatrix);
+		//XMStoreFloat3(&m_TotalVelocity, totalVelocityWorld);
 	}
 
 	if (m_TpCooldown >= 0.f)
