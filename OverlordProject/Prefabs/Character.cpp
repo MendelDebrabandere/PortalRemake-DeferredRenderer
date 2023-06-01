@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "Character.h"
 
+#include "Materials/DiffuseMaterial_Skinned.h"
+
 Character::Character(const CharacterDesc& characterDesc) :
 	m_CharacterDesc{ characterDesc },
 	m_MoveAcceleration(characterDesc.maxMoveSpeed / characterDesc.moveAccelerationTime),
@@ -11,6 +13,15 @@ void Character::AddCameraRotation(float yaw, float pitch)
 {
 	m_TotalYaw += yaw;
 	m_TotalPitch += pitch;
+}
+
+void Character::SetVelocity(const XMFLOAT3& v)
+{
+	m_TotalVelocity = v;
+
+	// Update m_CurrentDirection
+	m_CurrentDirection.x = m_TotalVelocity.x / m_MoveSpeed;
+	m_CurrentDirection.z = m_TotalVelocity.z / m_MoveSpeed;
 }
 
 void Character::Initialize(const SceneContext& /*sceneContext*/)
@@ -27,6 +38,41 @@ void Character::Initialize(const SceneContext& /*sceneContext*/)
 
 	//for rendering E on the screen when a box is pickupable
 	m_pFont = ContentManager::Load<SpriteFont>(L"SpriteFonts/Consolas_32.fnt");
+
+	//Character Mesh
+	//**************
+	const auto pCharacterMesh = AddChild(new GameObject);
+	const auto pModel = pCharacterMesh->AddComponent(new ModelComponent(L"Meshes/CharacterMesh2.ovm"));
+
+	const auto pSkinnedMaterialTorso = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Skinned>();
+	pSkinnedMaterialTorso->SetDiffuseTexture(L"Textures/character/chell_torso_diffuse.png");
+	const auto pSkinnedMaterialLegs = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Skinned>();
+	pSkinnedMaterialLegs->SetDiffuseTexture(L"Textures/character/chell_legs_diffuse.png");
+	const auto pSkinnedMaterialHead = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Skinned>();
+	pSkinnedMaterialHead->SetDiffuseTexture(L"Textures/character/chell_head_diffuse.png");
+	const auto pSkinnedMaterialHair = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Skinned>();
+	pSkinnedMaterialHair->SetDiffuseTexture(L"Textures/character/chell_hair.png");
+	const auto pSkinnedMaterialEye = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Skinned>();
+	pSkinnedMaterialEye->SetDiffuseTexture(L"Textures/character/eyeball_l.png");
+
+	pModel->SetMaterial(pSkinnedMaterialHead, 0);
+	pModel->SetMaterial(pSkinnedMaterialEye, 1);
+	pModel->SetMaterial(pSkinnedMaterialEye, 2);
+	pModel->SetMaterial(pSkinnedMaterialTorso, 3);
+	pModel->SetMaterial(pSkinnedMaterialLegs, 4);
+	pModel->SetMaterial(pSkinnedMaterialHair, 5);
+
+	pCharacterMesh->GetTransform()->Translate(0, -1.6f, -1.f);
+	pCharacterMesh->GetTransform()->Rotate(0, 180.f, 0.f);
+
+	m_pAnimator = pModel->GetAnimator();
+	if (m_pAnimator)
+	{
+		m_CurrClip = 0;
+		m_pAnimator->SetAnimation(m_CurrClip);
+		m_pAnimator->Play();
+	}
+
 }
 
 void Character::Update(const SceneContext& sceneContext)
@@ -52,6 +98,42 @@ void Character::Update(const SceneContext& sceneContext)
 		if (sceneContext.pInput->IsActionTriggered(m_CharacterDesc.actionId_MoveLeft))
 			move.x = -1.f;
 		//Optional: if move.x is near zero (abs(move.x) < epsilon), you could use the Left ThumbStickPosition.x for movement
+
+		//*************************************
+		//ANIMATION
+		if (m_pAnimator)
+		{
+			int lastClip = m_CurrClip;
+			if (move.y > 0.2f)
+			{
+				if (m_CurrClip != 1)
+					m_CurrClip = 1;
+			}
+			else if (move.y < -0.2f)
+			{
+				if (m_CurrClip != 2)
+					m_CurrClip = 2;
+			}
+			else if (move.x > 0.2f)
+			{
+				if (m_CurrClip != 4)
+					m_CurrClip = 4;
+			}
+			else if (move.x < -0.2f)
+			{
+				if (m_CurrClip != 3)
+					m_CurrClip = 3;
+			}
+			else
+			{
+				if (m_CurrClip != 0)
+					m_CurrClip = 0;
+			}
+
+			if (lastClip != m_CurrClip)
+				m_pAnimator->SetAnimation(m_CurrClip);
+		}
+
 
 		//## Input Gathering (look)
 		XMFLOAT2 look{ 0.f, 0.f };
@@ -183,8 +265,32 @@ void Character::Update(const SceneContext& sceneContext)
 			if (RBName && std::string(RBName) == "CubeRB")
 			{
 				TextRenderer::Get()->DrawText(m_pFont, StringUtil::utf8_decode("E"), XMFLOAT2{ 633,390 }, XMFLOAT4{ 0,0,0,1 });
+
+				if (InputManager::IsKeyboardKey(InputState::pressed, 'E'))
+				{
+					if (m_pHoldingCube == nullptr)
+						m_pHoldingCube = go;
+					else
+						m_pHoldingCube = nullptr;
+				}
 			}
 		}
+	}
+
+	//holding cube logic
+	if (m_pHoldingCube)
+	{
+		constexpr float objDist{ 6 };
+
+		const XMFLOAT3& camPos = m_pCameraComponent->GetTransform()->GetWorldPosition();
+
+		const XMFLOAT3 camFor = m_pCameraComponent->GetTransform()->GetForward();
+		XMFLOAT3 objectPos{ camPos.x + camFor.x * objDist,
+							camPos.y + camFor.y * objDist,
+							camPos.z + camFor.z * objDist };
+
+		m_pHoldingCube->GetTransform()->Translate(objectPos);
+
 	}
 }
 
