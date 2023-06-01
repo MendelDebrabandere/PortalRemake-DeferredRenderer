@@ -85,5 +85,6 @@ private:
 
 	ModelAnimator* m_pAnimator{};
 	int m_CurrClip{};
+	float m_JumpAnimTime{};
 };
 

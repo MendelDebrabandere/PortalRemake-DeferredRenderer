@@ -180,6 +180,7 @@ void PortalScene::InitCharacter(bool controlCamera, float mouseSens)
 	characterDesc.actionId_MoveRight = CharacterMoveRight;
 	characterDesc.actionId_Jump = CharacterJump;
 	characterDesc.rotationSpeed = mouseSens;
+	characterDesc.JumpSpeed = 18;
 
 	m_pCharacter = AddChild(new Character(characterDesc));
 	m_pCharacter->GetTransform()->Translate(0.f, 5.f, 0.f);

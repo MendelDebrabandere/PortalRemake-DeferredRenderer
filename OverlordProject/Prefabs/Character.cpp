@@ -42,7 +42,7 @@ void Character::Initialize(const SceneContext& /*sceneContext*/)
 	//Character Mesh
 	//**************
 	const auto pCharacterMesh = AddChild(new GameObject);
-	const auto pModel = pCharacterMesh->AddComponent(new ModelComponent(L"Meshes/CharacterMesh2.ovm"));
+	const auto pModel = pCharacterMesh->AddComponent(new ModelComponent(L"Meshes/CharacterMesh.ovm"));
 
 	const auto pSkinnedMaterialTorso = MaterialManager::Get()->CreateMaterial<DiffuseMaterial_Skinned>();
 	pSkinnedMaterialTorso->SetDiffuseTexture(L"Textures/character/chell_torso_diffuse.png");
@@ -101,7 +101,7 @@ void Character::Update(const SceneContext& sceneContext)
 
 		//*************************************
 		//ANIMATION
-		if (m_pAnimator)
+		if (m_pAnimator && m_JumpAnimTime <= 0.f)
 		{
 			int lastClip = m_CurrClip;
 			if (move.y > 0.2f)
@@ -207,6 +207,7 @@ void Character::Update(const SceneContext& sceneContext)
 		{
 			m_TotalVelocity.x = m_CurrentDirection.x * m_MoveSpeed;
 			m_TotalVelocity.z = m_CurrentDirection.z * m_MoveSpeed;
+			m_JumpAnimTime = 0.f;
 		}
 
 		//## Vertical Movement (Jump/Fall)
@@ -218,11 +219,23 @@ void Character::Update(const SceneContext& sceneContext)
 			//Make sure that the minimum speed stays above -CharacterDesc::maxFallSpeed (negative!)
 			//m_TotalVelocity.y = std::max(m_TotalVelocity.y, -m_CharacterDesc.maxFallSpeed);
 			//WHY, I WANT TO FALL AT INFIINITE SPEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEDS
+			m_JumpAnimTime += elapsedSec;
+			if (m_JumpAnimTime >= 0.55f && m_CurrClip != 6)
+			{
+				m_CurrClip = 6;
+				m_pAnimator->SetAnimation(m_CurrClip);
+			}
 		}
 		//Else If the jump action is triggered
 		else if (sceneContext.pInput->IsActionTriggered(m_CharacterDesc.actionId_Jump))
+		{
 			//Set m_TotalVelocity.y equal to CharacterDesc::JumpSpeed
 			m_TotalVelocity.y = m_CharacterDesc.JumpSpeed;
+			m_CurrClip = 5;
+			m_pAnimator->SetAnimation(m_CurrClip);
+			m_JumpAnimTime = 0.1f;
+			//Set the time because otherwise it gets set to idle next update
+		}
 		//Else (=Character is grounded, no input pressed)
 		else
 			//m_TotalVelocity.y is zero
