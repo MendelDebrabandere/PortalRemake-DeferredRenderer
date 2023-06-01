@@ -295,30 +295,42 @@ void Character::Update(const SceneContext& sceneContext)
 		m_TpCooldown -= sceneContext.pGameTime->GetElapsed();
 	}
 
-	//Box pickup logic
-	GameObject* go = m_pCameraComponent->Pick(CollisionGroup::Group9);
-	if (go)
+	//Box pickup/drop logic
+	if (InputManager::IsKeyboardKey(InputState::pressed, 'E') && m_pHoldingCube)
 	{
-		auto rb = go->GetComponent<RigidBodyComponent>();
-		if (rb)
+		m_pHoldingCube = nullptr;
+	}
+	else
+	{
+		//Get the object the camera is looking at
+		GameObject* go = m_pCameraComponent->Pick(CollisionGroup::Group9);
+		if (go)
 		{
-			auto pxRigidActor = rb->GetPxRigidActor();
-			auto RBName = pxRigidActor->getName();
-			//IF IT IS A PORTALCUBE
-			if (RBName && std::string(RBName) == "CubeRB")
+			auto tag = go->GetTag();
+			if (tag == L"Cube")
 			{
-				TextRenderer::Get()->DrawText(m_pFont, StringUtil::utf8_decode("E"), XMFLOAT2{ 633,390 }, XMFLOAT4{ 0,0,0,1 });
+				//IT IS A CUBE
+				auto xmPlayerPos = XMLoadFloat3(&GetTransform()->GetWorldPosition());
+				auto xmCubeTransform = XMLoadFloat3(&go->GetTransform()->GetWorldPosition());
 
-				if (InputManager::IsKeyboardKey(InputState::pressed, 'E'))
+				XMVECTOR diff = XMVectorSubtract(xmPlayerPos, xmCubeTransform);
+
+				float distance = XMVectorGetX(XMVector3Length(diff));
+
+				if (distance <= 10.f) //BOX PICKUP RANGE
 				{
-					if (m_pHoldingCube == nullptr)
-						m_pHoldingCube = go;
-					else
-						m_pHoldingCube = nullptr;
+					TextRenderer::Get()->DrawText(m_pFont, StringUtil::utf8_decode("E"), XMFLOAT2{ 633,390 }, XMFLOAT4{ 0,0,0,1 });
+
+					if (InputManager::IsKeyboardKey(InputState::pressed, 'E'))
+					{
+						if (m_pHoldingCube == nullptr)
+							m_pHoldingCube = go;
+					}
 				}
 			}
 		}
 	}
+
 
 	//holding cube logic
 	if (m_pHoldingCube)

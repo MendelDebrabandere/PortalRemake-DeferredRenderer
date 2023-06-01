@@ -126,6 +126,7 @@ void PortalScene::InitLevel()
 	pCubeMaterial->SetDiffuseTexture(L"textures/PortalCube.jpg");
 
 	auto pCube = AddChild(new GameObject());
+	pCube->SetTag(L"Cube");
 
 	//Mesh
 	const auto CubeMeshComponent = new ModelComponent(L"Meshes/PortalCube.ovm");
