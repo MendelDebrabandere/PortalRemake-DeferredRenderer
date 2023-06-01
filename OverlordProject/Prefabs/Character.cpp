@@ -24,6 +24,9 @@ void Character::Initialize(const SceneContext& /*sceneContext*/)
 	//m_pCameraComponent->SetActive(true); //Uncomment to make this camera the active camera
 
 	pCamera->GetTransform()->Translate(0.f, m_CharacterDesc.controller.height * .5f, 0.f);
+
+	//for rendering E on the screen when a box is pickupable
+	m_pFont = ContentManager::Load<SpriteFont>(L"SpriteFonts/Consolas_32.fnt");
 }
 
 void Character::Update(const SceneContext& sceneContext)
@@ -35,16 +38,7 @@ void Character::Update(const SceneContext& sceneContext)
 
 		//***************
 		//HANDLE INPUT
-
-		//// Get World and Inverse World Matrix
-		//XMMATRIX worldMatrix = XMLoadFloat4x4(&GetTransform()->GetWorld());
-		//XMMATRIX invWorldMatrix = XMMatrixInverse(nullptr, worldMatrix);
-
-		//// Transform m_TotalVelocity to local space at the start
-		//XMVECTOR totalVelocityLocal = XMVector3TransformNormal(XMLoadFloat3(&m_TotalVelocity), invWorldMatrix);
-		//XMStoreFloat3(&m_TotalVelocity, totalVelocityLocal);
-
-
+		
 		//## Input Gathering (move)
 		XMFLOAT2 move;
 		//move.y should contain a 1 (Forward) or -1 (Backward) based on the active input (check corresponding actionId in m_CharacterDesc)
@@ -168,15 +162,29 @@ void Character::Update(const SceneContext& sceneContext)
 		//The above is a simple implementation of Movement Dynamics, adjust the code to further improve the movement logic and behaviour.
 		//Also, it can be usefull to use a seperate RayCast to check if the character is grounded (more responsive)
 
-
-		//// Transform m_TotalVelocity back to world space at the end
-		//XMVECTOR totalVelocityWorld = XMVector3TransformNormal(XMLoadFloat3(&m_TotalVelocity), worldMatrix);
-		//XMStoreFloat3(&m_TotalVelocity, totalVelocityWorld);
 	}
 
+	//TP cooldown
 	if (m_TpCooldown >= 0.f)
 	{
 		m_TpCooldown -= sceneContext.pGameTime->GetElapsed();
+	}
+
+	//Box pickup logic
+	GameObject* go = m_pCameraComponent->Pick(CollisionGroup::Group9);
+	if (go)
+	{
+		auto rb = go->GetComponent<RigidBodyComponent>();
+		if (rb)
+		{
+			auto pxRigidActor = rb->GetPxRigidActor();
+			auto RBName = pxRigidActor->getName();
+			//IF IT IS A PORTALCUBE
+			if (RBName && std::string(RBName) == "CubeRB")
+			{
+				TextRenderer::Get()->DrawText(m_pFont, StringUtil::utf8_decode("E"), XMFLOAT2{ 633,390 }, XMFLOAT4{ 0,0,0,1 });
+			}
+		}
 	}
 }
 

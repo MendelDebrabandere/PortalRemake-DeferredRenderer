@@ -70,12 +70,11 @@ void Portal::Initialize(const SceneContext& sceneContext)
 	AddComponent(pFrameModel);
 
 	//Overlap box
-
 	auto& physx = PxGetPhysics();
 	auto pDefaultMaterial = physx.createMaterial(0.5f, 0.5f, 0.5f);
 
 	auto overlapRB = AddComponent(new RigidBodyComponent(true));
-	overlapRB->AddCollider(PxBoxGeometry{ 0.7f, 1.1f, 1.f }, *pDefaultMaterial, true);
+	overlapRB->AddCollider(PxBoxGeometry{ 0.7f, 0.8f, 1.f }, *pDefaultMaterial, true);
 	overlapRB->GetPxRigidActor()->setName("PortalRB"); //important, because otherwise you can make new portals with gun on this RB
 
 	auto function = [=](GameObject*, GameObject* pOtherObject, PxTriggerAction action)
@@ -124,7 +123,7 @@ void Portal::DoCameraRotations(const SceneContext& sceneContext)
 
 	float distance;
 	XMStoreFloat(&distance, XMVector3Length(relativePos));
-	if (distance > 0.5f)
+	if (distance > 0.2f)
 	{
 		//convert to XMFLOAT
 		XMFLOAT3 relativePosition;
@@ -248,12 +247,12 @@ void Portal::DoTeleportingLogic(const SceneContext&)
 	XMVECTOR dotProduct = XMVector3Dot(playerRelativePos, xmThisPortalForward);
 	float dotProductValue = XMVectorGetX(dotProduct);
 
-	if (abs(dotProductValue) <= 1.f)
+	if (abs(dotProductValue) <= 0.4f)
 	{
 		// Calculate the length (3D distance from player and portal)
 		XMVECTOR length = XMVector3Length(playerRelativePos);
 		float lengthValue = XMVectorGetX(length);
-		if (lengthValue <= 1.5f)
+		if (lengthValue <= 2.f)
 		{
 			//TP to other portal
 			m_pCharacter->SetTpCooldown(1.f);
@@ -261,6 +260,10 @@ void Portal::DoTeleportingLogic(const SceneContext&)
 			//Calculate player relative pos to this portal
 			XMVECTOR xmThisRelativePos = xmCharacterPos - xmThisPortalPos;
 			xmThisRelativePos = XMVectorSetZ(xmThisRelativePos, 0.1f);
+			XMFLOAT3 float3;
+			XMStoreFloat3(&float3, xmThisRelativePos);
+			float3.z = 0;
+			xmThisRelativePos = XMLoadFloat3(&float3);
 			XMVECTOR xmTeleportationPos = xmOtherPortalPos + xmThisRelativePos;
 
 			XMFLOAT3 teleportationPos;

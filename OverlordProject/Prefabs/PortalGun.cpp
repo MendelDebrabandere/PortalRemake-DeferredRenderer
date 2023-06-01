@@ -2,7 +2,6 @@
 #include "PortalGun.h"
 
 #include "Portal.h"
-#include "Materials/Portal/PortalMaterial.h"
 #include "Scenes/Exam/PortalScene.h"
 #include "Prefabs/Character.h"
 
@@ -16,6 +15,8 @@ PortalGun::PortalGun(PortalScene* scene, Character* character)
 void PortalGun::ShootGun(PortalType type)
 {
 	//RAYCAST
+	//We do a custom raycast and not just cameracomponent.pick
+	//because we need the normal and location of te hit as well
 	constexpr float Xndc = 0;
 	constexpr float Yndc = 0;
 

@@ -1,15 +1,12 @@
 #include "stdafx.h"
 #include "PortalScene.h"
 
-#include "Materials/BasicMaterial_Deferred.h"
-#include "Materials/ColorMaterial.h"
 #include "Materials/DiffuseMaterial.h"
 #include "Prefabs/Character.h"
 #include "Prefabs/PortalGun.h"
 #include "Prefabs/CubePrefab.h"
 #include "Prefabs/Portal.h"
 #include "Materials/Portal/PortalMaterial.h"
-#include "Prefabs/SpherePrefab.h"
 
 void PortalScene::Initialize()
 {
@@ -32,11 +29,11 @@ void PortalScene::Initialize()
 void PortalScene::Update()
 {
 	//Shooting gun
-	if (InputManager::IsMouseButton(InputState::pressed, VK_RBUTTON))
+	if (InputManager::IsMouseButton(InputState::pressed, VK_LBUTTON))
 	{
 		m_pPortalGun->ShootGun(PortalType::Blue);
 	}
-	if (InputManager::IsMouseButton(InputState::pressed, VK_LBUTTON))
+	if (InputManager::IsMouseButton(InputState::pressed, VK_RBUTTON))
 	{
 		m_pPortalGun->ShootGun(PortalType::Orange);
 	}
@@ -127,9 +124,24 @@ void PortalScene::InitLevel()
 	AddChild(pChair);
 
 	//Cube
-	auto cube = new CubePrefab(1, 1, 1, XMFLOAT4{ 0.1f,0.1f,0.1f,1 });
-	cube->GetTransform()->Translate(18, 1, 25);
-	AddChild(cube);
+	DiffuseMaterial* pCubeMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
+	//Set texture of the material
+	pCubeMaterial->SetDiffuseTexture(L"textures/PortalCube.jpg");
+
+	auto pCube = AddChild(new GameObject());
+
+	//Mesh
+	const auto CubeMeshComponent = new ModelComponent(L"Meshes/PortalCube.ovm");
+	CubeMeshComponent->SetMaterial(pCubeMaterial);
+	pCube->AddComponent<ModelComponent>(CubeMeshComponent);
+
+	//RigidBody
+	const auto pConvexMesh = ContentManager::Load<PxConvexMesh>(L"Meshes/PortalCube.ovpc");
+	const auto convexGeometry{ PxConvexMeshGeometry{ pConvexMesh } };
+	auto cubeRB = pCube->AddComponent(new RigidBodyComponent(false));
+	cubeRB->AddCollider(convexGeometry, *pDefaultMaterial);
+	cubeRB->GetPxRigidActor()->setName("CubeRB");
+	pCube->GetTransform()->Translate(5, 10, -5.f);
 
 	////level
 	//const auto model = new ModelComponent(L"Meshes/PortalLevel.ovm");
@@ -191,9 +203,19 @@ void PortalScene::InitCharacter(bool controlCamera, float mouseSens)
 	// Control camera
 	m_pCharacter->SetCameraActive(controlCamera);
 
+	m_pCharacter->SetCollisionGroup(CollisionGroup::Group9);
+
 	// Add protalgun
 	m_pPortalGun = new PortalGun(this, m_pCharacter);
 	m_pCharacter->AddChild(m_pPortalGun);
+
+	//Sprite on screen
+	m_pSprite = new GameObject();
+	m_pSprite->AddComponent(new SpriteComponent(L"Textures/PortalCrosshair.png", { 0.5f,0.5f }, { 1.f,1.f,1.f,1.f }));
+	AddChild(m_pSprite);
+
+	m_pSprite->GetTransform()->Translate(1280 / 2.f, 720 / 2.f, 1.);
+	m_pSprite->GetTransform()->Scale(1.f, 1.f, 1.f);
 }
 
 void PortalScene::PostDraw()

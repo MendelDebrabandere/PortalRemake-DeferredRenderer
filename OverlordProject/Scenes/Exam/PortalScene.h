@@ -39,4 +39,6 @@ private:
 	Portal* m_pBluePortal{};
 	Portal* m_pOrangePortal{};
 
+	GameObject* m_pSprite{};
+
 };
