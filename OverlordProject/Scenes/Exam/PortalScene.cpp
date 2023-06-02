@@ -334,14 +334,14 @@ void PortalScene::PostDraw()
 
 	//Draw blue portal
 	SetActiveCamera(m_pBluePortal->GetCamera());
-	m_pBluePortal->SetNearClipPlane();
+	m_pBluePortal->UpateNearClipPlane();
 	DrawPortal(m_pBluePortal->GetRenderTarget());
 	m_pOrangePortal->GetScreenMat()->SetVariable_Texture(L"gTexture", m_pBluePortal->GetRenderTarget()->GetColorShaderResourceView());
 
 
 	//Draw orange portal
 	SetActiveCamera(m_pOrangePortal->GetCamera());
-	m_pOrangePortal->SetNearClipPlane();
+	m_pOrangePortal->UpateNearClipPlane();
 	DrawPortal(m_pOrangePortal->GetRenderTarget());
 	m_pBluePortal->GetScreenMat()->SetVariable_Texture(L"gTexture", m_pOrangePortal->GetRenderTarget()->GetColorShaderResourceView());
 

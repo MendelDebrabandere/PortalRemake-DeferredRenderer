@@ -59,6 +59,7 @@ public:
 	XMFLOAT3 GetVelocity() const { return m_TotalVelocity; }
 	void SetVelocity(const XMFLOAT3& v);
 
+	GameObject* GetCube() const { return m_pHoldingCube; }
 protected:
 	void Initialize(const SceneContext&) override;
 	void Update(const SceneContext&) override;

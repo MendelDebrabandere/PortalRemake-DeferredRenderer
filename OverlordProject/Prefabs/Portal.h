@@ -30,7 +30,7 @@ public:
 	void Initialize(const SceneContext&) override;
 	void Update(const SceneContext&) override;
 
-	void SetNearClipPlane();
+	void UpateNearClipPlane();
 
 	void SetWall(PxShape* wall);
 
@@ -38,6 +38,7 @@ private:
 	void DoCameraRotations(const SceneContext&);
 	void DoCollisionLogic(const SceneContext&);
 	void DoTeleportingLogic(const SceneContext&);
+	void DoCubeLogic(const SceneContext&);
 
 	Character* m_pCharacter{};
 	bool m_CharacterEntered{ false };
@@ -60,6 +61,6 @@ private:
 	PxShape* m_pWall{};
 	PxTransform m_WallPos{};
 
-	const float PI{ 3.141592653589793238462643383279502884197f };
+	GameObject* m_pCube{ nullptr };
 };
 

@@ -3,6 +3,7 @@
 
 #include "Character.h"
 #include "Materials/ColorMaterial.h"
+#include "Materials/DiffuseMaterial.h"
 #include "Materials/Portal/PortalMaterial.h"
 
 Portal::Portal(PortalType type, Portal* pLinkedPortal, Character* character)
@@ -89,6 +90,26 @@ void Portal::Initialize(const SceneContext& sceneContext)
 	};
 
 	SetOnTriggerCallBack(function);
+
+	//SECOND CUBE
+	DiffuseMaterial* pCubeMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
+	//Set texture of the material
+	pCubeMaterial->SetDiffuseTexture(L"textures/PortalCube.jpg");
+
+	m_pCube = AddChild(new GameObject());
+	m_pCube->SetTag(L"Cube");
+
+	//Mesh
+	const auto CubeMeshComponent = new ModelComponent(L"Meshes/PortalCube.ovm");
+	CubeMeshComponent->SetMaterial(pCubeMaterial);
+	m_pCube->AddComponent<ModelComponent>(CubeMeshComponent);
+
+	//RigidBody
+	const auto pConvexMesh = ContentManager::Load<PxConvexMesh>(L"Meshes/PortalCube.ovpc");
+	const auto convexGeometry{ PxConvexMeshGeometry{ pConvexMesh } };
+	auto cubeRB = m_pCube->AddComponent(new RigidBodyComponent(true));
+	cubeRB->AddCollider(convexGeometry, *pDefaultMaterial);
+	cubeRB->GetPxRigidActor()->setName("CubeRB");
 }
 
 void Portal::Update(const SceneContext& sceneContext)
@@ -102,6 +123,7 @@ void Portal::Update(const SceneContext& sceneContext)
 
 	DoTeleportingLogic(sceneContext);
 
+	DoCubeLogic(sceneContext);
 }
 
 void Portal::DoCameraRotations(const SceneContext& sceneContext)
@@ -141,11 +163,11 @@ void Portal::DoCameraRotations(const SceneContext& sceneContext)
 	float roll = atan2(2.f * (q.w * q.x + q.y * q.z), 1 - 2.f * (q.x * q.x + q.y * q.y));
 	float yaw = atan2(2.f * (q.w * q.z + q.x * q.y), 1 - 2.f * (q.y * q.y + q.z * q.z));
 
-	if (yaw > PI / 2.f || yaw < -PI / 2.f)
+	if (yaw > XM_PI / 2.f || yaw < -XM_PI / 2.f)
 	{
-		roll += PI;
-		yaw += PI;
-		pitch = PI - pitch;
+		roll += XM_PI;
+		yaw += XM_PI;
+		pitch = XM_PI - pitch;
 	}
 
 	m_pCameraObject->GetTransform()->Rotate(roll, pitch, yaw, false); // These values are radians so passing false
@@ -156,14 +178,14 @@ void Portal::DoCameraRotations(const SceneContext& sceneContext)
 	roll = atan2(2.f * (q.w * q.x + q.y * q.z), 1 - 2.f * (q.x * q.x + q.y * q.y));
 	yaw = atan2(2.f * (q.w * q.z + q.x * q.y), 1 - 2.f * (q.y * q.y + q.z * q.z));
 
-	if (yaw > PI / 2.f || yaw < -PI / 2.f)
+	if (yaw > XM_PI / 2.f || yaw < -XM_PI / 2.f)
 	{
-		roll += PI;
-		yaw += PI;
-		pitch = PI - pitch;
+		roll += XM_PI;
+		yaw += XM_PI;
+		pitch = XM_PI - pitch;
 	}
 
-	m_pCameraPivot->GetTransform()->Rotate(-roll, PI - pitch, -yaw, false); // These values are radians so passing false
+	m_pCameraPivot->GetTransform()->Rotate(-roll, XM_PI - pitch, -yaw, false); // These values are radians so passing false
 }
 
 void Portal::DoCollisionLogic(const SceneContext&)
@@ -182,7 +204,7 @@ void Portal::DoCollisionLogic(const SceneContext&)
 	}
 }
 
-void Portal::SetNearClipPlane()
+void Portal::UpateNearClipPlane()
 {
 	if (m_pLinkedPortal == nullptr)
 		return;
@@ -192,7 +214,6 @@ void Portal::SetNearClipPlane()
 
 	const XMFLOAT3& portalNormal = GetTransform()->GetForward();
 	XMVECTOR xmPortalNormal = XMLoadFloat3(&portalNormal);
-	//XMVECTOR xmInvPortalNormal = XMVectorScale(xmPortalNormal, -1); //rotate 180 degrees
 
 	XMFLOAT3 inversPortalNormal{ -portalNormal.x ,-portalNormal.y ,-portalNormal.z };
 
@@ -221,8 +242,6 @@ void Portal::DoTeleportingLogic(const SceneContext&)
 	//Get Player data
 	const XMFLOAT3& characterPos = m_pCharacter->GetTransform()->GetWorldPosition();
 	XMVECTOR xmCharacterPos = XMLoadFloat3(&characterPos);
-	const XMFLOAT3 characterForward = m_pCharacter->GetTransform()->GetForward();
-	XMVECTOR xmCharacterForward = XMLoadFloat3(&characterForward);
 
 	//Get this data
 	const XMFLOAT3& thisPortalPos = GetTransform()->GetPosition();
@@ -236,7 +255,6 @@ void Portal::DoTeleportingLogic(const SceneContext&)
 	const XMFLOAT3& otherPortalPos = m_pLinkedPortal->GetTransform()->GetPosition();
 	XMVECTOR xmOtherPortalPos = XMLoadFloat3(&otherPortalPos);
 	const XMFLOAT3& otherPortalForward = m_pLinkedPortal->GetTransform()->GetForward();
-	XMVECTOR xmOtherPortalForward = XMLoadFloat3(&otherPortalForward);
 	const XMFLOAT4& otherPortalRot = m_pLinkedPortal->GetTransform()->GetWorldRotation();
 	XMVECTOR xmOtherPortalRot = XMLoadFloat4(&otherPortalRot);
 
@@ -271,17 +289,17 @@ void Portal::DoTeleportingLogic(const SceneContext&)
 			m_pCharacter->GetTransform()->Translate(teleportationPos);
 
 			//Calculate the rotation difference between the portals
-			float thisPortalYaw = PI + atan2f(thisPortalForward.z, thisPortalForward.x); // PI + because we need to take the opposite angle of the entrance (the back vector)
+			float thisPortalYaw = XM_PI + atan2f(thisPortalForward.z, thisPortalForward.x); // PI + because we need to take the opposite angle of the entrance (the back vector)
 			float otherPortalYaw = atan2f(otherPortalForward.z, otherPortalForward.x);
 
 			float portalYawDiff = otherPortalYaw - thisPortalYaw;
 
-			m_pCharacter->AddCameraRotation(-portalYawDiff * 180.f / PI, 0); // negative because in playercamere positive means rotation to the right, not left
+			m_pCharacter->AddCameraRotation(-portalYawDiff * 180.f / XM_PI, 0); // negative because in playercamere positive means rotation to the right, not left
 
 			// i dont bother with the Pitch because that would look weird
 			// the real game handles it really well but i wont bother
 
-
+			//Rotate velocity
 			XMFLOAT3 velocity = m_pCharacter->GetVelocity();
 			XMVECTOR xmVelocity = XMLoadFloat3(&velocity);
 
@@ -305,6 +323,97 @@ void Portal::DoTeleportingLogic(const SceneContext&)
 			std::cout << "Teleporting player \n";
 		}
 	}
+}
+
+void Portal::DoCubeLogic(const SceneContext&)
+{
+	auto playerCube = m_pCharacter->GetCube();
+	if (playerCube == nullptr)
+	{
+		m_pCube->GetTransform()->Translate(-1000, -1000, -1000);
+		return;
+	}
+
+	auto cubeModel = m_pCube->GetComponent<ModelComponent>();
+	if (cubeModel == nullptr)
+		return;
+
+	//Get Player cube data
+	const XMFLOAT3& cubePos = playerCube->GetTransform()->GetWorldPosition();
+	XMVECTOR xmCubePos = XMLoadFloat3(&cubePos);
+
+	//Get this data
+	const XMFLOAT3& otherPortalPos = m_pLinkedPortal->GetTransform()->GetPosition();
+	XMVECTOR xmOtherPortalPos = XMLoadFloat3(&otherPortalPos);
+
+	//Get cube pos in otherportal space
+	auto cubeRelativePos = xmCubePos - xmOtherPortalPos;
+
+	// Calculate the length (3D distance from player and portal)
+	XMVECTOR length = XMVector3Length(cubeRelativePos);
+	float lengthValue = XMVectorGetX(length);
+
+	//if the box is in range of portal
+	if (lengthValue <= 5.8f)
+	{
+		//TRANSLATIONS
+		// Compute position of player relative to portal A
+		XMVECTOR relativePos = xmCubePos - xmOtherPortalPos;
+
+		//Rotate with local position if the other portal
+		const XMFLOAT4& rotQuat = m_pLinkedPortal->GetTransform()->GetRotation();
+		auto xmRotQuat = XMLoadFloat4(&rotQuat);
+		XMVECTOR q_conjugate = XMQuaternionConjugate(xmRotQuat);
+		XMVECTOR rotatedVec = XMQuaternionMultiply(XMQuaternionMultiply(xmRotQuat, relativePos), q_conjugate);
+
+		//convert to XMFLOAT
+		XMFLOAT3 relativePosition;
+		XMStoreFloat3(&relativePosition, rotatedVec);
+		//Invert Z and X
+		relativePosition.x = -relativePosition.x;
+		relativePosition.z = -relativePosition.z;
+		m_pCube->GetTransform()->Translate(relativePosition);
 
 
+		//ROTATIONS
+		const XMFLOAT4& cubeRot = playerCube->GetTransform()->GetRotation();
+		XMVECTOR xmCubeRot = XMLoadFloat4(&cubeRot);
+
+		//This portal Rot
+		auto thisRotQuat = GetTransform()->GetRotation();
+		auto xmThisRotQuat = XMLoadFloat4(&thisRotQuat);
+
+		// Calculate the quaternion that brings quaternion1 to quaternion2
+		XMVECTOR rotationQuaternion = XMQuaternionMultiply(XMQuaternionConjugate(xmThisRotQuat), xmRotQuat);
+
+		// Apply the rotation to the other vector
+		XMVECTOR xmRotatedQuat = XMQuaternionMultiply(rotationQuaternion, xmCubeRot);
+
+		XMFLOAT4 rotatedQuat;
+		XMStoreFloat4(&rotatedQuat, xmRotatedQuat);
+
+		float yaw, pitch, roll;
+
+		// roll (x-axis rotation)
+		float sinr_cosp = +2.0f * (rotatedQuat.w * rotatedQuat.x + rotatedQuat.y * rotatedQuat.z);
+		float cosr_cosp = +1.0f - 2.0f * (rotatedQuat.x * rotatedQuat.x + rotatedQuat.y * rotatedQuat.y);
+		roll = atan2f(sinr_cosp, cosr_cosp);
+
+		// pitch (y-axis rotation)
+		float sinp = +2.0f * (rotatedQuat.w * rotatedQuat.y - rotatedQuat.z * rotatedQuat.x);
+		if (fabs(sinp) >= 1)
+			pitch = copysign(XM_PI / 2, sinp); // use 90 degrees if out of range
+		else
+			pitch = asinf(sinp);
+
+		// yaw (z-axis rotation)
+		float siny_cosp = +2.0f * (rotatedQuat.w * rotatedQuat.z + rotatedQuat.x * rotatedQuat.y);
+		float cosy_cosp = +1.0f - 2.0f * (rotatedQuat.y * rotatedQuat.y + rotatedQuat.z * rotatedQuat.z);
+		yaw = atan2f(siny_cosp, cosy_cosp);
+
+
+		m_pCube->GetTransform()->Rotate(pitch, yaw, roll, false); // These values are radians so passing false
+	}
+	else
+		m_pCube->GetTransform()->Translate(-1000, -1000, -1000);
 }
