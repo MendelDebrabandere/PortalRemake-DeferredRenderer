@@ -90,7 +90,7 @@ void PortalGun::ShootGun(PortalType type)
 		transform->Rotate(angleX, PI + angleY, 0, false);
 
 		//Set wall
-		portal->SetWall(hit.block.actor);
+		portal->SetWall(hit.block.shape);
 	}
 }
 
@@ -99,14 +99,14 @@ void PortalGun::Initialize(const SceneContext&)
 	//Portal 1
 	//***********
 	m_pBluePortal = new Portal(PortalType::Blue, nullptr, m_pCharacter);
-	m_pBluePortal->GetTransform()->Rotate(0, 180.f, 0);
-	m_pBluePortal->GetTransform()->Translate(15, 2.5, 20);
+	m_pBluePortal->GetTransform()->Rotate(0, 0, 0);
+	m_pBluePortal->GetTransform()->Translate(25.f, -7.3f, 39.2f);
 
 	//Portal 2
 	//***********
 	m_pOrangePortal = new Portal(PortalType::Orange, m_pBluePortal, m_pCharacter);
-	m_pOrangePortal->GetTransform()->Rotate(0, 45.f, 0);
-	m_pOrangePortal->GetTransform()->Translate(5, 2.5, 5);
+	m_pOrangePortal->GetTransform()->Rotate(0, -90.f, 0);
+	m_pOrangePortal->GetTransform()->Translate(5.f, -7.3f, 35.f);
 
 	m_pBluePortal->SetLinkedPortal(m_pOrangePortal);
 
@@ -123,4 +123,14 @@ void PortalGun::Update(const SceneContext&)
 std::pair<Portal*, Portal*> PortalGun::GetPortals() const
 {
 	return std::pair(m_pBluePortal, m_pOrangePortal);
+}
+
+void PortalGun::SetBluePortalWall(PxShape* wall)
+{
+	m_pBluePortal->SetWall(wall);
+}
+
+void PortalGun::SetOrangePortalWall(PxShape* wall)
+{
+	m_pOrangePortal->SetWall(wall);
 }

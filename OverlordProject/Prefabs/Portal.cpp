@@ -74,7 +74,7 @@ void Portal::Initialize(const SceneContext& sceneContext)
 	auto pDefaultMaterial = physx.createMaterial(0.5f, 0.5f, 0.5f);
 
 	auto overlapRB = AddComponent(new RigidBodyComponent(true));
-	overlapRB->AddCollider(PxBoxGeometry{ 0.7f, 0.8f, 1.f }, *pDefaultMaterial, true);
+	overlapRB->AddCollider(PxBoxGeometry{ 0.7f, 0.7f, 1.f }, *pDefaultMaterial, true);
 	overlapRB->GetPxRigidActor()->setName("PortalRB"); //important, because otherwise you can make new portals with gun on this RB
 
 	auto function = [=](GameObject*, GameObject* pOtherObject, PxTriggerAction action)
@@ -170,13 +170,13 @@ void Portal::DoCollisionLogic(const SceneContext&)
 {
 	if (m_CharacterEntered)
 	{
-		m_pWall->setGlobalPose(PxTransform(PxVec3{ -100,-100,-100 }));
+		m_pWall->setLocalPose(PxTransform(PxVec3{ -1000,-1000,-1000 }));
 		std::cout << "Entered collision zone \n";
 		m_CharacterEntered = false;
 	}
 	if (m_CharacterLeft)
 	{
-		m_pWall->setGlobalPose(m_pWallTransform);
+		m_pWall->setLocalPose(m_WallPos);
 		std::cout << "Left collision zone \n";
 		m_CharacterLeft = false;
 	}
@@ -207,10 +207,10 @@ void Portal::SetNearClipPlane()
 	m_pCameraComponent->SetClipPlane(clipPlane);
 }
 
-void Portal::SetWall(PxRigidActor* wall)
+void Portal::SetWall(PxShape* wall)
 {
 	m_pWall = wall;
-	m_pWallTransform = m_pWall->getGlobalPose();
+	m_WallPos = m_pWall->getLocalPose();
 }
 
 void Portal::DoTeleportingLogic(const SceneContext&)
@@ -252,7 +252,7 @@ void Portal::DoTeleportingLogic(const SceneContext&)
 		// Calculate the length (3D distance from player and portal)
 		XMVECTOR length = XMVector3Length(playerRelativePos);
 		float lengthValue = XMVectorGetX(length);
-		if (lengthValue <= 2.f)
+		if (lengthValue <= 3.f)
 		{
 			//TP to other portal
 			m_pCharacter->SetTpCooldown(1.f);

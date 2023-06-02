@@ -15,5 +15,5 @@ void DiffuseMaterial::SetDiffuseTexture(const std::wstring& assetFile)
 
 void DiffuseMaterial::InitializeEffectVariables()
 {
-		//const auto effectDiffuse = m_pEffect->GetVariableByName("gDiffuseMap");
+
 }

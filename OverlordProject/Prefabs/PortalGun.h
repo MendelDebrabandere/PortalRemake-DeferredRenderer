@@ -20,6 +20,10 @@ public:
 
 	std::pair<Portal*, Portal*> GetPortals() const;
 
+	//Only used at start for blue portal that is sitting on a black wall
+	void SetBluePortalWall(PxShape* wall);
+	void SetOrangePortalWall(PxShape* wall);
+
 protected:
 	void Initialize(const SceneContext&) override;
 	void Update(const SceneContext&) override;

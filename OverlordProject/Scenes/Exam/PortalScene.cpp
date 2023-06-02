@@ -12,14 +12,24 @@ void PortalScene::Initialize()
 {
 	// Game settings
 	//m_SceneContext.settings.showInfoOverlay = true;
-	m_SceneContext.settings.drawPhysXDebug = true;
+	m_SceneContext.settings.drawPhysXDebug = false;
 	m_SceneContext.settings.drawGrid = false;
-	m_SceneContext.settings.enableOnGUI = true;
+	m_SceneContext.settings.enableOnGUI = false;
 
 	m_SceneContext.pLights->SetDirectionalLight({ -95.6139526f,66.1346436f,-41.1850471f }, { 0.740129888f, -0.597205281f, 0.309117377f });
 
-	InitLevel();
+	//in this order because the level uses the portalgun object in init of no portal walls for start game
 	InitCharacter(true, 10);
+	InitLevel();
+
+
+	//Sprite on screen
+	m_pSprite = new GameObject();
+	m_pSprite->AddComponent(new SpriteComponent(L"Textures/PortalCrosshair.png", { 0.5f,0.5f }, { 1.f,1.f,1.f,1.f }));
+	AddChild(m_pSprite);
+
+	m_pSprite->GetTransform()->Translate(1280 / 2.f, 720 / 2.f, 1.);
+	m_pSprite->GetTransform()->Scale(1.f, 1.f, 1.f);
 
 }
 
@@ -46,219 +56,221 @@ void PortalScene::InitLevel()
 	// Default physics material
 	const auto pDefaultMaterial = PxGetPhysics().createMaterial(0.5f, 0.5f, 0.5f);
 
-
-	// Floor settings
-	constexpr XMFLOAT4	floorColor{ 0.3f,0.3f,0.3f,1.f };
-	constexpr XMFLOAT2	floorSize{ 100,100 };
-
-	// Walls settings
-	constexpr XMFLOAT4	wallColor{ 0.8f,0.8f,0.8f,1.f };
-	constexpr XMFLOAT2	wallSize{ 30,30 };
-	constexpr XMFLOAT2	wall1Pos{ 10,10 };
-	constexpr float		wall1Rot{ 45 };
-	constexpr XMFLOAT2	wall2Pos{ -10,-10 };
-	constexpr float		wall2Rot{ 45 };
-
-
-
-	// Floor creation
-	m_pFloor = new CubePrefab(floorSize.x, 1, floorSize.y, floorColor);
-	m_pFloor->GetTransform()->Translate(0, -0.5F, 0);
-	auto floorRB = m_pFloor->AddComponent(new RigidBodyComponent(true));
-	floorRB->AddCollider(PxBoxGeometry{ floorSize.x / 2, 1 / 2.f, floorSize.y / 2 }, *pDefaultMaterial);
-	AddChild(m_pFloor);
-
-	// Wall1 creation
-	m_pWall1 = new CubePrefab(wallSize.x, wallSize.y, 1, wallColor);
-	m_pWall1->GetTransform()->Translate(wall1Pos.x, wallSize.y / 2, wall1Pos.y);
-	m_pWall1->GetTransform()->Rotate(0, wall1Rot, 0);
-	auto wall1RB = m_pWall1->AddComponent(new RigidBodyComponent(true));
-	wall1RB->AddCollider(PxBoxGeometry{ wallSize.x / 2, wallSize.y / 2, 1 / 2.f }, *pDefaultMaterial);
-	AddChild(m_pWall1);
-
-	// Wall2 creation
-	m_pWall2 = new CubePrefab(wallSize.x, wallSize.y, 1, wallColor);
-	m_pWall2->GetTransform()->Translate(wall2Pos.x, wallSize.y / 2, wall2Pos.y);
-	m_pWall2->GetTransform()->Rotate(0, wall2Rot, 0);
-	auto wall2RB = m_pWall2->AddComponent(new RigidBodyComponent(true));
-	wall2RB->AddCollider(PxBoxGeometry{ wallSize.x / 2, wallSize.y / 2, 1 / 2.f }, *pDefaultMaterial);
- 	AddChild(m_pWall2);
-
-	// Wall3 creation
-	auto wall3 = new CubePrefab(wallSize.x, wallSize.y, 1, wallColor);
-	wall3->GetTransform()->Translate(-40,0, 40);
-	wall3->GetTransform()->Rotate(80, wall2Rot, 0);
-	auto wall3RB = wall3->AddComponent(new RigidBodyComponent(true));
-	wall3RB->AddCollider(PxBoxGeometry{ wallSize.x / 2, wallSize.y / 2, 1 / 2.f }, *pDefaultMaterial);
-	AddChild(wall3);
-
-	// Wall4 creation
-	auto wall4 = new CubePrefab(wallSize.x, wallSize.y, 8, wallColor);
-	wall4->GetTransform()->Translate(-30, 5, 40);
-	wall4->GetTransform()->Rotate(0, 20, 0);
-	auto wall4RB = wall4->AddComponent(new RigidBodyComponent(true));
-	wall4RB->AddCollider(PxBoxGeometry{ wallSize.x / 2, wallSize.y / 2, 8 / 2.f }, *pDefaultMaterial);
-	AddChild(wall4);
-
-	// Roof creation
-	auto roof = new CubePrefab(wallSize.x, 5, wallSize.x, wallColor);
-	roof->GetTransform()->Translate(0, wallSize.y, 0);
-	roof->GetTransform()->Rotate(0, 45, 0);
-	auto roof4RB = roof->AddComponent(new RigidBodyComponent(true));
-	roof4RB->AddCollider(PxBoxGeometry{ wallSize.x / 2, 5 / 2, wallSize.x / 2.f }, *pDefaultMaterial);
-	AddChild(roof);
-
-	//CHAIR
-	DiffuseMaterial* pMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
-	//Set texture of the material
-	pMaterial->SetDiffuseTexture(L"textures/Chair_Dark.dds");
-
-	auto pChair = new GameObject();
-	const auto component = new ModelComponent(L"Meshes/Chair.ovm");
-	component->SetMaterial(pMaterial);
-	pChair->AddComponent<ModelComponent>(component);
-	pChair->GetTransform()->Translate(18, -3, 35);
-	AddChild(pChair);
-
 	//Cube
-	DiffuseMaterial* pCubeMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
-	//Set texture of the material
-	pCubeMaterial->SetDiffuseTexture(L"textures/PortalCube.jpg");
+	{
+		DiffuseMaterial* pCubeMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
+		//Set texture of the material
+		pCubeMaterial->SetDiffuseTexture(L"textures/PortalCube.jpg");
 
-	auto pCube = AddChild(new GameObject());
-	pCube->SetTag(L"Cube");
+		auto pCube = AddChild(new GameObject());
+		pCube->SetTag(L"Cube");
 
-	//Mesh
-	const auto CubeMeshComponent = new ModelComponent(L"Meshes/PortalCube.ovm");
-	CubeMeshComponent->SetMaterial(pCubeMaterial);
-	pCube->AddComponent<ModelComponent>(CubeMeshComponent);
+		//Mesh
+		const auto CubeMeshComponent = new ModelComponent(L"Meshes/PortalCube.ovm");
+		CubeMeshComponent->SetMaterial(pCubeMaterial);
+		pCube->AddComponent<ModelComponent>(CubeMeshComponent);
 
-	//RigidBody
-	const auto pConvexMesh = ContentManager::Load<PxConvexMesh>(L"Meshes/PortalCube.ovpc");
-	const auto convexGeometry{ PxConvexMeshGeometry{ pConvexMesh } };
-	auto cubeRB = pCube->AddComponent(new RigidBodyComponent(false));
-	cubeRB->AddCollider(convexGeometry, *pDefaultMaterial);
-	cubeRB->GetPxRigidActor()->setName("CubeRB");
-	pCube->GetTransform()->Translate(5, 10, -5.f);
-
+		//RigidBody
+		const auto pConvexMesh = ContentManager::Load<PxConvexMesh>(L"Meshes/PortalCube.ovpc");
+		const auto convexGeometry{ PxConvexMeshGeometry{ pConvexMesh } };
+		auto cubeRB = pCube->AddComponent(new RigidBodyComponent(false));
+		cubeRB->AddCollider(convexGeometry, *pDefaultMaterial);
+		cubeRB->GetPxRigidActor()->setName("CubeRB");
+		pCube->GetTransform()->Translate(60, 40, 90.f);
+	}
 
 	//Door
-	DiffuseMaterial* pDoorMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
-	//Set texture of the material
-	pDoorMaterial->SetDiffuseTexture(L"textures/portal_door.jpeg");
-
-	auto pDoor = AddChild(new GameObject());
-
-	//Mesh
-	const auto doorMeshComponent = new ModelComponent(L"Meshes/door.ovm");
-	doorMeshComponent->SetMaterial(pDoorMaterial);
-	pDoor->AddComponent<ModelComponent>(doorMeshComponent);
-
-	//RigidBody
-	const auto pDoorConvexMesh = ContentManager::Load<PxConvexMesh>(L"Meshes/door.ovpc");
-	const auto doorConvexGeometry{ PxConvexMeshGeometry{ pDoorConvexMesh } };
-	auto doorRB = pDoor->AddComponent(new RigidBodyComponent(true));
-	doorRB->AddCollider(doorConvexGeometry, *pDefaultMaterial);
-	doorRB->GetPxRigidActor()->setName("DoorRB");
-	pDoor->GetTransform()->Translate(25, 0, 0.f);
-	pDoor->GetTransform()->Rotate(0, 0, 0);
-
-	doorRB->AddCollider(PxBoxGeometry{5.f, 8.f, 2.6f }, * pDefaultMaterial, true);
-
-	auto doorFunction = [=](GameObject*, GameObject* pOtherObject, PxTriggerAction action)
 	{
-		//IF IT IS THE CUBE
-		if (action == PxTriggerAction::ENTER && m_ButtonIsTriggered)
+		DiffuseMaterial* pDoorMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
+		//Set texture of the material
+		pDoorMaterial->SetDiffuseTexture(L"textures/portal_door.jpeg");
+
+		auto pDoor = AddChild(new GameObject());
+
+		//Mesh
+		const auto doorMeshComponent = new ModelComponent(L"Meshes/door.ovm");
+		doorMeshComponent->SetMaterial(pDoorMaterial);
+		pDoor->AddComponent<ModelComponent>(doorMeshComponent);
+
+		//RigidBody
+		const auto pDoorConvexMesh = ContentManager::Load<PxConvexMesh>(L"Meshes/door.ovpc");
+		const auto doorConvexGeometry{ PxConvexMeshGeometry{ pDoorConvexMesh } };
+		auto doorRB = pDoor->AddComponent(new RigidBodyComponent(true));
+		doorRB->AddCollider(doorConvexGeometry, *pDefaultMaterial);
+		doorRB->GetPxRigidActor()->setName("DoorRB");
+		pDoor->GetTransform()->Translate(72.f, 0, 51.f);
+		pDoor->GetTransform()->Rotate(0, 90, 0);
+
+		doorRB->AddCollider(PxBoxGeometry{ 5.f, 8.f, 2.6f }, *pDefaultMaterial, true);
+
+		auto doorFunction = [=](GameObject*, GameObject* pOtherObject, PxTriggerAction action)
 		{
-			if (pOtherObject->GetTag() == L"Player")
+			//IF IT IS THE CUBE
+			if (action == PxTriggerAction::ENTER && m_ButtonIsTriggered)
 			{
-				//GO TO MAIN MENU
-				SceneManager::Get()->SetActiveGameScene(L"MainMenuScene");
+				if (pOtherObject->GetTag() == L"Player")
+				{
+					//GO TO MAIN MENU
+					SceneManager::Get()->SetActiveGameScene(L"MainMenuScene");
+				}
 			}
-		}
-	};
+		};
 
-	pDoor->SetOnTriggerCallBack(doorFunction);
-
-
+		pDoor->SetOnTriggerCallBack(doorFunction);
+	}
 
 	//Button
-	DiffuseMaterial* pButtonMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
-	//Set texture of the material
-	pButtonMaterial->SetDiffuseTexture(L"textures/portal_button.jpeg");
-
-	auto pButton = AddChild(new GameObject());
-
-	//Mesh
-	const auto buttonMeshComponent = new ModelComponent(L"Meshes/button.ovm");
-	buttonMeshComponent->SetMaterial(pButtonMaterial);
-	pButton->AddComponent<ModelComponent>(buttonMeshComponent);
-
-	//RigidBody
-	const auto pButtonConvexMesh = ContentManager::Load<PxConvexMesh>(L"Meshes/button.ovpc");
-	const auto buttonConvexGeometry{ PxConvexMeshGeometry{ pButtonConvexMesh } };
-	auto buttonRB = pButton->AddComponent(new RigidBodyComponent(true));
-	buttonRB->AddCollider(buttonConvexGeometry, *pDefaultMaterial);
-	buttonRB->GetPxRigidActor()->setName("ButtonRB");
-	pButton->GetTransform()->Translate(17, 0, -23.f);
-	pButton->GetTransform()->Rotate(0, 0, 0);
-	buttonRB->AddCollider(PxBoxGeometry{ 2.3f, 2.2f, 2.3f }, * pDefaultMaterial, true);
-
-
-	auto buttonFunction = [=](GameObject*, GameObject* pOtherObject, PxTriggerAction action)
 	{
-		auto pFmod = SoundManager::Get()->GetSystem();
-		FMOD::Sound* pSound{};
+		DiffuseMaterial* pButtonMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
+		//Set texture of the material
+		pButtonMaterial->SetDiffuseTexture(L"textures/portal_button.jpeg");
 
-		//IF IT IS THE CUBE
-		auto rb = pOtherObject->GetComponent<RigidBodyComponent>();
-		if (rb)
+		auto pButton = AddChild(new GameObject());
+
+		//Mesh
+		const auto buttonMeshComponent = new ModelComponent(L"Meshes/button.ovm");
+		buttonMeshComponent->SetMaterial(pButtonMaterial);
+		pButton->AddComponent<ModelComponent>(buttonMeshComponent);
+
+		//RigidBody
+		const auto pButtonConvexMesh = ContentManager::Load<PxConvexMesh>(L"Meshes/button.ovpc");
+		const auto buttonConvexGeometry{ PxConvexMeshGeometry{ pButtonConvexMesh } };
+		auto buttonRB = pButton->AddComponent(new RigidBodyComponent(true));
+		buttonRB->AddCollider(buttonConvexGeometry, *pDefaultMaterial);
+		buttonRB->GetPxRigidActor()->setName("ButtonRB");
+		pButton->GetTransform()->Translate(62, 0, 15.f);
+		pButton->GetTransform()->Rotate(0, 0, 0);
+		buttonRB->AddCollider(PxBoxGeometry{ 2.3f, 2.2f, 2.3f }, *pDefaultMaterial, true);
+
+
+		auto buttonFunction = [=](GameObject*, GameObject* pOtherObject, PxTriggerAction action)
 		{
-			auto name = rb->GetPxRigidActor()->getName();
-			if (name)
+			auto pFmod = SoundManager::Get()->GetSystem();
+			FMOD::Sound* pSound{};
+
+			//IF IT IS THE CUBE
+			auto rb = pOtherObject->GetComponent<RigidBodyComponent>();
+			if (rb)
 			{
-				if (std::string(name) == "CubeRB")
+				auto name = rb->GetPxRigidActor()->getName();
+				if (name)
 				{
-					if (action == PxTriggerAction::ENTER)
+					if (std::string(name) == "CubeRB")
 					{
-						m_ButtonIsTriggered = true;
-						pFmod->createStream("Resources/sound/ButtonPressed.mp3", FMOD_DEFAULT, nullptr, &pSound);
-					}
-					if (action == PxTriggerAction::LEAVE)
-					{
-						m_ButtonIsTriggered = false;
-						pFmod->createStream("Resources/sound/ButtonReleased.mp3", FMOD_DEFAULT, nullptr, &pSound);
+						if (action == PxTriggerAction::ENTER)
+						{
+							m_ButtonIsTriggered = true;
+							pFmod->createStream("Resources/sound/ButtonPressed.mp3", FMOD_DEFAULT, nullptr, &pSound);
+						}
+						if (action == PxTriggerAction::LEAVE)
+						{
+							m_ButtonIsTriggered = false;
+							pFmod->createStream("Resources/sound/ButtonReleased.mp3", FMOD_DEFAULT, nullptr, &pSound);
+						}
 					}
 				}
 			}
-		}
 
-		if (pSound)
-		{
-			pFmod->playSound(pSound, nullptr, false, &m_pChannelAudio);
-			m_pChannelAudio->setVolume(0.1f);
-		}
-	};
+			if (pSound)
+			{
+				pFmod->playSound(pSound, nullptr, false, &m_pChannelAudio);
+				m_pChannelAudio->setVolume(0.1f);
+			}
+		};
 
-	pButton->SetOnTriggerCallBack(buttonFunction);
+		pButton->SetOnTriggerCallBack(buttonFunction);
+	}
 
+	//level
+	{
+		DiffuseMaterial* pLevelMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
+		//Set texture of the material
+		pLevelMaterial->SetDiffuseTexture(L"textures/WallTextureWhite.jpg");
 
+		const auto levelModel = new ModelComponent(L"Meshes/PortalLevel.ovm");
+		levelModel->SetMaterial(pLevelMaterial);
+		auto pLevel = new GameObject();
+		pLevel->AddComponent<ModelComponent>(levelModel);
+		pLevel->GetComponent<TransformComponent>()->Rotate(0, -90, 0);
+		AddChild(pLevel);
+		//RigidBody
+		//
+		//I want to just add a RB but for some reason the .ovpc doesnt work, so i will have to place them all manualy :(
+		//A lot of ugly hard coded values :(
+		//
+		//const auto pLevelConvexMesh = ContentManager::Load<PxConvexMesh>(L"Meshes/PortalLevel.ovpc");
+		//const auto pLevelConvexGeometry{ PxConvexMeshGeometry{ pLevelConvexMesh } };
+		auto pLevelRB = pLevel->AddComponent(new RigidBodyComponent(true)); /*->AddCollider(pLevelConvexGeometry, *pDefaultMaterial);*/
+		pLevelRB->AddCollider(PxBoxGeometry{ 14.8f, 10 ,40 }, *pDefaultMaterial, false, PxTransform(10, -9.9f, -35)); // Start floor
+		pLevelRB->AddCollider(PxBoxGeometry{ 10.f, 2, 40 }, *pDefaultMaterial, false, PxTransform(30, -11.8f, -35)); // Drop down floor
+		pLevelRB->AddCollider(PxBoxGeometry{ 35.f, 10, 40 }, *pDefaultMaterial, false, PxTransform(74.5f, -9.9f, -35)); // Other side floor
 
+		pLevelRB->AddCollider(PxBoxGeometry{ 2, 32, 40 }, *pDefaultMaterial, false, PxTransform(3.f, 20.f, -35)); // Back wall
+		pLevelRB->AddCollider(PxBoxGeometry{ 2, 32, 40 }, *pDefaultMaterial, false, PxTransform(105.9f, 20.f, -35)); // Front wall
+		UINT colliderID = pLevelRB->AddCollider(PxBoxGeometry{ 60, 32, 2 }, *pDefaultMaterial, false, PxTransform(55.f, 20.f, -3)); // Left wall
+		pLevelRB->AddCollider(PxBoxGeometry{ 60, 32, 2 }, *pDefaultMaterial, false, PxTransform(55.f, 20.f, -73.8f)); // Right wall
 
+		pLevelRB->AddCollider(PxBoxGeometry{ 8.69f, 14.7f, 30 }, *pDefaultMaterial, false, PxTransform(68.08f, 10.1f, -54.7f)); // Middle Wall Bottom part
+		pLevelRB->AddCollider(PxBoxGeometry{ 8.69f, 6.3f, 30 }, *pDefaultMaterial, false, PxTransform(68.08f, 45.9f, -54.7f)); // Middle Wall Top part
+		pLevelRB->AddCollider(PxBoxGeometry{ 8.69f, 7.5f, 12.4f }, *pDefaultMaterial, false, PxTransform(68.08f, 32.f, -37.1f)); // Middle Wall Left part
+		pLevelRB->AddCollider(PxBoxGeometry{ 8.69f, 7.5f, 4.f }, *pDefaultMaterial, false, PxTransform(68.08f, 32.f, -68.4f)); // Middle Wall Right part
 
-	////level
-	//const auto model = new ModelComponent(L"Meshes/PortalLevel.ovm");
-	//model->SetMaterial(pMaterial);
-	//auto pLevel = new GameObject();
-	//pLevel->AddComponent<ModelComponent>(model);
-	//pLevel->GetComponent<TransformComponent>()->Translate(0.0f, 15.0f, 0.0f);
-	//pLevel->GetComponent<TransformComponent>()->Rotate(0, 90, 0);
-	//pLevel->GetComponent<TransformComponent>()->Scale(0.03f, 0.03f, 0.03f);
-	////RigidBody
-	//const auto pConvexMesh = ContentManager::Load<PxConvexMesh>(L"Meshes/PortalLevel.ovpc");
-	//const auto convexGeometry{ PxConvexMeshGeometry{ pConvexMesh } };
-	//pLevel->AddComponent(new RigidBodyComponent())->AddCollider(convexGeometry, *pDefaultMaterial);
-	//AddChild(pLevel);
+		pLevelRB->AddCollider(PxBoxGeometry{ 14.f, 14.7f, 20 }, *pDefaultMaterial, false, PxTransform(90.7f, 10.1f, -64.5f)); // Back elevated part
+
+		//Set to left wall
+		m_pPortalGun->SetOrangePortalWall(pLevelRB->GetCollider(colliderID).GetShape());
+
+	}
+
+	//No portal walls
+	{
+		DiffuseMaterial* pWallMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
+		//Set texture of the material
+		pWallMaterial->SetDiffuseTexture(L"textures/NoPortal.png");
+
+		auto pWalls = AddChild(new GameObject());
+		pWalls->SetTag(L"Walls");
+
+		//Mesh
+		const auto wallMeshComponent = new ModelComponent(L"Meshes/NoPortalWalls.ovm");
+		wallMeshComponent->SetMaterial(pWallMaterial);
+		pWalls->AddComponent<ModelComponent>(wallMeshComponent);
+
+		//RigidBody
+		const auto pConvexMesh = ContentManager::Load<PxTriangleMesh>(L"Meshes/NoPortalWalls.ovpt");
+		const auto convexGeometry{ PxTriangleMeshGeometry{ pConvexMesh } };
+		auto wallRB = pWalls->AddComponent(new RigidBodyComponent(true));
+		UINT colliderID = wallRB->AddCollider(convexGeometry, *pDefaultMaterial);
+		wallRB->GetPxRigidActor()->setName("WallsRB");
+		pWalls->GetTransform()->Rotate(0, -90, 0);
+
+		m_pPortalGun->SetBluePortalWall(wallRB->GetCollider(colliderID).GetShape());
+	}
+
+	//Glass Cage
+	{
+		DiffuseMaterial* pCubeMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
+		//Set texture of the material
+		pCubeMaterial->SetDiffuseTexture(L"textures/Glass.png");
+		pCubeMaterial->SetTechnique(L"TransparencyTech");
+
+		auto pCube = AddChild(new GameObject());
+		pCube->SetTag(L"Glass");
+
+		//Mesh
+		const auto CubeMeshComponent = new ModelComponent(L"Meshes/GlassCage.ovm");
+		CubeMeshComponent->SetMaterial(pCubeMaterial);
+		pCube->AddComponent<ModelComponent>(CubeMeshComponent);
+
+		//RigidBody
+		const auto pConvexMesh = ContentManager::Load<PxTriangleMesh>(L"Meshes/GlassCage.ovpt");
+		const auto convexGeometry{ PxTriangleMeshGeometry{ pConvexMesh } };
+		auto cubeRB = pCube->AddComponent(new RigidBodyComponent(true));
+		cubeRB->AddCollider(convexGeometry, *pDefaultMaterial);
+		cubeRB->GetPxRigidActor()->setName("GlassRB");
+		pCube->GetTransform()->Rotate(0, -90, 0);
+		pCube->GetTransform()->Translate(0, 1.2f, 0);
+	}
 }
 
 void PortalScene::InitCharacter(bool controlCamera, float mouseSens)
@@ -287,7 +299,7 @@ void PortalScene::InitCharacter(bool controlCamera, float mouseSens)
 	characterDesc.controller.height = 2.7f;
 
 	m_pCharacter = AddChild(new Character(characterDesc));
-	m_pCharacter->GetTransform()->Translate(0.f, 5.f, 0.f);
+	m_pCharacter->GetTransform()->Translate(25.f, -7.3f, 25.f);
 
 	// Character input
 	auto inputAction = InputAction(CharacterMoveLeft, InputState::down, 'A');
@@ -313,14 +325,6 @@ void PortalScene::InitCharacter(bool controlCamera, float mouseSens)
 	// Add protalgun
 	m_pPortalGun = new PortalGun(this, m_pCharacter);
 	m_pCharacter->AddChild(m_pPortalGun);
-
-	//Sprite on screen
-	m_pSprite = new GameObject();
-	m_pSprite->AddComponent(new SpriteComponent(L"Textures/PortalCrosshair.png", { 0.5f,0.5f }, { 1.f,1.f,1.f,1.f }));
-	AddChild(m_pSprite);
-
-	m_pSprite->GetTransform()->Translate(1280 / 2.f, 720 / 2.f, 1.);
-	m_pSprite->GetTransform()->Scale(1.f, 1.f, 1.f);
 }
 
 void PortalScene::PostDraw()

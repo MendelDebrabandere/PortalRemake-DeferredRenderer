@@ -32,7 +32,7 @@ public:
 
 	void SetNearClipPlane();
 
-	void SetWall(PxRigidActor* wall);
+	void SetWall(PxShape* wall);
 
 private:
 	void DoCameraRotations(const SceneContext&);
@@ -57,8 +57,8 @@ private:
 
 	XMFLOAT4 m_Color{};
 
-	PxRigidActor* m_pWall{};
-	PxTransform m_pWallTransform{};
+	PxShape* m_pWall{};
+	PxTransform m_WallPos{};
 
 	const float PI{ 3.141592653589793238462643383279502884197f };
 };

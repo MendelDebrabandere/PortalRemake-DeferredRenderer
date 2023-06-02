@@ -34,6 +34,12 @@ DepthStencilState EnableDepth
 	DepthWriteMask = ALL;
 };
 
+DepthStencilState TransparentDepth
+{
+	DepthEnable = TRUE;
+	DepthWriteMask = ZERO;
+};
+
 RasterizerState NoCulling
 {
 	CullMode = NONE;
@@ -42,6 +48,17 @@ RasterizerState NoCulling
 BlendState NoBlending
 {
 	BlendEnable[0] = FALSE;
+};
+
+BlendState EnableBlending
+{
+	BlendEnable[0] = TRUE;
+	SrcBlend = SRC_ALPHA;
+	DestBlend = INV_SRC_ALPHA;
+	BlendOp = ADD;
+	SrcBlendAlpha = ONE;
+	DestBlendAlpha = ZERO;
+	BlendOpAlpha = ADD;
 };
 
 //--------------------------------------------------------------------------------------
@@ -93,5 +110,19 @@ technique11 Default
 		SetGeometryShader( NULL );
 		SetPixelShader( CompileShader( ps_4_0, PS() ) );
     }
+}
+
+technique11 TransparencyTech
+{
+	pass P0
+	{
+		SetRasterizerState(NoCulling);
+		SetDepthStencilState(TransparentDepth, 0);
+		SetBlendState(EnableBlending, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
+
+		SetVertexShader(CompileShader(vs_4_0, VS()));
+		SetGeometryShader(NULL);
+		SetPixelShader(CompileShader(ps_4_0, PS()));
+	}
 }
 
