@@ -49,6 +49,12 @@ void PortalScene::Update()
 	auto portalPair = m_pPortalGun->GetPortals();
 	m_pBluePortal = portalPair.first;
 	m_pOrangePortal = portalPair.second;
+
+
+	if (InputManager::IsKeyboardKey(InputState::pressed, 27)) // ESC BUTTON = 27
+	{
+		SceneManager::Get()->SetActiveGameScene(L"MainMenuScene");
+	}
 }
 
 void PortalScene::InitLevel()
@@ -105,7 +111,7 @@ void PortalScene::InitLevel()
 
 		auto doorFunction = [=](GameObject*, GameObject* pOtherObject, PxTriggerAction action)
 		{
-			//IF IT IS THE CUBE
+			//IF THE BUTTON IS PRESSED
 			if (action == PxTriggerAction::ENTER && m_ButtonIsTriggered)
 			{
 				if (pOtherObject->GetTag() == L"Player")
@@ -201,9 +207,9 @@ void PortalScene::InitLevel()
 		//const auto pLevelConvexMesh = ContentManager::Load<PxConvexMesh>(L"Meshes/PortalLevel.ovpc");
 		//const auto pLevelConvexGeometry{ PxConvexMeshGeometry{ pLevelConvexMesh } };
 		auto pLevelRB = pLevel->AddComponent(new RigidBodyComponent(true)); /*->AddCollider(pLevelConvexGeometry, *pDefaultMaterial);*/
-		pLevelRB->AddCollider(PxBoxGeometry{ 14.8f, 10 ,40 }, *pDefaultMaterial, false, PxTransform(10, -9.9f, -35)); // Start floor
-		pLevelRB->AddCollider(PxBoxGeometry{ 10.f, 2, 40 }, *pDefaultMaterial, false, PxTransform(30, -11.8f, -35)); // Drop down floor
-		pLevelRB->AddCollider(PxBoxGeometry{ 35.f, 10, 40 }, *pDefaultMaterial, false, PxTransform(74.5f, -9.9f, -35)); // Other side floor
+		pLevelRB->AddCollider(PxBoxGeometry{ 14.8f, 10 ,40 }, *pDefaultMaterial, false, PxTransform(10, -10.f, -35)); // Start floor
+		//pLevelRB->AddCollider(PxBoxGeometry{ 10.f, 2, 40 }, *pDefaultMaterial, false, PxTransform(30, -11.7f, -35)); // Drop down floor
+		pLevelRB->AddCollider(PxBoxGeometry{ 35.f, 10, 40 }, *pDefaultMaterial, false, PxTransform(74.5f, -10.f, -35)); // Other side floor
 
 		pLevelRB->AddCollider(PxBoxGeometry{ 2, 32, 40 }, *pDefaultMaterial, false, PxTransform(3.f, 20.f, -35)); // Back wall
 		pLevelRB->AddCollider(PxBoxGeometry{ 2, 32, 40 }, *pDefaultMaterial, false, PxTransform(105.9f, 20.f, -35)); // Front wall

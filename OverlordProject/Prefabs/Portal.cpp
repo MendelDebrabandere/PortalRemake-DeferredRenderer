@@ -193,13 +193,11 @@ void Portal::DoCollisionLogic(const SceneContext&)
 	if (m_CharacterEntered)
 	{
 		m_pWall->setLocalPose(PxTransform(PxVec3{ -1000,-1000,-1000 }));
-		std::cout << "Entered collision zone \n";
 		m_CharacterEntered = false;
 	}
 	if (m_CharacterLeft)
 	{
 		m_pWall->setLocalPose(m_WallPos);
-		std::cout << "Left collision zone \n";
 		m_CharacterLeft = false;
 	}
 }
@@ -320,7 +318,6 @@ void Portal::DoTeleportingLogic(const SceneContext&)
 
 			m_pCharacter->SetVelocity(rotatedVector);
 
-			std::cout << "Teleporting player \n";
 		}
 	}
 }
@@ -384,7 +381,7 @@ void Portal::DoCubeLogic(const SceneContext&)
 		auto xmThisRotQuat = XMLoadFloat4(&thisRotQuat);
 
 		// Calculate the quaternion that brings quaternion1 to quaternion2
-		XMVECTOR rotationQuaternion = XMQuaternionMultiply(XMQuaternionConjugate(xmThisRotQuat), xmRotQuat);
+		XMVECTOR rotationQuaternion = XMQuaternionMultiply(xmThisRotQuat, xmRotQuat);
 
 		// Apply the rotation to the other vector
 		XMVECTOR xmRotatedQuat = XMQuaternionMultiply(rotationQuaternion, xmCubeRot);
@@ -410,7 +407,7 @@ void Portal::DoCubeLogic(const SceneContext&)
 		float siny_cosp = +2.0f * (rotatedQuat.w * rotatedQuat.z + rotatedQuat.x * rotatedQuat.y);
 		float cosy_cosp = +1.0f - 2.0f * (rotatedQuat.y * rotatedQuat.y + rotatedQuat.z * rotatedQuat.z);
 		yaw = atan2f(siny_cosp, cosy_cosp);
-
+		
 
 		m_pCube->GetTransform()->Rotate(pitch, yaw, roll, false); // These values are radians so passing false
 	}
