@@ -20,7 +20,7 @@ void Character::SetTpCooldown(float val)
 	pFmod->createStream("Resources/sound/Teleport.mp3", FMOD_DEFAULT, nullptr, &pSound);
 
 	pFmod->playSound(pSound, nullptr, false, &m_pChannelTeleport);
-	m_pChannelTeleport->setVolume(0.1f);
+	m_pChannelTeleport->setVolume(0.03f);
 }
 
 void Character::AddCameraRotation(float yaw, float pitch)

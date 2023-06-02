@@ -255,7 +255,7 @@ void Portal::DoTeleportingLogic(const SceneContext&)
 		if (lengthValue <= 3.f)
 		{
 			//TP to other portal
-			m_pCharacter->SetTpCooldown(1.f);
+			m_pCharacter->SetTpCooldown(0.01f);
 
 			//Calculate player relative pos to this portal
 			XMVECTOR xmThisRelativePos = xmCharacterPos - xmThisPortalPos;

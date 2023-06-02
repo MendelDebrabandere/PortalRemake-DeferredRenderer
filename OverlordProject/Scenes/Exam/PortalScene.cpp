@@ -174,7 +174,7 @@ void PortalScene::InitLevel()
 			if (pSound)
 			{
 				pFmod->playSound(pSound, nullptr, false, &m_pChannelAudio);
-				m_pChannelAudio->setVolume(0.1f);
+				m_pChannelAudio->setVolume(0.2f);
 			}
 		};
 
