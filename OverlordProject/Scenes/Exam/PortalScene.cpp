@@ -31,10 +31,10 @@ void PortalScene::Initialize()
 	m_pSprite->GetTransform()->Translate(1280 / 2.f, 720 / 2.f, 1.);
 	m_pSprite->GetTransform()->Scale(1.f, 1.f, 1.f);
 
-	//Brightness Post processing
-	auto postBrightness = MaterialManager::Get()->CreateMaterial<PostBrightness>();
-	AddPostProcessingEffect(postBrightness);
-	postBrightness->SetIsEnabled(true);
+	////Brightness Post processing
+	//auto postBrightness = MaterialManager::Get()->CreateMaterial<PostBrightness>();
+	//AddPostProcessingEffect(postBrightness);
+	//postBrightness->SetIsEnabled(true);
 }
 
 void PortalScene::Update()

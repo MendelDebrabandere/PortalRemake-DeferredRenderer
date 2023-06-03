@@ -72,6 +72,9 @@ technique11 Brightness
 {
     pass P0
     {
+        SetRasterizerState(BackfaceCulling);
+        SetDepthStencilState(EnableDepthWriting, 0);
+
         // Set states...
         SetVertexShader(CompileShader(vs_4_0, VS()));
         SetGeometryShader(NULL);
