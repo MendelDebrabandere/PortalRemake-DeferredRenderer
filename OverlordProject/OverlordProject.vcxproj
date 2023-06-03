@@ -93,6 +93,7 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Materials\Post\PostBrightness.cpp" />
     <ClCompile Include="Scenes\Exam\MainMenuScene.cpp" />
     <ClCompile Include="Materials\BasicMaterial.cpp" />
     <ClCompile Include="Materials\BasicMaterial_Deferred.cpp" />
@@ -101,7 +102,6 @@
     <ClCompile Include="Materials\Shadow\DiffuseMaterial_Shadow.cpp" />
     <ClCompile Include="Materials\Shadow\DiffuseMaterial_Shadow_Skinned.cpp" />
     <ClCompile Include="Materials\Post\PostBlur.cpp" />
-    <ClCompile Include="Materials\Post\PostBloom.cpp" />
     <ClCompile Include="Materials\Portal\PortalMaterial.cpp" />
     <ClCompile Include="Prefabs\PortalGun.cpp" />
     <ClCompile Include="Prefabs\Portal.cpp" />
@@ -155,6 +155,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Materials\Post\PostBrightness.h" />
     <ClInclude Include="Scenes\Exam\MainMenuScene.h" />
     <ClInclude Include="Materials\BasicMaterial.h" />
     <ClInclude Include="Materials\BasicMaterial_Deferred.h" />
@@ -163,7 +164,6 @@
     <ClInclude Include="Materials\Shadow\DiffuseMaterial_Shadow.h" />
     <ClInclude Include="Materials\Shadow\DiffuseMaterial_Shadow_Skinned.h" />
     <ClInclude Include="Materials\Post\PostBlur.h" />
-    <ClInclude Include="Materials\Post\PostBloom.h" />
     <ClInclude Include="Materials\Portal\PortalMaterial.h" />
     <ClInclude Include="Prefabs\PortalGun.h" />
     <ClInclude Include="Prefabs\Portal.h" />

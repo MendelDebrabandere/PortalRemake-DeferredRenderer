@@ -10,7 +10,6 @@
 
 #include "Materials/Post/PostGrayscale.h"
 #include "Materials/Post/PostBlur.h"
-#include "Materials/Post/PostBloom.h"
 
 void PostProcessingScene::Initialize()
 {
@@ -58,7 +57,6 @@ void PostProcessingScene::Initialize()
 	//=====================
 	m_pPostGrayscale = MaterialManager::Get()->CreateMaterial<PostGrayscale>();
 	m_pPostBlur = MaterialManager::Get()->CreateMaterial<PostBlur>();
-	m_pPostBloom = MaterialManager::Get()->CreateMaterial<PostBloom>();
 
 	//TODO_W10
 	//Create and add a PostBlur material class (using Blur.fx)
@@ -66,7 +64,6 @@ void PostProcessingScene::Initialize()
 	//If you already have shadow mapping working you can change the code above to use the shadow variant shaders
 	AddPostProcessingEffect(m_pPostGrayscale);
 	AddPostProcessingEffect(m_pPostBlur);
-	AddPostProcessingEffect(m_pPostBloom);
 }
 
 void PostProcessingScene::OnGUI()
@@ -79,7 +76,4 @@ void PostProcessingScene::OnGUI()
 	ImGui::Checkbox("Blur PP", &isEnabled);
 	m_pPostBlur->SetIsEnabled(isEnabled);
 
-	isEnabled = m_pPostBloom->IsEnabled();
-	ImGui::Checkbox("Bloom PP", &isEnabled);
-	m_pPostBloom->SetIsEnabled(isEnabled);
 }

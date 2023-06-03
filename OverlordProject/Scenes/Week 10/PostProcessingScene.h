@@ -20,6 +20,5 @@ protected:
 private:
 	PostBlur* m_pPostBlur{};
 	PostGrayscale* m_pPostGrayscale{};
-	PostBloom* m_pPostBloom{};
 };
 

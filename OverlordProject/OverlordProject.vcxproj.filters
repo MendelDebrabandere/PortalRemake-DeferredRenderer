@@ -38,12 +38,12 @@
     <ClCompile Include="Scenes\Week 10\PostProcessingScene.cpp" />
     <ClCompile Include="Materials\Post\PostGrayscale.cpp" />
     <ClCompile Include="Materials\Post\PostBlur.cpp" />
-    <ClCompile Include="Materials\Post\PostBloom.cpp" />
     <ClCompile Include="Scenes\Week 11\DeferredRenderingScene.cpp" />
     <ClCompile Include="Materials\BasicMaterial.cpp" />
     <ClCompile Include="Materials\BasicMaterial_Deferred.cpp" />
     <ClCompile Include="Materials\Portal\PortalMaterial.cpp" />
     <ClCompile Include="Scenes\Exam\MainMenuScene.cpp" />
+    <ClCompile Include="Materials\Post\PostBrightness.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainGame.h" />
@@ -82,11 +82,11 @@
     <ClInclude Include="Scenes\Week 10\PostProcessingScene.h" />
     <ClInclude Include="Materials\Post\PostGrayscale.h" />
     <ClInclude Include="Materials\Post\PostBlur.h" />
-    <ClInclude Include="Materials\Post\PostBloom.h" />
     <ClInclude Include="Scenes\Week 11\DeferredRenderingScene.h" />
     <ClInclude Include="Materials\BasicMaterial.h" />
     <ClInclude Include="Materials\BasicMaterial_Deferred.h" />
     <ClInclude Include="Materials\Portal\PortalMaterial.h" />
     <ClInclude Include="Scenes\Exam\MainMenuScene.h" />
+    <ClInclude Include="Materials\Post\PostBrightness.h" />
   </ItemGroup>
 </Project>

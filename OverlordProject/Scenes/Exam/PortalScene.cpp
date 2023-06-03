@@ -4,9 +4,9 @@
 #include "Materials/DiffuseMaterial.h"
 #include "Prefabs/Character.h"
 #include "Prefabs/PortalGun.h"
-#include "Prefabs/CubePrefab.h"
 #include "Prefabs/Portal.h"
 #include "Materials/Portal/PortalMaterial.h"
+#include "Materials/Post/PostBrightness.h"
 
 void PortalScene::Initialize()
 {
@@ -31,6 +31,10 @@ void PortalScene::Initialize()
 	m_pSprite->GetTransform()->Translate(1280 / 2.f, 720 / 2.f, 1.);
 	m_pSprite->GetTransform()->Scale(1.f, 1.f, 1.f);
 
+	//Brightness Post processing
+	auto postBrightness = MaterialManager::Get()->CreateMaterial<PostBrightness>();
+	AddPostProcessingEffect(postBrightness);
+	postBrightness->SetIsEnabled(true);
 }
 
 void PortalScene::Update()
