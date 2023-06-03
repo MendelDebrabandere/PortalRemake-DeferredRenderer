@@ -26,12 +26,10 @@ BlendState EnableBlending
 	DestBlend = INV_SRC_ALPHA;
 };
 
-
 struct VS_INPUT
 {
 	float3 pos : POSITION;
 	float2 texCoord : TEXCOORD;
-
 };
 
 struct PS_INPUT
@@ -60,12 +58,12 @@ PS_INPUT VS(VS_INPUT input)
 //--------------------------------------------------------------------------------------
 float4 PS(PS_INPUT input) : SV_TARGET
 {
-	float2 ssUV = (float2)0;
-	ssUV.x = input.screenPos.x / input.screenPos.w / 2.0f + 0.5f;
-	ssUV.y = -input.screenPos.y / input.screenPos.w / 2.0f + 0.5f;
+	float2 UVcoords;
+	UVcoords.x = input.screenPos.x / input.screenPos.w / 2.0f + 0.5f;
+	UVcoords.y = -input.screenPos.y / input.screenPos.w / 2.0f + 0.5f;
 
-	float3 sample = gTexture.Sample(samLinear, ssUV);
-	return float4(sample, 1.f);
+	float3 color = gTexture.Sample(samLinear, UVcoords);
+	return float4(color, 1.f);
 }
 
 //--------------------------------------------------------------------------------------
@@ -84,17 +82,3 @@ technique11 Default
 		SetPixelShader(CompileShader(ps_4_0, PS()));
 	}
 }
-
-//technique11 TransparencyTech
-//{
-//	pass P0
-//	{
-//		SetRasterizerState(NoCulling);
-//		SetDepthStencilState(EnableDepth, 0);
-//		SetBlendState(EnableBlending, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
-//
-//		SetVertexShader(CompileShader(vs_4_0, VS()));
-//		SetGeometryShader(NULL);
-//		SetPixelShader(CompileShader(ps_4_0, PS()));
-//	}
-//}

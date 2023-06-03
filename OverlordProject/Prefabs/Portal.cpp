@@ -52,10 +52,11 @@ void Portal::Initialize(const SceneContext& sceneContext)
 	m_pCameraObject->AddComponent(m_pCameraComponent);
 	m_pCameraObject->SetTag(L"PortalCam");
 
-	auto modelGO = m_pCameraObject->AddChild(new GameObject());
-	auto pModel = modelGO->AddComponent(new ModelComponent(L"Meshes/Arrow.ovm", false));
-	modelGO->GetTransform()->Translate(0.0f, 0.0f, -1.f);
-	pModel->SetMaterial(pColorMat);
+	////Camera arrow component for debugging
+	//auto modelGO = m_pCameraObject->AddChild(new GameObject());
+	//auto pModel = modelGO->AddComponent(new ModelComponent(L"Meshes/Arrow.ovm", false));
+	//modelGO->GetTransform()->Translate(0.0f, 0.0f, -1.f);
+	//pModel->SetMaterial(pColorMat);
 
 	//Screen
 	auto screenGO = AddChild(new GameObject());

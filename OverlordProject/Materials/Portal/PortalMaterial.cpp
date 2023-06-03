@@ -3,13 +3,8 @@
 
 
 PortalMaterial::PortalMaterial()
-	: Material<PortalMaterial>(L"Effects/Portal/PostPortal.fx")
+	: Material(L"Effects/Portal/Portal.fx")
 {
-}
-
-void PortalMaterial::SetWorldViewProj(const XMFLOAT4X4& wvp)
-{
-	SetVariable_Matrix(L"gWorldViewProj", wvp);
 }
 
 void PortalMaterial::InitializeEffectVariables()

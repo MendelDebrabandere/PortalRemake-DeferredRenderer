@@ -9,12 +9,7 @@ public:
 	PortalMaterial& operator=(const PortalMaterial& other) = delete;
 	PortalMaterial& operator=(PortalMaterial&& other) noexcept = delete;
 
-	void SetWorldViewProj(const XMFLOAT4X4& wvp);
-
 protected:
 	void InitializeEffectVariables() override;
-
-private:
-	TextureData* m_pDiffuseTexture{};
 };
 
