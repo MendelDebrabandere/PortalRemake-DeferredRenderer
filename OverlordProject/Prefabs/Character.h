@@ -49,7 +49,7 @@ public:
 	void SetCollisionGroup(CollisionGroup group);
 	void SetCollisionIgnoreGroup(CollisionGroup group);
 
-	const FixedCamera* GetCamera() const { return m_pCameraObject; }
+	FixedCamera* GetCamera() { return m_pCameraObject; }
 	const CameraComponent* GetCameraComponent() const { return m_pCameraComponent; }
 
 	float GetTpCooldown() const { return m_TpCooldown; }
@@ -89,7 +89,5 @@ private:
 	float m_JumpAnimTime{};
 
 	FMOD::Channel* m_pChannelTeleport{ nullptr };
-
-	GameObject* m_pGun{};
 };
 

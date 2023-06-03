@@ -90,18 +90,6 @@ void Character::Initialize(const SceneContext& /*sceneContext*/)
 	}
 
 
-	//Gun mesh
-	m_pGun = m_pCameraObject->AddChild(new GameObject);
-	const auto pGunModel = m_pGun->AddComponent(new ModelComponent(L"Meshes/PortalGun.ovm"));
-
-	const auto pMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
-	pMaterial->SetDiffuseTexture(L"Textures/PortalGun.png");
-
-	pGunModel->SetMaterial(pMaterial, 0);
-
-	m_pGun->GetTransform()->Translate(0.3f, -0.25f, 0.3f);
-	m_pGun->GetTransform()->Rotate(90, 0, 180);
-	m_pGun->GetTransform()->Scale(0.5f, 0.5f, 0.5f);
 
 }
 

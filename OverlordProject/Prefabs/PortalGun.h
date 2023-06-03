@@ -29,6 +29,8 @@ protected:
 	void Update(const SceneContext&) override;
 
 private:
+	void SpawnParticle(PortalType);
+
 	Character* m_pCharacter;
 
 	Portal* m_pBluePortal{};
@@ -39,4 +41,10 @@ private:
 
 	FMOD::Channel* m_pChannelOrangeGun{ nullptr };
 	FMOD::Channel* m_pChannelBlueGun{ nullptr };
+
+	GameObject* m_pGunMesh{};
+
+	GameObject* m_pEmitterObj{};
+	ParticleEmitterComponent* m_pEmitter{};
+	float particleTimer{};
 };

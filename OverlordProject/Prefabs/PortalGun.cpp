@@ -15,6 +15,9 @@ PortalGun::PortalGun(PortalScene* scene, Character* character)
 
 void PortalGun::ShootGun(PortalType type)
 {
+	//Spawn particle
+	SpawnParticle(type);
+
 	//RAYCAST
 	//We do a custom raycast and not just cameracomponent.pick
 	//because we need the normal and location of te hit as well
@@ -112,11 +115,81 @@ void PortalGun::Initialize(const SceneContext&)
 
 	m_pScene->AddChild(m_pBluePortal);
 	m_pScene->AddChild(m_pOrangePortal);
+
+	//Gun mesh
+	m_pGunMesh = m_pCharacter->GetCamera()->AddChild(new GameObject);
+	const auto pGunModel = m_pGunMesh->AddComponent(new ModelComponent(L"Meshes/PortalGun.ovm"));
+
+	const auto pMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
+	pMaterial->SetDiffuseTexture(L"Textures/PortalGun.png");
+
+	pGunModel->SetMaterial(pMaterial, 0);
+
+	m_pGunMesh->GetTransform()->Translate(0.3f, -0.25f, 0.3f);
+	m_pGunMesh->GetTransform()->Rotate(90, 0, 180);
+	m_pGunMesh->GetTransform()->Scale(0.5f, 0.5f, 0.5f);
 }
 
-void PortalGun::Update(const SceneContext&)
+void PortalGun::Update(const SceneContext& sceneContext)
 {
-	
+	if (m_pEmitterObj)
+	{
+		particleTimer += sceneContext.pGameTime->GetElapsed();
+		if (particleTimer >= 0.1f)
+		{
+			particleTimer = 0.f;
+			RemoveChild(m_pEmitterObj, true);
+			m_pEmitterObj = nullptr;
+		}
+	}
+}
+
+void PortalGun::SpawnParticle(PortalType type)
+{
+	//Particle System for shooting gun
+	ParticleEmitterSettings settings{};
+	settings.velocity = { 0.f,0.f,0.f };
+	settings.minSize = 0.6f;
+	settings.maxSize = 0.6f;
+	settings.minEnergy = 0.1f;
+	settings.maxEnergy = 0.1f;
+	settings.minScale = 1.f;
+	settings.maxScale = 1.f;
+	settings.minEmitterRadius = .0f;
+	settings.maxEmitterRadius = .0f;
+	settings.color = { 1.f,1.f,1.f, .6f };
+
+	m_pEmitterObj = AddChild(new GameObject());
+	if (type == PortalType::Blue)
+		m_pEmitter = m_pEmitterObj->AddComponent(new ParticleEmitterComponent(L"Textures/BlueEffect.png", settings, 1));
+	else
+		m_pEmitter = m_pEmitterObj->AddComponent(new ParticleEmitterComponent(L"Textures/OrangeEffect.png", settings, 1));
+
+	//SET THE POS OF THE EMITTER
+	XMFLOAT3 startVec = { 0,-1,0 };
+
+	XMFLOAT4 rot = m_pGunMesh->GetTransform()->GetWorldRotation();
+	XMFLOAT3 pos = m_pGunMesh->GetTransform()->GetWorldPosition();
+
+	//rotate unit vector with rotation quaternion
+	XMVECTOR xmStartVec = XMLoadFloat3(&startVec);
+	XMVECTOR xmRot = XMLoadFloat4(&rot);
+
+	XMMATRIX rotationMatrix = XMMatrixRotationQuaternion(xmRot);
+
+	XMVECTOR rotatedVec = XMVector3Transform(xmStartVec, rotationMatrix);
+
+	XMFLOAT3 result;
+	XMStoreFloat3(&result, rotatedVec);
+
+	//Adding offset to position
+	constexpr float dist{ 0.7f };
+
+	pos = XMFLOAT3{ pos.x + result.x * dist,
+					pos.y + result.y * dist,
+					pos.z + result.z * dist };
+
+	m_pEmitterObj->GetTransform()->Translate(pos);
 }
 
 
