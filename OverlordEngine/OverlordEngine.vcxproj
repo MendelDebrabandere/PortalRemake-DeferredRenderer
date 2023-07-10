@@ -62,6 +62,7 @@
       <TreatWarningAsError>true</TreatWarningAsError>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
+      <BuildStlModules>false</BuildStlModules>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -89,6 +90,7 @@
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalOptions>/Zc:__cplusplus %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(ProjectDir)</AdditionalIncludeDirectories>
+      <BuildStlModules>false</BuildStlModules>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
