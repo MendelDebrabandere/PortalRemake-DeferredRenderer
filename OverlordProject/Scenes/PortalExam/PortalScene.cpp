@@ -83,7 +83,7 @@ void PortalScene::Update()
 
 	if (InputManager::IsKeyboardKey(InputState::pressed, 27)) // ESC BUTTON = 27
 	{
-		SceneManager::Get()->SetActiveGameScene(L"MainMenuScene");
+		//SceneManager::Get()->SetActiveGameScene(L"MainMenuScene");
 	}
 }
 

@@ -19,8 +19,8 @@ public:
 		Depth = 4
 	};
 
-	void Begin(const SceneContext& sceneContext) const;
-	void End(const SceneContext& sceneContext) const;
+	void Begin(const SceneContext& sceneContext, RenderTarget* rt) const;
+	void End(const SceneContext& sceneContext, RenderTarget* rt) const;
 
 	void DrawImGui();
 

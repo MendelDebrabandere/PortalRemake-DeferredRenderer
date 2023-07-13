@@ -65,8 +65,16 @@ RenderTarget* DeferredRenderer::CreateRenderTarget(UINT width, UINT height, DXGI
 	return pRenderTarget;
 }
 
-void DeferredRenderer::Begin(const SceneContext& sceneContext) const
+void DeferredRenderer::Begin(const SceneContext& sceneContext, RenderTarget* rt) const
 {
+	//auto tempRenderTargetView = m_pDefaultRenderTargetView;
+	auto tempDepthStencilView = m_pDefaultDepthStencilView;
+	if (rt)
+	{
+		//tempRenderTargetView = rt->GetRenderTargetView();
+		tempDepthStencilView = rt->GetDepthStencilView();
+	}
+
 	//Ignore this function if DeferredRendering is not 'active'
 	if (!sceneContext.useDeferredRendering) return;
 
@@ -80,10 +88,10 @@ void DeferredRenderer::Begin(const SceneContext& sceneContext) const
 		pDeviceContext->ClearRenderTargetView(m_RenderTargetViews[i], &clearColor.x);
 	}
 
-	pDeviceContext->ClearDepthStencilView(m_pDefaultDepthStencilView, D3D11_CLEAR_DEPTH, 1.f, 0);
+	pDeviceContext->ClearDepthStencilView(tempDepthStencilView, D3D11_CLEAR_DEPTH, 1.f, 0);
 
 	//2. Bind GBuffer RTVs + DSV
-	pDeviceContext->OMSetRenderTargets(RT_COUNT, m_RenderTargetViews, m_pDefaultDepthStencilView);
+	pDeviceContext->OMSetRenderTargets(RT_COUNT, m_RenderTargetViews, tempDepthStencilView);
 
 
 	//3. DRAW GEOMETRY
@@ -91,26 +99,34 @@ void DeferredRenderer::Begin(const SceneContext& sceneContext) const
 
 }
 
-void DeferredRenderer::End(const SceneContext& sceneContext) const
+void DeferredRenderer::End(const SceneContext& sceneContext, RenderTarget* rt) const
 {
 	//Ignore this function if DeferredRendering is not 'active'
 	if (!sceneContext.useDeferredRendering) return;
 
 	const auto pDeviceContext = sceneContext.d3dContext.pDeviceContext;
 
+	auto tempRenderTargetView = m_pDefaultRenderTargetView;
+	auto tempDepthStencilView = m_pDefaultDepthStencilView;
+	if (rt)
+	{
+		tempRenderTargetView = rt->GetRenderTargetView();
+		tempDepthStencilView = rt->GetDepthStencilView();
+	}
+
 	//1. Geometry Pass is finished > Unbind GBuffer RTVs
 	ID3D11RenderTargetView* rTargets[RT_COUNT] = { nullptr };
-	rTargets[0] = m_pDefaultRenderTargetView;
+	rTargets[0] = tempRenderTargetView;
 	pDeviceContext->OMSetRenderTargets(RT_COUNT, rTargets, nullptr);
 
 	//2. Restore Main RenderTarget WITHOUT DSV (DepthBuffer SRV is used in pipeline)
-	//pDeviceContext->OMSetRenderTargets(1, &m_pDefaultRenderTargetView, nullptr);
+	pDeviceContext->OMSetRenderTargets(1, &tempRenderTargetView, nullptr);
 
 	//3. Directional Light Pass
 	m_pLightPassRenderer->DirectionalLightPass(sceneContext, m_ShaderResourceViews);
 
 	//4. Volumetric Light Pass
-	m_pLightPassRenderer->VolumetricLightPass(sceneContext, m_ShaderResourceViews, m_pDefaultRenderTargetView);
+	m_pLightPassRenderer->VolumetricLightPass(sceneContext, m_ShaderResourceViews, tempRenderTargetView);
 
 	//5. Unbind G-Buffer SRVs (Diffuse, Specular, Normal & Depth)
 	ID3D11ShaderResourceView* pSRV[SRV_COUNT - 1] = { nullptr };
