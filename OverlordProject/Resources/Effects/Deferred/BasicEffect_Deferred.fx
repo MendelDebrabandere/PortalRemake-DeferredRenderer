@@ -24,10 +24,16 @@ float4x4 gWorld : WORLD;
 
 //STATES
 //******
-RasterizerState gRasterizerState
+RasterizerState gBackCullRasterizerState
 {
 	FillMode = SOLID;
 	CullMode = BACK;
+};
+
+RasterizerState gFrontCullRasterizerState
+{
+	FillMode = SOLID;
+	CullMode = Front;
 };
 
 BlendState gBlendState
@@ -86,7 +92,7 @@ float4 gSpecularColor
 <
 	string UIName = "Specular Color";
 	string UIWidget = "Color";
-> = float4(1, 1, 1, 1);
+> = float4(0.2, 0.2f, 0.2f, 1);
 
 Texture2D gSpecularMap
 <
@@ -210,7 +216,7 @@ PS_Output MainPS(VS_Output input){
 	{
 		diffuse = gDiffuseMap.Sample(gTextureSampler, input.TexCoord);
 	}
-	
+
 	//Set Diffuse
 	output.Diffuse = diffuse;
 
@@ -268,7 +274,19 @@ PS_Output MainPS(VS_Output input){
 technique10 Default {
 	pass p0 {
 		SetDepthStencilState(gDepthState, 0);
-		SetRasterizerState(gRasterizerState);
+		SetRasterizerState(gBackCullRasterizerState);
+		SetBlendState(gBlendState, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
+
+		SetVertexShader(CompileShader(vs_4_0, MainVS()));
+		SetGeometryShader(NULL);
+		SetPixelShader(CompileShader(ps_4_0, MainPS()));
+	}
+}
+
+technique10 DefaultFrontCull {
+	pass p0 {
+		SetDepthStencilState(gDepthState, 0);
+		SetRasterizerState(gFrontCullRasterizerState);
 		SetBlendState(gBlendState, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xFFFFFFFF);
 
 		SetVertexShader(CompileShader(vs_4_0, MainVS()));
