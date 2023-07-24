@@ -87,6 +87,8 @@ void DeferredRenderer::Begin(const SceneContext& sceneContext, RenderTarget* rt)
 	{
 		pDeviceContext->ClearRenderTargetView(m_RenderTargetViews[i], &clearColor.x);
 	}
+	if (rt)
+		pDeviceContext->ClearRenderTargetView(rt->GetRenderTargetView(), &clearColor.x);
 
 	pDeviceContext->ClearDepthStencilView(tempDepthStencilView, D3D11_CLEAR_DEPTH, 1.f, 0);
 
