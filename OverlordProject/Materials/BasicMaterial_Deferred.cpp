@@ -11,11 +11,6 @@ void BasicMaterial_Deferred::SetDiffuseMap(const std::wstring& assetFile)
 	SetDiffuseMap(ContentManager::Load<TextureData>(assetFile));
 }
 
-void BasicMaterial_Deferred::SetDiffuseColor(const XMFLOAT4& color)
-{
-	SetVariable(L"gDiffuseColor", &color, 0, sizeof(XMFLOAT4));
-}
-
 void BasicMaterial_Deferred::SetDiffuseMap(TextureData* pTextureData)
 {
 	SetVariable_Scalar(L"gUseDiffuseMap", pTextureData != nullptr);

@@ -28,7 +28,7 @@
     <ClCompile Include="Scenes\Week 7\FontTestScene.cpp" />
     <ClCompile Include="Scenes\Week 7\PickingScene.cpp" />
     <ClCompile Include="Prefabs\Character.cpp" />
-    <ClCompile Include="Scenes\PortalExam\PortalScene.cpp" />
+    <ClCompile Include="Scenes\Exam\PortalScene.cpp" />
     <ClCompile Include="Scenes\Week 8\ShadowMappingScene.cpp" />
     <ClCompile Include="Materials\Shadow\DiffuseMaterial_Shadow.cpp" />
     <ClCompile Include="Materials\Shadow\DiffuseMaterial_Shadow_Skinned.cpp" />
@@ -42,7 +42,7 @@
     <ClCompile Include="Materials\BasicMaterial.cpp" />
     <ClCompile Include="Materials\BasicMaterial_Deferred.cpp" />
     <ClCompile Include="Materials\Portal\PortalMaterial.cpp" />
-    <ClCompile Include="Scenes\PortalExam\MainMenuScene.cpp" />
+    <ClCompile Include="Scenes\Exam\MainMenuScene.cpp" />
     <ClCompile Include="Materials\Post\PostBrightness.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -72,7 +72,7 @@
     <ClInclude Include="Scenes\Week 7\FontTestScene.h" />
     <ClInclude Include="Scenes\Week 7\PickingScene.h" />
     <ClInclude Include="Prefabs\Character.h" />
-    <ClInclude Include="Scenes\PortalExam\PortalScene.h" />
+    <ClInclude Include="Scenes\Exam\PortalScene.h" />
     <ClInclude Include="Scenes\Week 8\ShadowMappingScene.h" />
     <ClInclude Include="Materials\Shadow\DiffuseMaterial_Shadow_Skinned.h" />
     <ClInclude Include="Materials\Shadow\DiffuseMaterial_Shadow.h" />
@@ -86,7 +86,7 @@
     <ClInclude Include="Materials\BasicMaterial.h" />
     <ClInclude Include="Materials\BasicMaterial_Deferred.h" />
     <ClInclude Include="Materials\Portal\PortalMaterial.h" />
-    <ClInclude Include="Scenes\PortalExam\MainMenuScene.h" />
+    <ClInclude Include="Scenes\Exam\MainMenuScene.h" />
     <ClInclude Include="Materials\Post\PostBrightness.h" />
   </ItemGroup>
 </Project>

@@ -3,7 +3,7 @@
 
 #include "Portal.h"
 #include "Materials/DiffuseMaterial.h"
-#include "Scenes/PortalExam/PortalScene.h"
+#include "Scenes/Exam/PortalScene.h"
 #include "Prefabs/Character.h"
 
 
@@ -120,7 +120,8 @@ void PortalGun::Initialize(const SceneContext&)
 	m_pGunMesh = m_pCharacter->GetCamera()->AddChild(new GameObject);
 	const auto pGunModel = m_pGunMesh->AddComponent(new ModelComponent(L"Meshes/PortalGun.ovm"));
 
-	BaseMaterial* pMaterial = m_pScene->LoadMaterial(L"PortalGun.png");
+	const auto pMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
+	pMaterial->SetDiffuseTexture(L"Textures/PortalGun.png");
 
 	pGunModel->SetMaterial(pMaterial, 0);
 

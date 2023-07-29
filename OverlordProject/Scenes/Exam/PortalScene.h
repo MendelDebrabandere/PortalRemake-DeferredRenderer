@@ -15,8 +15,6 @@ public:
 	PortalScene& operator=(const PortalScene& other) = delete;
 	PortalScene& operator=(PortalScene&& other) noexcept = delete;
 
-	BaseMaterial* LoadMaterial(const std::wstring& name = L"", const XMFLOAT4& color = { 0,0,0,1 }, bool useTransparency = false);
-
 protected:
 	void Initialize() override;
 	void Update() override;

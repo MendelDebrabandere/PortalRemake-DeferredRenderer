@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "PortalScene.h"
 
-#include "Materials/BasicMaterial_Deferred.h"
 #include "Materials/DiffuseMaterial.h"
 #include "Prefabs/Character.h"
 #include "Prefabs/PortalGun.h"
@@ -12,15 +11,12 @@
 void PortalScene::Initialize()
 {
 	// Game settings
-	m_SceneContext.useDeferredRendering = true;
-
 	//m_SceneContext.settings.showInfoOverlay = true;
 	m_SceneContext.settings.drawPhysXDebug = false;
 	m_SceneContext.settings.drawGrid = false;
 	m_SceneContext.settings.enableOnGUI = false;
 
-	m_SceneContext.pLights->SetDirectionalLight({ 0.f, 0.f, 0.f }, { 0.740129888f, -0.597205281f, 0.309117377f });
-	//m_SceneContext.pLights->SetDirectionalLight({ -95.6139526f,66.1346436f,-41.1850471f }, { 0.f, -1.f, 0.f });
+	m_SceneContext.pLights->SetDirectionalLight({ -95.6139526f,66.1346436f,-41.1850471f }, { 0.740129888f, -0.597205281f, 0.309117377f });
 
 	//in this order because the level uses the portalgun object in init of no portal walls for start game
 	InitCharacter(true, 10);
@@ -39,28 +35,6 @@ void PortalScene::Initialize()
 	//auto postBrightness = MaterialManager::Get()->CreateMaterial<PostBrightness>();
 	//AddPostProcessingEffect(postBrightness);
 	//postBrightness->SetIsEnabled(true);
-
-		//Spot Light
-	Light light = {};
-	light.isEnabled = true;
-	light.position = { 20.f,15.f,20.f,1.0f };
-	light.direction = { 0.f,0.f,1.f,0.f };
-	light.color = { 0.7f,0.f,0.f,1.f };
-	light.intensity = 1.0f;
-	light.spotLightAngle = 35.f;
-	light.range = 150.0f;
-	light.type = LightType::Spot;
-	m_SceneContext.pLights->AddLight(light);
-
-	//Point Light
-	light = {};
-	light.isEnabled = true;
-	light.position = { 15.f,15.f,15.f,1.0f };
-	light.color = { 0.f,1.f,0.f,1.f };
-	light.intensity = 1.f;
-	light.range = 30.0f;
-	light.type = LightType::Point;
-	m_SceneContext.pLights->AddLight(light);
 }
 
 void PortalScene::Update()
@@ -83,7 +57,7 @@ void PortalScene::Update()
 
 	if (InputManager::IsKeyboardKey(InputState::pressed, 27)) // ESC BUTTON = 27
 	{
-		//SceneManager::Get()->SetActiveGameScene(L"MainMenuScene");
+		SceneManager::Get()->SetActiveGameScene(L"MainMenuScene");
 	}
 }
 
@@ -92,16 +66,11 @@ void PortalScene::InitLevel()
 	// Default physics material
 	const auto pDefaultMaterial = PxGetPhysics().createMaterial(0.5f, 0.5f, 0.5f);
 
-	// make material
-
-
-
 	//Cube
 	{
-		//DiffuseMaterial* pCubeMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
-		//pCubeMaterial->SetDiffuseTexture(L"textures/PortalCube.jpg");
-		//Set texture of the 
-		BaseMaterial* pCubeMaterial = LoadMaterial(L"PortalCube.jpg");
+		DiffuseMaterial* pCubeMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
+		//Set texture of the material
+		pCubeMaterial->SetDiffuseTexture(L"textures/PortalCube.jpg");
 
 		auto pCube = AddChild(new GameObject());
 		pCube->SetTag(L"Cube");
@@ -122,10 +91,9 @@ void PortalScene::InitLevel()
 
 	//Door
 	{
-		//DiffuseMaterial* pDoorMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
-		//pDoorMaterial->SetDiffuseTexture(L"textures/portal_door.jpeg");
+		DiffuseMaterial* pDoorMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
 		//Set texture of the material
-		BaseMaterial* pDoorMaterial = LoadMaterial(L"portal_door.jpeg");
+		pDoorMaterial->SetDiffuseTexture(L"textures/portal_door.jpeg");
 
 		auto pDoor = AddChild(new GameObject());
 
@@ -163,11 +131,9 @@ void PortalScene::InitLevel()
 
 	//Button
 	{
-		//DiffuseMaterial* pButtonMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
-		//pButtonMaterial->SetDiffuseTexture(L"textures/portal_button.jpeg");
+		DiffuseMaterial* pButtonMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
 		//Set texture of the material
-		BaseMaterial* pButtonMaterial = LoadMaterial(L"portal_button.jpeg");
-
+		pButtonMaterial->SetDiffuseTexture(L"textures/portal_button.jpeg");
 
 		auto pButton = AddChild(new GameObject());
 
@@ -227,11 +193,9 @@ void PortalScene::InitLevel()
 
 	//level
 	{
-		//DiffuseMaterial* pLevelMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
-		//pLevelMaterial->SetDiffuseTexture(L"textures/WallTextureWhite.jpg");
+		DiffuseMaterial* pLevelMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
 		//Set texture of the material
-		BaseMaterial* pLevelMaterial = LoadMaterial(L"WallTextureWhite.jpg");
-
+		pLevelMaterial->SetDiffuseTexture(L"textures/WallTextureWhite.jpg");
 
 		const auto levelModel = new ModelComponent(L"Meshes/PortalLevel.ovm");
 		levelModel->SetMaterial(pLevelMaterial);
@@ -270,10 +234,9 @@ void PortalScene::InitLevel()
 
 	//No portal walls
 	{
-		//DiffuseMaterial* pWallMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
-		//pWallMaterial->SetDiffuseTexture(L"textures/NoPortal.png");
+		DiffuseMaterial* pWallMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
 		//Set texture of the material
-		BaseMaterial* pWallMaterial = LoadMaterial(L"NoPortal.png");
+		pWallMaterial->SetDiffuseTexture(L"textures/NoPortal.png");
 
 		auto pWalls = AddChild(new GameObject());
 		pWalls->SetTag(L"Walls");
@@ -372,52 +335,6 @@ void PortalScene::InitCharacter(bool controlCamera, float mouseSens)
 	// Add protalgun
 	m_pPortalGun = new PortalGun(this, m_pCharacter);
 	m_pCharacter->AddChild(m_pPortalGun);
-}
-
-BaseMaterial* PortalScene::LoadMaterial(const std::wstring& name, const XMFLOAT4& color, bool useTransparency)
-{
-	BaseMaterial* pBaseMaterial = nullptr;
-
-	if (m_SceneContext.useDeferredRendering)
-	{
-		//BASIC-EFFECT_DEFERRED
-		const auto pMaterial = MaterialManager::Get()->CreateMaterial<BasicMaterial_Deferred>();
-		pMaterial->UseTransparency(useTransparency);
-		pMaterial->SetTechnique(L"DefaultFrontCull");
-		if (name != L"")
-		{
-			//Diffuse
-			pMaterial->SetDiffuseMap(L"Textures\\" + name);
-		}
-		else
-		{
-			pMaterial->SetDiffuseColor(color);
-		}
-
-		pBaseMaterial = pMaterial;
-	}
-	else
-	{
-		//BASIC-EFFECT
-		DiffuseMaterial* pMaterial = MaterialManager::Get()->CreateMaterial<DiffuseMaterial>();
-		if (useTransparency)
-		{
-			pMaterial->SetTechnique(L"TransparencyTech");
-		}
-
-		if (name != L"")
-		{
-			//Diffuse
-			std::wstring texPath{};
-			pMaterial->SetDiffuseTexture(L"Textures/" + texPath);
-		}
-		else
-		{
-			//pMaterial->SetDiffuseColor(color);
-		}
-	}
-
-	return pBaseMaterial;
 }
 
 void PortalScene::PostDraw()

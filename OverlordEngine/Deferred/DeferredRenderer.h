@@ -19,9 +19,8 @@ public:
 		Depth = 4
 	};
 
-	//If it is given a nulptr it is renderet to the screen, otherwise to the rt (i need it for portals)
-	void Begin(const SceneContext& sceneContext, RenderTarget* rt) const;
-	void End(const SceneContext& sceneContext, RenderTarget* rt) const;
+	void Begin(const SceneContext& sceneContext) const;
+	void End(const SceneContext& sceneContext) const;
 
 	void DrawImGui();
 

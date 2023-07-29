@@ -11,7 +11,6 @@ public:
 	BasicMaterial_Deferred& operator=(BasicMaterial_Deferred&& other) noexcept = delete;
 
 	void SetDiffuseMap(const std::wstring& assetFile);
-	void SetDiffuseColor(const XMFLOAT4& color);
 	void SetDiffuseMap(TextureData* pTextureData);
 
 	void SetNormalMap(const std::wstring& assetFile);

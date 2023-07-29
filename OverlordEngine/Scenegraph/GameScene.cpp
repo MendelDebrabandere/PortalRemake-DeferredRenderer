@@ -171,11 +171,8 @@ void GameScene::RootDraw()
 
 #pragma region USER PASS
 
-	PostDraw();
-
-
 	//DEFERRED BEGIN
-	DeferredRenderer::Get()->Begin(m_SceneContext, nullptr);
+	DeferredRenderer::Get()->Begin(m_SceneContext);
 
 	//USER_PASS
 	//+++++++++
@@ -189,7 +186,7 @@ void GameScene::RootDraw()
 	}
 
 	//DEFERRED END
-	DeferredRenderer::Get()->End(m_SceneContext, nullptr);
+	DeferredRenderer::Get()->End(m_SceneContext);
 
 	//SpriteRenderer Draw
 	SpriteRenderer::Get()->Draw(m_SceneContext);
@@ -198,6 +195,7 @@ void GameScene::RootDraw()
 	TextRenderer::Get()->Draw(m_SceneContext);
 
 	//Object-Scene Post-Draw
+	PostDraw();
 	for (const auto pChild : m_pChildren)
 	{
 		pChild->RootPostDraw(m_SceneContext);
@@ -427,23 +425,13 @@ void GameScene::DrawPortal(RenderTarget* rt)
 
 	rt->Clear();
 
-	//DEFERRED BEGIN
-	DeferredRenderer::Get()->Begin(m_SceneContext, rt);
-
 	//Object-Scene Draw
 	for (const auto pChild : m_pChildren)
 	{
 		pChild->RootDraw(m_SceneContext);
 	}
 
-
-	//DEFERRED END
-	DeferredRenderer::Get()->End(m_SceneContext, rt);
-
-
 	constexpr ID3D11ShaderResourceView* const pSRV[] = { nullptr };
 	m_SceneContext.d3dContext.pDeviceContext->PSSetShaderResources(0, 1, pSRV);
 	m_pGame->SetRenderTarget(nullptr);
-	
-
 }

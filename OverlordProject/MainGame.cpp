@@ -84,8 +84,8 @@
 #endif
 
 #ifdef Exam
-#include "Scenes/PortalExam/PortalScene.h"
-#include "Scenes/PortalExam/MainMenuScene.h"
+#include "Scenes/Exam/PortalScene.h"
+#include "Scenes/Exam/MainMenuScene.h"
 #endif
 
 #pragma endregion
