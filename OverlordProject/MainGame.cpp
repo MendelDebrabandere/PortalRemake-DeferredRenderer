@@ -15,8 +15,8 @@
 // #define MILESTONE_1
 // #define MILESTONE_2
 
-// #define PortalExam
- #define DeferredRenderer
+ #define PortalExam
+// #define DeferredRenderer
 
 #pragma region Lab/Milestone Includes
 #ifdef W3
