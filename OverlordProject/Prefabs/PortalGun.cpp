@@ -3,7 +3,7 @@
 
 #include "Portal.h"
 #include "Materials/DiffuseMaterial.h"
-#include "Scenes/Exam/PortalScene.h"
+#include "Scenes/PortalExam/PortalScene.h"
 #include "Prefabs/Character.h"
 
 
