@@ -5,7 +5,7 @@ This project was made during the Graphics Programming 2 cours at DAE: https://ww
 The two main projects in this solution are the Portal Exam and the Deferred Renderer.
 You can change what project is being run in the OverlordProject/MainGame.cpp file. It is decided based on what you have as #define.
 
-![image](https://github.com/MendelDebrabandere/PortalRemake-DeferredRenderer/assets/95921047/7db50d95-be56-4df8-9dc1-7ca9e850d81d)
+![image](https://github.com/MendelDebrabandere/PortalRemake-DeferredRenderer/assets/95921047/05c35eb9-c54c-48ee-985d-fdd515402f78)
 
 
 
