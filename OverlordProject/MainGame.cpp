@@ -15,7 +15,7 @@
 // #define MILESTONE_1
 // #define MILESTONE_2
 
- #define PortalExam
+ #define PortalRemake
 // #define DeferredRenderer
 
 #pragma region Lab/Milestone Includes
@@ -79,9 +79,9 @@
 #include "Scenes/Week 10/PostProcessingScene.h"
 #endif
 
-#ifdef PortalExam
-#include "Scenes/PortalExam/PortalScene.h"
-#include "Scenes/PortalExam/MainMenuScene.h"
+#ifdef PortalRemake
+#include "Scenes/PortalRemake/PortalScene.h"
+#include "Scenes/PortalRemake/MainMenuScene.h"
 #endif
 
 #ifdef DeferredRenderer
@@ -165,7 +165,7 @@ void MainGame::Initialize()
 	SceneManager::Get()->AddGameScene(new PostProcessingScene());
 #endif
 
-#ifdef PortalExam
+#ifdef PortalRemake
 	SceneManager::Get()->AddGameScene(new MainMenuScene());
 #endif
 
