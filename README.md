@@ -1,5 +1,7 @@
 # PortalRemake-DeferredRenderer
 
+Github repo: https://github.com/MendelDebrabandere/PortalRemake-DeferredRenderer
+
 This project was made during the Graphics Programming 2 cours at DAE: https://www.digitalartsandentertainment.be/page/48/Graphics+programming+2
 
 The two main projects in this solution are the Portal Exam and the Deferred Renderer.
