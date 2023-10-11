@@ -11,8 +11,9 @@ You can change what project is being run in the OverlordProject/MainGame.cpp fil
 
 
 
-## Portal Exam
-This is a remake from the Portal game from Valve. I only recreated the portal game mechanic and made a small level to demonstrate the mechanic.
+## Portal Remake
+This is a remake from the Portal game from Valve. I only recreated the portal game mechanic and made a small level to demonstrate the mechanic. \
+I really enjoyed working on this, from rendering to physics and maths.
 
 ![Portal](https://github.com/MendelDebrabandere/PortalRemake-DeferredRenderer/assets/95921047/1eeb85a8-d071-4914-918c-15ff0ee189e0)
 
