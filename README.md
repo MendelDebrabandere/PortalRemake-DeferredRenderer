@@ -22,5 +22,3 @@ This is an exploration of the deferred rendering pipeline where we first render 
 deffered rendering allows for much more efficient calculation of lighting if there are a lot of lights in the scene. It also allows volumetric lighting.
 
 ![Portal](https://github.com/MendelDebrabandere/PortalRemake-DeferredRenderer/assets/95921047/c19667c1-9df3-4325-93e8-b10e34a1f821)
-
-Lab assignments in the overlord engine for the Game Graphics Programming 2 course in DAE
